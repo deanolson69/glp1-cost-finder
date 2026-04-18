@@ -501,7 +501,7 @@ function Footer() {
         {sep}<Link to="/contact" style={linkStyle}>Contact</Link>
       </p>
       <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.6,maxWidth:560,margin:"10px auto 0"}}>
-        This site contains affiliate links. We may earn a commission when you click through and take action.
+        <strong>Affiliate Disclosure:</strong> We may earn commissions from partner links.
       </p>
       <p style={{fontSize:10,color:"#cbd5e1",marginTop:8}}>Sources: TrumpRx.gov, GoodRx, NovoCare, LillyDirect, CMS, KFF, FDA.gov</p>
     </div>
@@ -800,6 +800,14 @@ function GLP1CostFinder() {
         {/* ========= RESULTS ========= */}
         {ready && (
           <div ref={resultsRef} className="fade-up" style={{marginTop:8}}>
+
+            {/* FTC AFFILIATE DISCLOSURE */}
+            <div style={{background:"#fefce8",border:"1px solid #fde68a",borderRadius:10,padding:"10px 14px",marginBottom:14,display:"flex",alignItems:"flex-start",gap:10}}>
+              <span aria-hidden="true" style={{fontSize:14,lineHeight:1.2,flexShrink:0,marginTop:1}}>&#9432;</span>
+              <p style={{fontSize:12,lineHeight:1.55,color:"#713f12",margin:0}}>
+                <strong>Affiliate disclosure:</strong> Some links below are affiliate links. If you sign up through one of these links, we may earn a commission at no extra cost to you. This does not influence our comparisons or recommendations.
+              </p>
+            </div>
 
             {/* RECOMMENDATION */}
             <div style={{background:"linear-gradient(135deg, #1e3a5f, #1e40af)",borderRadius:20,padding:"32px 28px",marginBottom:16,color:"#fff",position:"relative",overflow:"hidden"}}>
