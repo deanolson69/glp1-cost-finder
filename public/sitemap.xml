@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage - GLP-1 Cost Finder Tool -->
+  <url>
+    <loc>https://glp1costfinder.com/</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- SEO Landing Pages (Placeholder - Uncomment and update as pages are created) -->
+
+  <!--
+  <url>
+    <loc>https://glp1costfinder.com/glp1-cost-by-state</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  -->
+
+  <!--
+  <url>
+    <loc>https://glp1costfinder.com/best-glp1-medication</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  -->
+
+  <!--
+  <url>
+    <loc>https://glp1costfinder.com/glp1-insurance-coverage</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  -->
+
+</urlset>
