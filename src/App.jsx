@@ -190,6 +190,180 @@ const conditionOptions = [
 
 const allStateCodes = Object.keys(stateData).sort((a,b) => stateData[a].name.localeCompare(stateData[b].name));
 
+// ─── PRIVACY POLICY PAGE ───
+// Source of truth is privacy-policy.md at repo root; mirror changes here.
+function PrivacyPage({ onBack }) {
+  const wrap = {minHeight:"100vh",background:"#f8fafc",color:"#1e293b",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif"};
+  const inner = {maxWidth:760,margin:"0 auto",padding:"28px 24px 64px"};
+  const h1 = {fontSize:28,fontWeight:800,color:"#0f172a",margin:"24px 0 8px"};
+  const h2 = {fontSize:20,fontWeight:800,color:"#0f172a",margin:"36px 0 10px",paddingTop:4};
+  const h3 = {fontSize:15,fontWeight:700,color:"#1e293b",margin:"18px 0 6px"};
+  const p = {fontSize:15,lineHeight:1.7,color:"#334155",margin:"0 0 12px"};
+  const ul = {fontSize:15,lineHeight:1.7,color:"#334155",margin:"0 0 14px",paddingLeft:22};
+  const hr = {border:"none",borderTop:"1px solid #e2e8f0",margin:"28px 0"};
+  const link = {color:"#2563eb",textDecoration:"underline"};
+  const backBtn = {display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",color:"#475569",fontSize:13,fontWeight:600,cursor:"pointer",textDecoration:"none"};
+  return (
+    <div style={wrap}>
+      <div style={inner}>
+        <a href="#" onClick={(e)=>{e.preventDefault();onBack();}} style={backBtn}>&larr; Back to Cost Finder</a>
+        <h1 style={h1}>Privacy Policy for GLP-1 Cost Finder</h1>
+        <p style={p}><strong>Effective Date:</strong> April 18, 2026<br/><strong>Last Updated:</strong> April 18, 2026</p>
+
+        <h2 style={h2}>Our Commitment to Your Privacy</h2>
+        <p style={p}>GLP-1 Cost Finder ("we," "us," "our," or "Website") is committed to protecting your privacy. This Privacy Policy explains what information we collect, how we use it, and your rights regarding that information.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>1. Information We Collect</h2>
+        <h3 style={h3}>Email Addresses</h3>
+        <p style={p}>When you submit your email address through our email capture form, we collect that email address to add you to our mailing list (via Mailchimp). This is the primary way we collect personal information.</p>
+        <h3 style={h3}>Information from Google Analytics</h3>
+        <p style={p}>We use Google Analytics 4 to understand how people use our Website. This automatically collects:</p>
+        <ul style={ul}>
+          <li>Pages you visit and how long you spend on them</li>
+          <li>Your general location (city/region level, not specific)</li>
+          <li>Device information (browser type, operating system, device type)</li>
+          <li>Referral source (how you found us)</li>
+          <li>Interaction data (clicks, form submissions, scroll depth)</li>
+        </ul>
+        <p style={p}>Google Analytics uses cookies and similar tracking technologies to collect this data.</p>
+        <h3 style={h3}>Other Information</h3>
+        <ul style={ul}>
+          <li><strong>IP Address:</strong> Automatically logged by our hosting provider for security and analytics purposes</li>
+          <li><strong>Volunteer Information:</strong> Any information you provide when contacting us (e.g., support inquiries)</li>
+        </ul>
+        <hr style={hr}/>
+
+        <h2 style={h2}>2. How We Use Your Information</h2>
+        <h3 style={h3}>Email Addresses</h3>
+        <p style={p}>We use your email address to:</p>
+        <ul style={ul}>
+          <li>Send you updates about GLP-1 pricing, news, and educational content</li>
+          <li>Notify you of changes to our Website or services</li>
+          <li>Respond to your inquiries or feedback</li>
+        </ul>
+        <h3 style={h3}>Analytics Data</h3>
+        <p style={p}>We use Google Analytics data to:</p>
+        <ul style={ul}>
+          <li>Understand how visitors use our Website</li>
+          <li>Improve Website performance and user experience</li>
+          <li>Test new features and content</li>
+          <li>Measure the effectiveness of our marketing efforts</li>
+        </ul>
+        <h3 style={h3}>General Uses</h3>
+        <p style={p}>We may use information (in aggregated or anonymized form) to comply with legal obligations and protect our Website from fraud or abuse.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>3. Email Communications and Your Choices</h2>
+        <p style={p}>When you subscribe to our email list, you're consenting to receive promotional and informational emails. <strong>You can unsubscribe at any time</strong> by:</p>
+        <ul style={ul}>
+          <li>Clicking the "Unsubscribe" link at the bottom of any email we send</li>
+          <li>Emailing us at <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a> with your request</li>
+        </ul>
+        <p style={p}>We will honor unsubscribe requests within 10 business days. You may also contact us to opt out of specific types of emails while remaining subscribed to others.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>4. Third-Party Links and Affiliate Relationships</h2>
+        <p style={p}>Our Website contains links to telehealth providers, pharmacies, manufacturers, and other third-party sites, including:</p>
+        <ul style={ul}>
+          <li>LillyDirect</li>
+          <li>TrumpRx</li>
+          <li>GoodRx</li>
+          <li>NovoCare</li>
+          <li>Other healthcare providers and retailers</li>
+        </ul>
+        <p style={p}><strong>We disclose that some of these links are affiliate links.</strong> This means we may earn a commission if you click through and make a purchase. This does not affect the price you pay&mdash;it's a way we help sustain the Website.</p>
+        <p style={p}><strong>Important:</strong> We are not responsible for the privacy practices of linked websites. Each site has its own privacy policy. We encourage you to review the privacy policy of any third-party site before providing your information or making a purchase.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>5. Cookies and Tracking Technologies</h2>
+        <h3 style={h3}>Google Analytics Cookies</h3>
+        <p style={p}>Google Analytics uses cookies to track your activity on our Website. These are persistent cookies that help Google Analytics recognize you on return visits. These cookies are used solely for analytics purposes and do not identify you personally.</p>
+        <h3 style={h3}>Your Cookie Choices</h3>
+        <p style={p}>Most browsers allow you to control cookies through settings:</p>
+        <ul style={ul}>
+          <li>You can disable cookies in your browser settings</li>
+          <li>You can opt out of Google Analytics tracking by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={link}>Google Analytics Opt-Out Browser Add-On</a></li>
+        </ul>
+        <p style={p}><strong>We do not use cookies for purposes other than analytics.</strong></p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>6. Data Sharing and Third Parties</h2>
+        <h3 style={h3}>We Do NOT:</h3>
+        <ul style={ul}>
+          <li>Sell your email address or personal data to third parties</li>
+          <li>Share your information with unaffiliated marketers</li>
+          <li>Provide your data to data brokers</li>
+        </ul>
+        <h3 style={h3}>We DO Share Data With:</h3>
+        <ul style={ul}>
+          <li><strong>Mailchimp:</strong> To manage our email list (subject to Mailchimp's privacy policy)</li>
+          <li><strong>Google Analytics:</strong> To track Website usage (subject to Google's privacy policy)</li>
+          <li><strong>Render:</strong> Our hosting provider (subject to Render's privacy policy)</li>
+          <li>Legal authorities: Only if required by law or to protect our rights, your safety, or others' safety</li>
+        </ul>
+        <hr style={hr}/>
+
+        <h2 style={h2}>7. Data Retention</h2>
+        <ul style={ul}>
+          <li><strong>Email Addresses:</strong> Retained as long as you remain subscribed to our mailing list, or until you request deletion</li>
+          <li><strong>Analytics Data:</strong> Retained by Google Analytics according to their standard retention policies (typically 14 months of inactivity)</li>
+          <li><strong>Server Logs:</strong> Retained by our hosting provider for up to 90 days for security purposes</li>
+        </ul>
+        <p style={p}>If you wish to have your email address deleted from our records, contact us at <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a>.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>8. Children's Privacy (COPPA)</h2>
+        <p style={p}>Our Website is intended for adults seeking health information about GLP-1 medications. We do not knowingly collect information from children under 13 years old. If we become aware that a child under 13 has provided us with personal information, we will delete that information promptly. If you believe a child under 13 has provided us with information, please contact us immediately at <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a>.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>9. California Privacy Rights (CCPA Basics)</h2>
+        <p style={p}>If you are a California resident, you have certain privacy rights under the California Consumer Privacy Act (CCPA), including:</p>
+        <ul style={ul}>
+          <li>The right to know what personal information is collected</li>
+          <li>The right to know whether your personal information is sold or disclosed</li>
+          <li>The right to delete personal information collected from you</li>
+          <li>The right to opt out of the sale of your personal information</li>
+        </ul>
+        <p style={p}>To exercise these rights, email us at <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a> with your request. We will respond within 45 days.</p>
+        <p style={p}><strong>Note:</strong> We do not sell personal information, so there is no opt-out needed for data sales. However, our analytics and email marketing tools may involve data sharing as described in Section 6.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>10. Data Security</h2>
+        <p style={p}>We implement reasonable technical and organizational measures to protect your information from unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is completely secure. We cannot guarantee absolute security.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>11. Contact Us</h2>
+        <p style={p}>If you have questions about this Privacy Policy, wish to access, correct, or delete your information, or want to exercise your privacy rights, please contact:</p>
+        <p style={p}><strong>Dean Olson</strong><br/><strong>Olson Coaches</strong><br/><strong>Email:</strong> <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a></p>
+        <p style={p}>We will respond to your inquiry within 30 days.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>12. Changes to This Privacy Policy</h2>
+        <p style={p}>We may update this Privacy Policy from time to time to reflect changes in our practices, technology, or applicable laws. We will notify you of material changes by updating the "Last Updated" date at the top of this page, and where legally required, by email.</p>
+        <p style={p}>Your continued use of the Website after changes become effective constitutes your acceptance of the updated Privacy Policy.</p>
+        <hr style={hr}/>
+
+        <h2 style={h2}>Summary: What You Should Know</h2>
+        <ul style={ul}>
+          <li>We collect your <strong>email address</strong> if you sign up, and <strong>analytics data</strong> from Google Analytics</li>
+          <li>We <strong>do not sell your data</strong> or use it for purposes beyond email marketing and Website improvement</li>
+          <li>You can <strong>unsubscribe anytime</strong> from our emails</li>
+          <li>We use <strong>affiliate links</strong> and disclose this relationship</li>
+          <li>We work with <strong>Mailchimp and Google Analytics</strong>, each with their own privacy policies</li>
+          <li>You can <strong>opt out of Google Analytics</strong> tracking</li>
+          <li><strong>Your email is kept safe</strong> and deleted upon request</li>
+        </ul>
+        <p style={p}>Questions? Reach out to <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a>.</p>
+
+        <div style={{marginTop:36,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
+          <a href="#" onClick={(e)=>{e.preventDefault();onBack();}} style={backBtn}>&larr; Back to Cost Finder</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN COMPONENT ───
 export default function GLP1CostFinder() {
   const [insurance, setInsurance] = useState(null);
@@ -204,6 +378,24 @@ export default function GLP1CostFinder() {
   const [showDD, setShowDD] = useState(false);
   const ddRef = useRef(null);
   const resultsRef = useRef(null);
+
+  const [currentPage, setCurrentPage] = useState(() => window.location.hash === "#privacy" ? "privacy" : "main");
+
+  useEffect(() => {
+    const onHashChange = () => setCurrentPage(window.location.hash === "#privacy" ? "privacy" : "main");
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  const goToPrivacy = () => {
+    window.location.hash = "privacy";
+    window.scrollTo(0, 0);
+  };
+  const goToMain = () => {
+    history.pushState("", document.title, window.location.pathname + window.location.search);
+    setCurrentPage("main");
+    window.scrollTo(0, 0);
+  };
 
   const state = selectedState ? stateData[selectedState] : null;
   const ready = insurance && condition && (insurance !== "medicaid" || selectedState);
@@ -315,6 +507,8 @@ export default function GLP1CostFinder() {
 
   const insComplete = !!insurance;
   const condComplete = !!condition;
+
+  if (currentPage === "privacy") return <PrivacyPage onBack={goToMain} />;
 
   return (
     <div style={{minHeight:"100vh",background:"#f8fafc"}}>
@@ -837,13 +1031,15 @@ export default function GLP1CostFinder() {
 
         {/* FOOTER */}
         <div style={{textAlign:"center",marginTop:40,paddingTop:20,borderTop:"1px solid #e2e8f0"}}>
-          <p style={{fontSize:11,color:"#94a3b8"}}>&copy; 2026 GLP-1 Cost Finder - glp1costfinder.com</p>
-          <div style={{display:"flex",justifyContent:"center",gap:16,marginTop:6}}>
-            <a href="/privacy" style={{fontSize:10,color:"#cbd5e1",textDecoration:"none"}}>Privacy Policy</a>
-            <a href="/terms" style={{fontSize:10,color:"#cbd5e1",textDecoration:"none"}}>Terms of Use</a>
-            <a href="/contact" style={{fontSize:10,color:"#cbd5e1",textDecoration:"none"}}>Contact</a>
-          </div>
-          <p style={{fontSize:10,color:"#cbd5e1",marginTop:6}}>Sources: TrumpRx.gov, GoodRx, NovoCare, LillyDirect, CMS, KFF, FDA.gov</p>
+          <p style={{fontSize:11,color:"#94a3b8",margin:0}}>
+            &copy; 2026 Olson Coaches
+            <span style={{margin:"0 8px",color:"#cbd5e1"}}>|</span>
+            <a href="#privacy" onClick={(e)=>{e.preventDefault();goToPrivacy();}} style={{color:"#94a3b8",textDecoration:"underline",cursor:"pointer"}}>Privacy Policy</a>
+          </p>
+          <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.6,maxWidth:560,margin:"10px auto 0"}}>
+            This site contains affiliate links. We may earn a commission when you click through and take action.
+          </p>
+          <p style={{fontSize:10,color:"#cbd5e1",marginTop:8}}>Sources: TrumpRx.gov, GoodRx, NovoCare, LillyDirect, CMS, KFF, FDA.gov</p>
         </div>
       </div>
     </div>
