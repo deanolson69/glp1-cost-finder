@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 
 // ─── STATE DATA (All 50 states + DC) ───
 const stateData = {
@@ -192,7 +193,7 @@ const allStateCodes = Object.keys(stateData).sort((a,b) => stateData[a].name.loc
 
 // ─── PRIVACY POLICY PAGE ───
 // Source of truth is privacy-policy.md at repo root; mirror changes here.
-function PrivacyPage({ onBack }) {
+function PrivacyPage() {
   const wrap = {minHeight:"100vh",background:"#f8fafc",color:"#1e293b",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif"};
   const inner = {maxWidth:760,margin:"0 auto",padding:"28px 24px 64px"};
   const h1 = {fontSize:28,fontWeight:800,color:"#0f172a",margin:"24px 0 8px"};
@@ -206,7 +207,7 @@ function PrivacyPage({ onBack }) {
   return (
     <div style={wrap}>
       <div style={inner}>
-        <a href="#" onClick={(e)=>{e.preventDefault();onBack();}} style={backBtn}>&larr; Back to Cost Finder</a>
+        <Link to="/" style={backBtn}>&larr; Back to Home</Link>
         <h1 style={h1}>Privacy Policy for GLP-1 Cost Finder</h1>
         <p style={p}><strong>Effective Date:</strong> April 18, 2026<br/><strong>Last Updated:</strong> April 18, 2026</p>
 
@@ -357,15 +358,75 @@ function PrivacyPage({ onBack }) {
         <p style={p}>Questions? Reach out to <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a>.</p>
 
         <div style={{marginTop:36,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
-          <a href="#" onClick={(e)=>{e.preventDefault();onBack();}} style={backBtn}>&larr; Back to Cost Finder</a>
+          <Link to="/" style={backBtn}>&larr; Back to Home</Link>
         </div>
       </div>
     </div>
   );
 }
 
+// ─── TERMS OF USE PAGE ───
+function TermsPage() {
+  return <LegalPagePlaceholder title="Terms of Use" />;
+}
+
+// ─── CONTACT PAGE ───
+function ContactPage() {
+  return <LegalPagePlaceholder title="Contact" />;
+}
+
+// Temporary shell used by Terms/Contact until content commit lands.
+function LegalPagePlaceholder({ title }) {
+  const wrap = {minHeight:"100vh",background:"#f8fafc",color:"#1e293b",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif"};
+  const inner = {maxWidth:760,margin:"0 auto",padding:"28px 24px 64px"};
+  const backBtn = {display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",color:"#475569",fontSize:13,fontWeight:600,cursor:"pointer",textDecoration:"none"};
+  return (
+    <div style={wrap}>
+      <div style={inner}>
+        <Link to="/" style={backBtn}>&larr; Back to Home</Link>
+        <h1 style={{fontSize:28,fontWeight:800,color:"#0f172a",margin:"24px 0 8px"}}>{title}</h1>
+        <p style={{fontSize:15,lineHeight:1.7,color:"#334155"}}>Content coming in the next commit.</p>
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
+// ─── SHARED FOOTER ───
+function Footer() {
+  const linkStyle = {color:"#94a3b8",textDecoration:"underline",cursor:"pointer"};
+  const sep = <span style={{margin:"0 8px",color:"#cbd5e1"}}>|</span>;
+  return (
+    <div style={{textAlign:"center",marginTop:40,paddingTop:20,borderTop:"1px solid #e2e8f0"}}>
+      <p style={{fontSize:11,color:"#94a3b8",margin:0}}>
+        &copy; 2026 Olson Coaches
+        {sep}<Link to="/privacy" style={linkStyle}>Privacy Policy</Link>
+        {sep}<Link to="/terms" style={linkStyle}>Terms of Use</Link>
+        {sep}<Link to="/contact" style={linkStyle}>Contact</Link>
+      </p>
+      <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.6,maxWidth:560,margin:"10px auto 0"}}>
+        This site contains affiliate links. We may earn a commission when you click through and take action.
+      </p>
+      <p style={{fontSize:10,color:"#cbd5e1",marginTop:8}}>Sources: TrumpRx.gov, GoodRx, NovoCare, LillyDirect, CMS, KFF, FDA.gov</p>
+    </div>
+  );
+}
+
+// ─── APP ROUTER ───
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<GLP1CostFinder />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 // ─── MAIN COMPONENT ───
-export default function GLP1CostFinder() {
+function GLP1CostFinder() {
   const [insurance, setInsurance] = useState(null);
   const [condition, setCondition] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
@@ -378,24 +439,6 @@ export default function GLP1CostFinder() {
   const [showDD, setShowDD] = useState(false);
   const ddRef = useRef(null);
   const resultsRef = useRef(null);
-
-  const [currentPage, setCurrentPage] = useState(() => window.location.hash === "#privacy" ? "privacy" : "main");
-
-  useEffect(() => {
-    const onHashChange = () => setCurrentPage(window.location.hash === "#privacy" ? "privacy" : "main");
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
-
-  const goToPrivacy = () => {
-    window.location.hash = "privacy";
-    window.scrollTo(0, 0);
-  };
-  const goToMain = () => {
-    history.pushState("", document.title, window.location.pathname + window.location.search);
-    setCurrentPage("main");
-    window.scrollTo(0, 0);
-  };
 
   const state = selectedState ? stateData[selectedState] : null;
   const ready = insurance && condition && (insurance !== "medicaid" || selectedState);
@@ -549,8 +592,6 @@ export default function GLP1CostFinder() {
 
   const insComplete = !!insurance;
   const condComplete = !!condition;
-
-  if (currentPage === "privacy") return <PrivacyPage onBack={goToMain} />;
 
   return (
     <div style={{minHeight:"100vh",background:"#f8fafc"}}>
@@ -1072,17 +1113,7 @@ export default function GLP1CostFinder() {
         )}
 
         {/* FOOTER */}
-        <div style={{textAlign:"center",marginTop:40,paddingTop:20,borderTop:"1px solid #e2e8f0"}}>
-          <p style={{fontSize:11,color:"#94a3b8",margin:0}}>
-            &copy; 2026 Olson Coaches
-            <span style={{margin:"0 8px",color:"#cbd5e1"}}>|</span>
-            <a href="#privacy" onClick={(e)=>{e.preventDefault();goToPrivacy();}} style={{color:"#94a3b8",textDecoration:"underline",cursor:"pointer"}}>Privacy Policy</a>
-          </p>
-          <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.6,maxWidth:560,margin:"10px auto 0"}}>
-            This site contains affiliate links. We may earn a commission when you click through and take action.
-          </p>
-          <p style={{fontSize:10,color:"#cbd5e1",marginTop:8}}>Sources: TrumpRx.gov, GoodRx, NovoCare, LillyDirect, CMS, KFF, FDA.gov</p>
-        </div>
+        <Footer />
       </div>
     </div>
   );
