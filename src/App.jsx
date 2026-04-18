@@ -194,16 +194,7 @@ const allStateCodes = Object.keys(stateData).sort((a,b) => stateData[a].name.loc
 // ─── PRIVACY POLICY PAGE ───
 // Source of truth is privacy-policy.md at repo root; mirror changes here.
 function PrivacyPage() {
-  const wrap = {minHeight:"100vh",background:"#f8fafc",color:"#1e293b",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif"};
-  const inner = {maxWidth:760,margin:"0 auto",padding:"28px 24px 64px"};
-  const h1 = {fontSize:28,fontWeight:800,color:"#0f172a",margin:"24px 0 8px"};
-  const h2 = {fontSize:20,fontWeight:800,color:"#0f172a",margin:"36px 0 10px",paddingTop:4};
-  const h3 = {fontSize:15,fontWeight:700,color:"#1e293b",margin:"18px 0 6px"};
-  const p = {fontSize:15,lineHeight:1.7,color:"#334155",margin:"0 0 12px"};
-  const ul = {fontSize:15,lineHeight:1.7,color:"#334155",margin:"0 0 14px",paddingLeft:22};
-  const hr = {border:"none",borderTop:"1px solid #e2e8f0",margin:"28px 0"};
-  const link = {color:"#2563eb",textDecoration:"underline"};
-  const backBtn = {display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",color:"#475569",fontSize:13,fontWeight:600,cursor:"pointer",textDecoration:"none"};
+  const { wrap, inner, h1, h2, h3, p, ul, hr, link, backBtn } = legalStyles;
   return (
     <div style={wrap}>
       <div style={inner}>
@@ -360,32 +351,137 @@ function PrivacyPage() {
         <div style={{marginTop:36,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
           <Link to="/" style={backBtn}>&larr; Back to Home</Link>
         </div>
+        <Footer />
       </div>
     </div>
   );
 }
 
+// Shared typography/layout for the legal pages (Privacy/Terms/Contact).
+const legalStyles = {
+  wrap: {minHeight:"100vh",background:"#f8fafc",color:"#1e293b",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif"},
+  inner: {maxWidth:760,margin:"0 auto",padding:"28px 24px 64px"},
+  h1: {fontSize:28,fontWeight:800,color:"#0f172a",margin:"24px 0 8px"},
+  h2: {fontSize:20,fontWeight:800,color:"#0f172a",margin:"36px 0 10px",paddingTop:4},
+  h3: {fontSize:15,fontWeight:700,color:"#1e293b",margin:"18px 0 6px"},
+  p: {fontSize:15,lineHeight:1.7,color:"#334155",margin:"0 0 12px"},
+  ul: {fontSize:15,lineHeight:1.7,color:"#334155",margin:"0 0 14px",paddingLeft:22},
+  hr: {border:"none",borderTop:"1px solid #e2e8f0",margin:"28px 0"},
+  link: {color:"#2563eb",textDecoration:"underline"},
+  backBtn: {display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",color:"#475569",fontSize:13,fontWeight:600,cursor:"pointer",textDecoration:"none"},
+};
+
 // ─── TERMS OF USE PAGE ───
 function TermsPage() {
-  return <LegalPagePlaceholder title="Terms of Use" />;
+  const s = legalStyles;
+  return (
+    <div style={s.wrap}>
+      <div style={s.inner}>
+        <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        <h1 style={s.h1}>Terms of Use</h1>
+        <p style={s.p}><strong>Effective Date:</strong> April 18, 2026<br/><strong>Last Updated:</strong> April 18, 2026</p>
+
+        <h2 style={s.h2}>1. Acceptance of Terms</h2>
+        <p style={s.p}>By accessing or using GLP-1 Cost Finder (the "Website"), you agree to be bound by these Terms of Use. If you do not agree, please do not use the Website. We may update these Terms at any time; continued use after changes constitutes acceptance of the updated Terms.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>2. Purpose of the Website</h2>
+        <p style={s.p}>GLP-1 Cost Finder is an <strong>educational price comparison tool</strong> for GLP-1 medications (such as Ozempic, Wegovy, Mounjaro, Zepbound, and Foundayo). We aggregate publicly available pricing, coverage, and program information from manufacturers, pharmacies, telehealth providers, and government sources to help you understand your options.</p>
+        <p style={s.p}><strong>This Website does not provide medical advice, diagnosis, or treatment.</strong> It is not a substitute for professional medical care.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>3. Medical Disclaimer</h2>
+        <p style={s.p}>We are not physicians, pharmacists, nurses, or licensed healthcare professionals. Nothing on this Website constitutes medical advice. You should <strong>always consult a qualified healthcare provider</strong> before:</p>
+        <ul style={s.ul}>
+          <li>Starting, stopping, or changing any medication</li>
+          <li>Making decisions about your treatment plan</li>
+          <li>Interpreting coverage, insurance, or eligibility information</li>
+          <li>Acting on anything you read on this Website</li>
+        </ul>
+        <p style={s.p}>Your reliance on any information provided here is solely at your own risk. Individual responses to medication, eligibility, and pricing vary.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>4. Affiliate Disclosure</h2>
+        <p style={s.p}>Some links on this Website are <strong>affiliate links</strong>. If you click through and take a qualifying action (such as starting a telehealth consultation or filling a prescription), we may earn a commission at no additional cost to you.</p>
+        <p style={s.p}><strong>Affiliate relationships do not influence our comparisons or recommendations.</strong> We rank options by the same criteria regardless of whether a partner pays a commission. When affiliate links exist alongside non-affiliate alternatives, we include both so you can make an informed choice.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>5. No Guarantees on Pricing, Availability, or Coverage</h2>
+        <p style={s.p}>Drug pricing, manufacturer savings programs, insurance formularies, and pharmacy availability <strong>change frequently and without notice</strong>. Prices shown on this Website are estimates compiled from publicly available sources at a specific point in time and may not reflect the price you are actually charged.</p>
+        <p style={s.p}>Before purchasing or enrolling, verify the current price, eligibility requirements, and terms directly with the pharmacy, manufacturer, telehealth provider, or insurer. We are not responsible for discrepancies between information on this Website and information provided by third parties at the time of your transaction.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>6. Intellectual Property</h2>
+        <p style={s.p}>All original content on this Website&mdash;including text, layout, recommendation logic, coverage tables, and compiled data sets&mdash;is the property of Olson Coaches and is protected by U.S. copyright law. You may view and share individual pages for personal, non-commercial use. You may not scrape, copy, republish, or redistribute our content, in whole or in part, for commercial purposes without prior written permission.</p>
+        <p style={s.p}>Trademarks, brand names, and product names referenced on this Website (such as Ozempic<sup>&reg;</sup>, Wegovy<sup>&reg;</sup>, Mounjaro<sup>&reg;</sup>, Zepbound<sup>&reg;</sup>) are the property of their respective owners and are used for identification only. Mention of a brand does not imply endorsement by that brand of this Website.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>7. Limitation of Liability</h2>
+        <p style={s.p}>To the fullest extent permitted by law, <strong>Olson Coaches, Dean Olson, and any contributors to this Website are not liable</strong> for any direct, indirect, incidental, consequential, special, or punitive damages arising from:</p>
+        <ul style={s.ul}>
+          <li>Your use of, or inability to use, the Website</li>
+          <li>Any inaccuracy in pricing, coverage, or eligibility information</li>
+          <li>Any decision you make based on information from this Website</li>
+          <li>Any transaction you enter into with a third-party pharmacy, telehealth provider, manufacturer, or insurer</li>
+          <li>Any loss of data, profits, or business opportunity</li>
+        </ul>
+        <p style={s.p}>This Website is provided "as is" and "as available" without warranties of any kind, express or implied.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>8. Governing Law</h2>
+        <p style={s.p}>These Terms are governed by the laws of the <strong>State of Washington</strong>, without regard to its conflict-of-laws principles. Any dispute arising out of or relating to these Terms or your use of the Website shall be resolved exclusively in the state or federal courts located in Washington, and you consent to personal jurisdiction in those courts.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>9. Contact</h2>
+        <p style={s.p}>Questions about these Terms? Contact:</p>
+        <p style={s.p}><strong>Dean Olson</strong><br/><strong>Olson Coaches</strong><br/><strong>Email:</strong> <a href="mailto:dean@olsoncoaches.com" style={s.link}>dean@olsoncoaches.com</a></p>
+
+        <div style={{marginTop:36,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
+          <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        </div>
+        <Footer />
+      </div>
+    </div>
+  );
 }
 
 // ─── CONTACT PAGE ───
 function ContactPage() {
-  return <LegalPagePlaceholder title="Contact" />;
-}
-
-// Temporary shell used by Terms/Contact until content commit lands.
-function LegalPagePlaceholder({ title }) {
-  const wrap = {minHeight:"100vh",background:"#f8fafc",color:"#1e293b",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif"};
-  const inner = {maxWidth:760,margin:"0 auto",padding:"28px 24px 64px"};
-  const backBtn = {display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:"1px solid #cbd5e1",background:"#fff",color:"#475569",fontSize:13,fontWeight:600,cursor:"pointer",textDecoration:"none"};
+  const s = legalStyles;
   return (
-    <div style={wrap}>
-      <div style={inner}>
-        <Link to="/" style={backBtn}>&larr; Back to Home</Link>
-        <h1 style={{fontSize:28,fontWeight:800,color:"#0f172a",margin:"24px 0 8px"}}>{title}</h1>
-        <p style={{fontSize:15,lineHeight:1.7,color:"#334155"}}>Content coming in the next commit.</p>
+    <div style={s.wrap}>
+      <div style={s.inner}>
+        <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        <h1 style={s.h1}>Contact</h1>
+        <p style={s.p}>We'd love to hear from you. Whether you have a question about the tool, spotted a pricing error, or want to explore a partnership, the best way to reach us is by email.</p>
+
+        <h2 style={s.h2}>Email Us</h2>
+        <p style={s.p}><a href="mailto:dean@olsoncoaches.com" style={s.link}>dean@olsoncoaches.com</a></p>
+        <p style={s.p}>We typically respond within <strong>48 hours</strong> on business days.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>Affiliate &amp; Partnership Inquiries</h2>
+        <p style={s.p}>Interested in partnering with GLP-1 Cost Finder? We work with telehealth providers, pharmacies, and manufacturers whose offerings fit our mission of helping consumers access GLP-1 medications affordably.</p>
+        <p style={s.p}>Send partnership proposals to <a href="mailto:dean@olsoncoaches.com" style={s.link}>dean@olsoncoaches.com</a> with "Partnership" in the subject line. Please include your program details, commission structure, and target audience.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>Report an Issue</h2>
+        <p style={s.p}>Spotted something wrong? We rely on user reports to keep our pricing and coverage data accurate. Please let us know if you find:</p>
+        <ul style={s.ul}>
+          <li>A price on the site that doesn't match what a pharmacy or manufacturer currently charges</li>
+          <li>A broken link or outdated URL to a third-party resource</li>
+          <li>A coverage detail that no longer reflects your state's Medicaid policy</li>
+          <li>A typo, formatting bug, or anything that just seems off</li>
+        </ul>
+        <p style={s.p}>Email <a href="mailto:dean@olsoncoaches.com" style={s.link}>dean@olsoncoaches.com</a> with "Report" in the subject line and include the URL and a short description. If you can include a screenshot, even better.</p>
+        <hr style={s.hr}/>
+
+        <h2 style={s.h2}>About</h2>
+        <p style={s.p}>GLP-1 Cost Finder is operated by Dean Olson under <strong>Olson Coaches</strong>.</p>
+
+        <div style={{marginTop:36,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
+          <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        </div>
         <Footer />
       </div>
     </div>
