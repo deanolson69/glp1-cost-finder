@@ -445,9 +445,51 @@ export default function GLP1CostFinder() {
   const selectState = (c) => { setSelectedState(c); setStateSearch(stateData[c].name); setShowDD(false); };
 
   const handleEmail = () => {
-    if (!email || !email.includes("@") || !email.includes(".")) { setEmailError("Please enter a valid email"); return; }
-    setEmailError(""); setEmailSubmitted(true);
-    console.log("Email captured:", {email, state:selectedState, insurance, condition});
+    if (!email || !email.includes("@") || !email.includes(".")) {
+      setEmailError("Please enter a valid email");
+      return;
+    }
+    setEmailError("");
+
+    const baseUrl = "https://olsoncoaches.us16.list-manage.com/subscribe/post-json";
+    const params = new URLSearchParams({
+      u: "de1492a2adba6ccde526379b6",
+      id: "83c9757d1b",
+      EMAIL: email,
+      MERGE7: selectedState || "",
+      MERGE8: insurance || "",
+      MERGE9: condition || "",
+      tags: "glp1-cost-finder",
+    });
+
+    const callbackName = "mc_callback_" + Date.now();
+
+    window[callbackName] = (data) => {
+      if (data.result === "success") {
+        setEmailSubmitted(true);
+      } else if (data.msg && data.msg.includes("already subscribed")) {
+        setEmailSubmitted(true);
+      } else {
+        setEmailError(data.msg || "Subscription failed. Please try again.");
+      }
+      delete window[callbackName];
+      const s = document.getElementById(callbackName);
+      if (s) s.remove();
+    };
+
+    const script = document.createElement("script");
+    script.id = callbackName;
+    script.src = baseUrl + "?" + params.toString() + "&c=" + callbackName;
+    document.body.appendChild(script);
+
+    setTimeout(() => {
+      if (window[callbackName]) {
+        setEmailSubmitted(true);
+        delete window[callbackName];
+        const s = document.getElementById(callbackName);
+        if (s) s.remove();
+      }
+    }, 5000);
   };
 
   const startOver = () => {
