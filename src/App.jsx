@@ -652,7 +652,6 @@ export default function GLP1CostFinder() {
                       const isOpen = expandedDrug === drug.name;
                       const isRec = drug.name === topPick.name;
                       const tcc = tc(drug.type);
-                      const matchesCondition = condition && condition !== "skip" && drug.conditions.includes(condition);
                       return (
                         <div key={drug.name} style={{background:"#fff",borderRadius:14,overflow:"hidden",boxShadow:isOpen?"0 4px 16px rgba(0,0,0,.08)":"0 1px 3px rgba(0,0,0,.04)",border:isRec&&!isOpen?"2px solid #3b82f6":"1px solid #e2e8f0",transition:"box-shadow .2s"}}>
                           <button onClick={()=>setExpandedDrug(isOpen?null:drug.name)}
@@ -662,7 +661,6 @@ export default function GLP1CostFinder() {
                                 {!isUninsured && isRec && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#dbeafe",color:"#1d4ed8",textTransform:"uppercase",letterSpacing:.5}}>Recommended</span>}
                                 {isUninsured && isRec && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#d1fae5",color:"#065f46",textTransform:"uppercase",letterSpacing:.5}}>Best Price</span>}
                                 {condition && condition !== "skip" && drug.conditions.includes(condition) && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#fef3c7",color:"#92400e",textTransform:"uppercase",letterSpacing:.5}}>FDA-approved for your condition</span>}
-                                {matchesCondition && !isRec && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#d1fae5",color:"#059669",textTransform:"uppercase",letterSpacing:.5}}>Matches your condition</span>}
                                 <span style={{fontSize:17,fontWeight:800,color:"#1e293b"}}>{drug.name}</span>
                                 <span style={{padding:"2px 8px",borderRadius:6,fontSize:10,fontWeight:600,background:tcc.bg,color:tcc.fg}}>{drug.typeLabel}</span>
                               </div>
