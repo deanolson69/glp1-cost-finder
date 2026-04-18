@@ -215,21 +215,17 @@ export default function GLP1CostFinder() {
   // Smart recommendation: factor in condition + price
   const getRecommendation = () => {
     if (!condition || !insurance) return medications[0];
-    if (condition === "skip") {
-      return [...medications].sort((a,b) => {
-        const pa = parseFloat(a.selfPay.price.replace(/[^0-9.]/g,''));
-        const pb = parseFloat(b.selfPay.price.replace(/[^0-9.]/g,''));
-        return pa - pb;
-      })[0];
-    }
-    const matching = medications.filter(m => m.conditions.includes(condition));
-    if (matching.length === 0) return medications[0];
-    const sorted = [...matching].sort((a,b) => {
+    const sortByPrice = (arr) => [...arr].sort((a,b) => {
       const pa = parseFloat(a.selfPay.price.replace(/[^0-9.]/g,''));
       const pb = parseFloat(b.selfPay.price.replace(/[^0-9.]/g,''));
       return pa - pb;
     });
-    return sorted[0];
+    if (insurance === "uninsured" || condition === "skip") {
+      return sortByPrice(medications)[0];
+    }
+    const matching = medications.filter(m => m.conditions.includes(condition));
+    if (matching.length === 0) return sortByPrice(medications)[0];
+    return sortByPrice(matching)[0];
   };
 
   const topPick = getRecommendation();
@@ -663,7 +659,9 @@ export default function GLP1CostFinder() {
                             style={{width:"100%",padding:"16px 20px",background:"transparent",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:14,textAlign:"left"}}>
                             <div style={{flex:1}}>
                               <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-                                {isRec && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#dbeafe",color:"#1d4ed8",textTransform:"uppercase",letterSpacing:.5}}>Recommended</span>}
+                                {!isUninsured && isRec && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#dbeafe",color:"#1d4ed8",textTransform:"uppercase",letterSpacing:.5}}>Recommended</span>}
+                                {isUninsured && isRec && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#d1fae5",color:"#065f46",textTransform:"uppercase",letterSpacing:.5}}>Best Price</span>}
+                                {condition && condition !== "skip" && drug.conditions.includes(condition) && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#fef3c7",color:"#92400e",textTransform:"uppercase",letterSpacing:.5}}>FDA-approved for your condition</span>}
                                 {matchesCondition && !isRec && <span style={{padding:"2px 8px",borderRadius:6,fontSize:9,fontWeight:800,background:"#d1fae5",color:"#059669",textTransform:"uppercase",letterSpacing:.5}}>Matches your condition</span>}
                                 <span style={{fontSize:17,fontWeight:800,color:"#1e293b"}}>{drug.name}</span>
                                 <span style={{padding:"2px 8px",borderRadius:6,fontSize:10,fontWeight:600,background:tcc.bg,color:tcc.fg}}>{drug.typeLabel}</span>
