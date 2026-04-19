@@ -1157,6 +1157,8 @@ function GLP1CostFinder() {
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [emailError, setEmailError] = useState("");
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
+  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
   const [expandedDrug, setExpandedDrug] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const [stateSearch, setStateSearch] = useState("");
@@ -1217,51 +1219,64 @@ function GLP1CostFinder() {
       return;
     }
     setEmailError("");
+    setEmailSubmitting(true);
 
     const baseUrl = "https://olsoncoaches.us16.list-manage.com/subscribe/post-json";
     const params = new URLSearchParams({
       u: "de1492a2adba6ccde526379b6",
       id: "83c9757d1b",
+      f_id: "00212be0f0",
       EMAIL: email,
-      MERGE7: selectedState || "",
-      MERGE8: insurance || "",
-      MERGE9: condition || "",
-      tags: "glp1-cost-finder",
+      STATE: selectedState || "",
+      INSTYPE: insurance || "",
+      CONDITION: condition || "",
+      "b_de1492a2adba6ccde526379b6_83c9757d1b": "",
     });
 
     const callbackName = "mc_callback_" + Date.now();
-
-    window[callbackName] = (data) => {
-      if (data.result === "success") {
-        setEmailSubmitted(true);
-      } else if (data.msg && data.msg.includes("already subscribed")) {
-        setEmailSubmitted(true);
-      } else {
-        setEmailError(data.msg || "Subscription failed. Please try again.");
-      }
-      delete window[callbackName];
+    let settled = false;
+    const cleanup = () => {
+      if (settled) return;
+      settled = true;
+      setEmailSubmitting(false);
+      try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
       const s = document.getElementById(callbackName);
       if (s) s.remove();
+    };
+
+    window[callbackName] = (data) => {
+      if (data && data.result === "success") {
+        setEmailSubmitted(true);
+      } else if (data && data.msg && /already subscribed/i.test(data.msg)) {
+        setAlreadySubscribed(true);
+        setEmailSubmitted(true);
+      } else {
+        setEmailError("Subscription failed. Please try again.");
+      }
+      cleanup();
     };
 
     const script = document.createElement("script");
     script.id = callbackName;
     script.src = baseUrl + "?" + params.toString() + "&c=" + callbackName;
+    script.onerror = () => {
+      setEmailError("Something went wrong, please try again.");
+      cleanup();
+    };
     document.body.appendChild(script);
 
     setTimeout(() => {
-      if (window[callbackName]) {
-        setEmailSubmitted(true);
-        delete window[callbackName];
-        const s = document.getElementById(callbackName);
-        if (s) s.remove();
+      if (!settled) {
+        setEmailError("Something went wrong, please try again.");
+        cleanup();
       }
-    }, 5000);
+    }, 8000);
   };
 
   const startOver = () => {
     setInsurance(null); setCondition(null); setSelectedState(null);
     setEmail(""); setEmailSubmitted(false); setEmailError("");
+    setEmailSubmitting(false); setAlreadySubscribed(false);
     setExpandedDrug(null); setShowMore(false); setStateSearch(""); setShowDD(false);
   };
 
@@ -1475,9 +1490,9 @@ function GLP1CostFinder() {
                 <div style={{fontSize:18,fontWeight:800,color:"#1e293b",marginBottom:6}}>See where to get this price</div>
                 <div style={{fontSize:13,color:"#64748b",marginBottom:16,maxWidth:400,margin:"0 auto 16px"}}>Enter your email to unlock pharmacy links, telehealth options, step-by-step instructions, and price drop alerts.</div>
                 <div style={{display:"flex",gap:8,maxWidth:440,margin:"0 auto"}}>
-                  <input type="email" placeholder="Your email address" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleEmail()}
+                  <input type="email" placeholder="Your email address" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!emailSubmitting&&handleEmail()} disabled={emailSubmitting}
                     style={{flex:1,padding:"12px 16px",borderRadius:10,border:emailError?"2px solid #f43f5e":"1px solid #e2e8f0",background:"#fff",color:"#1e293b",fontSize:15}}/>
-                  <button onClick={handleEmail} style={{padding:"12px 24px",borderRadius:10,border:"none",background:"#3b82f6",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>Unlock</button>
+                  <button onClick={handleEmail} disabled={emailSubmitting} style={{padding:"12px 24px",borderRadius:10,border:"none",background:"#3b82f6",color:"#fff",fontSize:14,fontWeight:700,cursor:emailSubmitting?"wait":"pointer",whiteSpace:"nowrap",opacity:emailSubmitting?0.7:1}}>{emailSubmitting?"Sending\u2026":"Unlock"}</button>
                 </div>
                 {emailError && <div style={{color:"#f43f5e",fontSize:12,marginTop:6}}>{emailError}</div>}
                 <div style={{fontSize:11,color:"#94a3b8",marginTop:10}}>No spam. Unsubscribe anytime. We never share your email.</div>
@@ -1502,7 +1517,11 @@ function GLP1CostFinder() {
               </div>
             ) : (
               <div style={{background:"#f0fdf4",borderRadius:12,padding:"12px 16px",marginBottom:16,textAlign:"center",border:"1px solid #bbf7d0"}}>
-                <span style={{fontSize:13,color:"#059669",fontWeight:600}}>{"\u2713"} We'll send price alerts to {email}</span>
+                <span style={{fontSize:13,color:"#059669",fontWeight:600}}>
+                  {alreadySubscribed
+                    ? "\u2713 You're already subscribed \u2014 here's your full results."
+                    : "\u2713 We'll send price alerts to " + email}
+                </span>
               </div>
             )}
 
