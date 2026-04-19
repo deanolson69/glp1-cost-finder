@@ -491,6 +491,7 @@ function ContactPage() {
 // ─── SHARED FOOTER ───
 function Footer() {
   const linkStyle = {color:"#94a3b8",textDecoration:"underline",cursor:"pointer"};
+  const guideLinkStyle = {color:"#94a3b8",textDecoration:"underline"};
   const sep = <span style={{margin:"0 8px",color:"#cbd5e1"}}>|</span>;
   return (
     <div style={{textAlign:"center",marginTop:40,paddingTop:20,borderTop:"1px solid #e2e8f0"}}>
@@ -499,6 +500,14 @@ function Footer() {
         {sep}<Link to="/privacy" style={linkStyle}>Privacy Policy</Link>
         {sep}<Link to="/terms" style={linkStyle}>Terms of Use</Link>
         {sep}<Link to="/contact" style={linkStyle}>Contact</Link>
+      </p>
+      <p style={{fontSize:10,color:"#94a3b8",margin:"8px auto 0",maxWidth:640}}>
+        <span style={{color:"#cbd5e1",marginRight:6}}>Guides:</span>
+        <Link to="/cheapest-glp1-without-insurance" style={guideLinkStyle}>Cheapest GLP-1 Without Insurance</Link>
+        <span style={{margin:"0 6px",color:"#cbd5e1"}}>&middot;</span>
+        <Link to="/ozempic-vs-mounjaro-cost" style={guideLinkStyle}>Ozempic vs Mounjaro Cost</Link>
+        <span style={{margin:"0 6px",color:"#cbd5e1"}}>&middot;</span>
+        <Link to="/glp1-self-pay-options" style={guideLinkStyle}>Self-Pay Options</Link>
       </p>
       <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.6,maxWidth:560,margin:"10px auto 0"}}>
         <strong>Affiliate Disclosure:</strong> We may earn commissions from partner links.
@@ -509,6 +518,597 @@ function Footer() {
 }
 
 // ─── APP ROUTER ───
+// ─── SEO PAGE HELPERS ───
+// Updates <title> and <meta name="description"> for the duration of the page,
+// then restores the previous values on unmount so navigating back to another
+// route leaves correct metadata in place.
+function useSeoMeta(title, description) {
+  useEffect(() => {
+    const prevTitle = document.title;
+    const metaEl = document.querySelector('meta[name="description"]');
+    const prevDesc = metaEl ? metaEl.getAttribute("content") : null;
+    document.title = title;
+    if (metaEl && description) metaEl.setAttribute("content", description);
+    return () => {
+      document.title = prevTitle;
+      if (metaEl && prevDesc != null) metaEl.setAttribute("content", prevDesc);
+    };
+  }, [title, description]);
+}
+
+// Appends a JSON-LD <script> to <head> for the lifetime of the component.
+function JsonLd({ data }) {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.text = JSON.stringify(data);
+    document.head.appendChild(script);
+    return () => { script.remove(); };
+  }, [data]);
+  return null;
+}
+
+// FTC disclosure banner used on the comparison tool and every SEO page.
+function AffiliateBanner({ style }) {
+  return (
+    <div style={{background:"#fefce8",border:"1px solid #fde68a",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"flex-start",gap:10,...style}}>
+      <span aria-hidden="true" style={{fontSize:14,lineHeight:1.2,flexShrink:0,marginTop:1}}>&#9432;</span>
+      <p style={{fontSize:12,lineHeight:1.55,color:"#713f12",margin:0}}>
+        <strong>Affiliate disclosure:</strong> Some links below are affiliate links. If you sign up through one of these links, we may earn a commission at no extra cost to you. This does not influence our comparisons or recommendations.
+      </p>
+    </div>
+  );
+}
+
+// Shared table styling for data-heavy SEO content.
+const tableStyles = {
+  table: {width:"100%",borderCollapse:"collapse",margin:"18px 0",fontSize:14,lineHeight:1.5,boxShadow:"0 1px 3px rgba(0,0,0,.06)",borderRadius:8,overflow:"hidden"},
+  th: {textAlign:"left",padding:"10px 12px",background:"#1e3a5f",color:"#fff",fontWeight:700,fontSize:13,borderBottom:"1px solid #1e40af"},
+  td: {padding:"10px 12px",borderBottom:"1px solid #e2e8f0",verticalAlign:"top",color:"#334155"},
+  tdStrong: {fontWeight:700,color:"#0f172a"},
+};
+
+function PrimaryCta({ children = "Compare GLP-1 Prices Now" }) {
+  return (
+    <div style={{textAlign:"center",margin:"32px 0 24px"}}>
+      <Link to="/" style={{display:"inline-block",padding:"14px 32px",background:"linear-gradient(135deg, #1e3a5f, #1e40af)",color:"#fff",borderRadius:10,fontSize:15,fontWeight:700,textDecoration:"none",boxShadow:"0 4px 12px rgba(30,58,95,.25)"}}>
+        {children} &rarr;
+      </Link>
+    </div>
+  );
+}
+
+function SeoCrossLink({ to, children }) {
+  return (
+    <div style={{textAlign:"center",margin:"12px 0 28px"}}>
+      <Link to={to} style={{fontSize:14,color:"#2563eb",textDecoration:"underline",fontWeight:600}}>
+        {children}
+      </Link>
+    </div>
+  );
+}
+
+// Shared wrapper for the SEO landing pages: back link + FTC banner + <h1>,
+// then page-specific {children}, then standard CTA + cross-link + footer.
+function SeoPageLayout({ title, description, h1, jsonLd, nextTo, nextLabel, ctaLabel, children }) {
+  const s = legalStyles;
+  useSeoMeta(title, description);
+  return (
+    <div style={s.wrap}>
+      <div style={s.inner}>
+        <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        <AffiliateBanner style={{margin:"18px 0 22px"}} />
+        <h1 style={s.h1}>{h1}</h1>
+        {children}
+        <PrimaryCta>{ctaLabel}</PrimaryCta>
+        {nextTo && <SeoCrossLink to={nextTo}>{nextLabel}</SeoCrossLink>}
+        <div style={{marginTop:20,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
+          <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        </div>
+        <Footer />
+      </div>
+      <JsonLd data={jsonLd} />
+    </div>
+  );
+}
+
+// ─── SEO PAGE 1: CHEAPEST GLP-1 WITHOUT INSURANCE ───
+const PAGE1_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the cheapest GLP-1 without insurance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compounded semaglutide at $117-$250/month is the cheapest. For FDA-approved options, Wegovy oral at $149/month is most affordable."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does Ozempic cost without insurance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ozempic lists at $978-$1,000 but costs $499/month with Novo Nordisk's patient assistance program."
+      }
+    }
+  ]
+};
+
+function CheapestGlp1WithoutInsurance() {
+  const s = legalStyles;
+  return (
+    <SeoPageLayout
+      title="Cheapest GLP-1 Without Insurance: 2026 Price Guide"
+      description="Compare GLP-1 costs without insurance. Find affordable semaglutide, tirzepatide & other options from $117-$499/month. Manufacturer discounts & savings programs inside."
+      h1="Cheapest GLP-1 Without Insurance: Your 2026 Pricing Guide"
+      jsonLd={PAGE1_JSONLD}
+      ctaLabel="Compare GLP-1 Prices Now"
+      nextTo="/ozempic-vs-mounjaro-cost"
+      nextLabel="Compare specific medications &rarr;"
+    >
+      <p style={s.p}>GLP-1 medications like Ozempic, Wegovy, and Mounjaro aren't cheap. Without insurance, you're looking at brand-name prices that can exceed $1,000 per month. But there's good news: if you know where to look, you can access GLP-1 medications for a fraction of that cost.</p>
+      <p style={s.p}>This guide walks you through every affordable option available in 2026&mdash;from manufacturer programs to compounded alternatives&mdash;so you can find the lowest price without sacrificing safety or quality.</p>
+
+      <h2 style={s.h2}>The Price Range: What to Expect</h2>
+      <p style={s.p}>GLP-1 medications without insurance typically cost between $117 and $1,500 per month, depending on the medication type, dose, and how you purchase it. The widest variation happens between brand-name drugs at full price and compounded or discounted alternatives.</p>
+      <p style={s.p}>Here's what the price floor looks like across the most common options:</p>
+      <ul style={s.ul}>
+        <li><strong>Compounded semaglutide</strong>: $117&ndash;$250/month (most affordable, not FDA-approved)</li>
+        <li><strong>Wegovy oral (pill)</strong>: $149/month (introductory pricing through August 2026)</li>
+        <li><strong>Zepbound vials</strong>: $299&ndash;$449/month (FDA-approved tirzepatide)</li>
+        <li><strong>Ozempic with manufacturer card</strong>: $499/month (prescription semaglutide)</li>
+        <li><strong>Mounjaro with SingleCare</strong>: $872/month (tirzepatide option)</li>
+        <li><strong>Brand-name at list price</strong>: $900&ndash;$1,500/month (avoid this if possible)</li>
+      </ul>
+
+      <h2 style={s.h2}>Best Budget Option: Wegovy Oral for $149/Month</h2>
+      <p style={s.p}>If you want an FDA-approved GLP-1 at the lowest possible price, Wegovy oral semaglutide is your answer. Through August 31, 2026, Novo Nordisk is running an introductory offer that lets eligible self-pay patients get the daily pill for just $149/month for the first two months. After the promotion ends, pricing is expected to stabilize around $199&ndash;$349/month.</p>
+      <p style={s.p}>The main trade-off: the oral version may not be quite as effective as weekly injectables for some patients, and you have to take it daily. But for budget-conscious shoppers, this is the sweet spot for FDA-approved safety with a rock-bottom price.</p>
+      <h3 style={s.h3}>How to get Wegovy oral at $149/month:</h3>
+      <ol style={s.ul}>
+        <li>Visit Novo Nordisk's official Wegovy website or work through a telehealth partner that offers the program</li>
+        <li>Complete a consultation with a licensed clinician (usually $50&ndash;$100 if not covered by the program)</li>
+        <li>Receive your prescription and activate the $149/month pricing</li>
+        <li>Refill each month at the same rate through the program</li>
+      </ol>
+
+      <h2 style={s.h2}>Most Affordable Option: Compounded Semaglutide ($117&ndash;$250/month)</h2>
+      <p style={s.p}>Compounded semaglutide is the absolute cheapest GLP-1 option you can find, sometimes starting as low as $117 per month through licensed telehealth providers. But it comes with a crucial caveat: it's not FDA-approved.</p>
+      <p style={s.p}>Compounded medications are made by licensed pharmacists in accordance with a doctor's prescription, and the FDA does oversee compounding facilities. However, they're not manufactured under the same rigorous standards as brand-name drugs, and your insurance won't cover them.</p>
+      <p style={s.p}><strong>When compounded makes sense:</strong> You're budget-constrained, have had success with semaglutide before, and you're comfortable with slightly less regulatory oversight.</p>
+      <p style={s.p}><strong>When to avoid compounded:</strong> You're new to GLP-1s and want the assurance of an FDA-approved medication, or you have concerns about product consistency.</p>
+
+      <h2 style={s.h2}>Best Brand-Name Option: Zepbound Vials ($299&ndash;$449/month)</h2>
+      <p style={s.p}>If you want to stick with a brand-name, FDA-approved medication but minimize cost, Zepbound (tirzepatide, made by Eli Lilly) in single-dose vial format beats the pre-filled pen versions by $200&ndash;$500 per month.</p>
+      <p style={s.p}>Pre-filled Zepbound pens can cost over $1,000 per month. The same medication in vial form through Lilly's Direct program costs $349&ndash;$499/month depending on dose. You inject from the vial yourself using a standard syringe, which takes practice but saves significant money.</p>
+
+      <h2 style={s.h2}>Second Brand-Name Option: Ozempic with Savings Card ($499/month)</h2>
+      <p style={s.p}>Novo Nordisk's patient assistance program makes Ozempic (semaglutide injection) available for $499/month for eligible self-pay patients. This is higher than Zepbound vials but can be a good alternative if:</p>
+      <ul style={s.ul}>
+        <li>Your doctor has prescribed Ozempic specifically and you're already on it</li>
+        <li>You want a weekly injection instead of a vial you have to draw from</li>
+        <li>You've responded well to semaglutide in the past</li>
+      </ul>
+
+      <h2 style={s.h2}>Smart Shopping: Price Comparison Across Pharmacies</h2>
+      <p style={s.p}>Even with the same medication and dose, pharmacy prices can vary by $100&ndash;$200 per month. Always compare prices across multiple chains before filling your prescription:</p>
+      <ul style={s.ul}>
+        <li>Check big-box chains: Walmart, CVS, Walgreens</li>
+        <li>Use GoodRx or SingleCare to see discounted rates</li>
+        <li>Call independent pharmacies&mdash;they sometimes negotiate better prices</li>
+        <li>Ask your telehealth provider which pharmacy they recommend (some have direct relationships)</li>
+      </ul>
+
+      <h2 style={s.h2}>How to Find Current Discounts and Promotions</h2>
+      <p style={s.p}>Pricing and promotions change frequently. Before you commit to any option, verify current pricing:</p>
+      <ul style={s.ul}>
+        <li><strong>Novo Nordisk Direct Programs:</strong> Wegovy.com and Ozempic.com for self-pay pricing and eligibility</li>
+        <li><strong>Eli Lilly Direct:</strong> LillyDirect.com for Mounjaro and Zepbound self-pay options</li>
+        <li><strong>GoodRx:</strong> Shows real-time pharmacy prices and available coupons</li>
+        <li><strong>Manufacturer Coupons:</strong> Check the official medication websites for savings cards</li>
+      </ul>
+
+      <h2 style={s.h2}>Important Questions to Ask Before You Buy</h2>
+      <p style={s.p}>Price isn't the only factor. Before choosing your GLP-1, ask:</p>
+      <ol style={s.ul}>
+        <li><strong>Is this medication FDA-approved?</strong> (Matters for safety and long-term confidence)</li>
+        <li><strong>What's the total monthly cost including doctor visits?</strong> (Some telehealth adds $40&ndash;$100 per month)</li>
+        <li><strong>Can I switch medications if this one doesn't work?</strong> (Good safety net)</li>
+        <li><strong>What happens after introductory pricing ends?</strong> (Plan for the real long-term cost)</li>
+        <li><strong>Is there a refund or money-back guarantee if I have side effects?</strong></li>
+      </ol>
+
+      <h2 style={s.h2}>Bottom Line</h2>
+      <p style={s.p}>The cheapest GLP-1 without insurance is compounded semaglutide at $117&ndash;$250/month. If you want FDA approval, Wegovy oral at $149/month is unbeatable. For a brand-name injectable, Zepbound vials at $299&ndash;$449/month offer the best value.</p>
+      <p style={s.p}>Don't pay list price. Use our tool to find your lowest-cost, safest option today.</p>
+    </SeoPageLayout>
+  );
+}
+
+// ─── SEO PAGE 2: OZEMPIC VS MOUNJARO COST ───
+const PAGE2_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Ozempic vs Mounjaro Cost Comparison",
+  "itemListElement": [
+    {
+      "@type": "Product",
+      "name": "Ozempic",
+      "brand": {"@type": "Brand", "name": "Novo Nordisk"},
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "USD",
+        "price": "499",
+        "description": "Monthly self-pay price with manufacturer program"
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Mounjaro",
+      "brand": {"@type": "Brand", "name": "Eli Lilly"},
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "USD",
+        "price": "349",
+        "description": "Monthly self-pay price with vials via Lilly Direct"
+      }
+    }
+  ]
+};
+
+function OzempicVsMounjaroCost() {
+  const s = legalStyles;
+  const t = tableStyles;
+  return (
+    <SeoPageLayout
+      title="Ozempic vs Mounjaro Cost: 2026 Price Comparison"
+      description="Compare Ozempic vs Mounjaro costs for 2026. See self-pay pricing, insurance coverage, manufacturer programs & how to get the best price on each medication."
+      h1="Ozempic vs Mounjaro Cost: Complete 2026 Price Comparison"
+      jsonLd={PAGE2_JSONLD}
+      ctaLabel="Find Your Best Price"
+      nextTo="/glp1-self-pay-options"
+      nextLabel="View all self-pay options &rarr;"
+    >
+      <p style={s.p}>If you're deciding between Ozempic and Mounjaro, price is probably a big factor. Both are powerful GLP-1 medications, but they're made by different companies with different pricing strategies. Your actual out-of-pocket cost depends on whether you have insurance, whether you qualify for discounts, and where you fill your prescription.</p>
+      <p style={s.p}>This guide breaks down exactly what each medication costs in 2026 so you can make a real comparison, not just look at list prices.</p>
+
+      <h2 style={s.h2}>Quick Price Comparison: Head-to-Head</h2>
+      <div style={{overflowX:"auto"}}>
+      <table style={t.table}>
+        <thead>
+          <tr>
+            <th style={t.th}>Medication</th>
+            <th style={t.th}>List Price</th>
+            <th style={t.th}>Manufacturer Discount</th>
+            <th style={t.th}>Pharmacy Coupon</th>
+            <th style={t.th}>Best Budget</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style={{...t.td,...t.tdStrong}}>Ozempic (Semaglutide)</td>
+            <td style={t.td}>$978&ndash;$1,000/mo</td>
+            <td style={t.td}>$499/mo</td>
+            <td style={t.td}>$400&ndash;$600/mo</td>
+            <td style={t.td}>$199/mo (intro)</td>
+          </tr>
+          <tr>
+            <td style={{...t.td,...t.tdStrong}}>Mounjaro (Tirzepatide)</td>
+            <td style={t.td}>$1,069&ndash;$1,079/mo</td>
+            <td style={t.td}>$499/mo (vials)</td>
+            <td style={t.td}>$800&ndash;$900/mo</td>
+            <td style={t.td}>$349/mo (vials)</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <p style={s.p}><strong>Quick verdict:</strong> For self-pay patients, Mounjaro vials are typically cheaper ($349&ndash;$499) than Ozempic ($499), but Ozempic wins if you can access the current introductory offer ($199/month). Insurance coverage varies widely and depends on your plan.</p>
+
+      <h2 style={s.h2}>Ozempic Pricing Breakdown</h2>
+      <h3 style={s.h3}>List Price</h3>
+      <p style={s.p}>Ozempic's full retail price is approximately $978&ndash;$1,000 per month for a standard dose. This is what you'd pay without any discounts, insurance, or savings programs. Avoid this if possible.</p>
+      <h3 style={s.h3}>Novo Nordisk Patient Assistance Program: $499/Month</h3>
+      <p style={s.p}>Novo Nordisk, the manufacturer of Ozempic, offers a patient assistance program for self-pay eligible patients. The cost is a flat $499/month, and the medication ships directly to your home.</p>
+      <p style={s.p}><strong>Who qualifies:</strong> You must be a U.S. resident without commercial insurance coverage (or your insurance doesn't cover the medication). You don't need to prove income, which makes this accessible to many people.</p>
+      <p style={s.p}><strong>How to access:</strong> Go to Novo Nordisk's official website or ask your healthcare provider to enroll you.</p>
+      <h3 style={s.h3}>GoodRx and SingleCare: $400&ndash;$600/Month</h3>
+      <p style={s.p}>If you have a discount card like GoodRx or SingleCare, Ozempic prices vary by pharmacy, but you're typically looking at $400&ndash;$600/month. This is cheaper than list price but more expensive than the manufacturer's direct program, so it's less optimal for uninsured patients.</p>
+      <h3 style={s.h3}>Insurance Coverage</h3>
+      <p style={s.p}>With commercial insurance, Ozempic copayments can range from $25 to $200/month depending on your plan and deductible. Many insurance plans now cover Ozempic, but some require prior authorization or proof that you've tried other medications first.</p>
+      <h3 style={s.h3}>Current Promotional Pricing: $199/Month (Limited Time)</h3>
+      <p style={s.p}>As of 2026, Novo Nordisk is running an introductory offer: eligible new patients can get Wegovy oral semaglutide (same active ingredient as Ozempic) for $199/month for the first two months. After the promotion, pricing moves to $349&ndash;$499/month. This is technically a different formulation (oral vs. injectable), but if you're open to the pill version, it's an excellent entry price.</p>
+
+      <h2 style={s.h2}>Mounjaro Pricing Breakdown</h2>
+      <h3 style={s.h3}>List Price</h3>
+      <p style={s.p}>Mounjaro (tirzepatide), made by Eli Lilly, has a list price of $1,069&ndash;$1,079 per month for a standard one-month supply (four pens). Like Ozempic, this list price is rarely what anyone pays in practice.</p>
+      <h3 style={s.h3}>Lilly Direct Self-Pay Program: $349&ndash;$499/Month</h3>
+      <p style={s.p}>Eli Lilly launched the Zepbound Self-Pay Journey Program (Zepbound is the weight-loss version of tirzepatide; Mounjaro is the diabetes version, but pricing is identical). When you buy directly through LillyDirect, you access vials instead of pre-filled pens, which dramatically reduces cost.</p>
+      <p style={s.p}><strong>Dosing structure:</strong></p>
+      <ul style={s.ul}>
+        <li>2.5 mg (starting dose): $349/month for the first fill</li>
+        <li>5 mg and above: $499/month</li>
+      </ul>
+      <p style={s.p}><strong>Why vials cost less:</strong> Pre-filled pens cost $900&ndash;$1,200/month because they're more convenient. Vials require you to draw the dose yourself with a syringe, which takes about 30 seconds and saves $200&ndash;$700/month. If you're comfortable with a needle, it's a no-brainer.</p>
+      <h3 style={s.h3}>SingleCare and Other Coupons: $800&ndash;$900/Month</h3>
+      <p style={s.p}>If you use a discount card like SingleCare, Mounjaro prices fall to around $800&ndash;$900/month. Better than list price, but more expensive than Lilly Direct, so less ideal if you don't have insurance.</p>
+      <h3 style={s.h3}>Insurance Coverage</h3>
+      <p style={s.p}>Insurance coverage for Mounjaro varies widely. Some plans cover it; others exclude it or require extensive prior authorization. If your plan covers Mounjaro, your copay might be as low as $25&ndash;$150/month. If it doesn't cover it, you're paying out-of-pocket, and Lilly Direct becomes your best option.</p>
+
+      <h2 style={s.h2}>Which Is Cheaper: Ozempic or Mounjaro?</h2>
+      <h3 style={s.h3}>For Self-Pay Patients (No Insurance)</h3>
+      <p style={s.p}><strong>Mounjaro wins.</strong> At $349/month for starting doses and $499/month for higher doses, Mounjaro vials beat Ozempic's $499/month flat rate. The difference is $150/month at the starting dose&mdash;that's $1,800/year.</p>
+      <p style={s.p}>Exception: If you qualify for Novo Nordisk's current $199/month promotion for Wegovy oral, that beats Mounjaro. But once the promotion ends, Mounjaro is cheaper.</p>
+      <h3 style={s.h3}>For Insured Patients</h3>
+      <p style={s.p}>Your plan determines the winner. Ask your insurance company what the copay is for each medication. It could be as low as $25&ndash;$50/month for either one if your plan covers it well. Some plans prefer one drug over the other and charge a lower copay as an incentive.</p>
+      <h3 style={s.h3}>Overall Cost Comparison (Full Picture)</h3>
+      <p style={s.p}>The most honest answer: costs are nearly identical for both medications when you account for real-world pricing through manufacturer programs ($349&ndash;$499/month for both). The choice should come down to efficacy, tolerability, and convenience, not price.</p>
+
+      <h2 style={s.h2}>What About Convenience and Format?</h2>
+      <h3 style={s.h3}>Ozempic</h3>
+      <ul style={s.ul}>
+        <li>Pre-filled injection pen (easier)</li>
+        <li>Weekly injection</li>
+        <li>Available through multiple access channels (telehealth, local pharmacies, direct programs)</li>
+      </ul>
+      <h3 style={s.h3}>Mounjaro</h3>
+      <ul style={s.ul}>
+        <li>Pre-filled injection pen (easier) at higher cost</li>
+        <li>Single-dose vials (cheaper but requires manual injection) at $349&ndash;$499/month</li>
+        <li>Weekly injection</li>
+        <li>Primarily through Lilly Direct for lowest self-pay pricing</li>
+      </ul>
+
+      <h2 style={s.h2}>How to Reduce Your Actual Costs Further</h2>
+      <ol style={s.ul}>
+        <li><strong>Use manufacturer programs first.</strong> Both Novo Nordisk and Eli Lilly offer the best discounts directly, not through insurance or pharmacies.</li>
+        <li><strong>Choose vials over pens if you can.</strong> The savings are substantial (30&ndash;50% cheaper).</li>
+        <li><strong>Shop pharmacies for pen versions.</strong> Even within a manufacturer program, some pharmacies charge different amounts. Walmart and independent pharmacies often beat chain drugstores.</li>
+        <li><strong>Ask about prior authorization delays.</strong> Insurance may require your doctor to request special approval, which takes time but sometimes results in better coverage.</li>
+        <li><strong>Review your insurance plan annually.</strong> Coverage and copays change each year; you might find a better plan during open enrollment.</li>
+      </ol>
+
+      <h2 style={s.h2}>Side-by-Side Decision Matrix</h2>
+      <div style={{overflowX:"auto"}}>
+      <table style={t.table}>
+        <thead>
+          <tr><th style={t.th}>Factor</th><th style={t.th}>Ozempic</th><th style={t.th}>Mounjaro</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style={{...t.td,...t.tdStrong}}>Cheapest self-pay price</td><td style={t.td}>$199/mo (promo) / $499 (regular)</td><td style={t.td}>$349&ndash;$499/mo</td></tr>
+          <tr><td style={{...t.td,...t.tdStrong}}>Easiest access</td><td style={t.td}>More telehealth options available</td><td style={t.td}>Lilly Direct is primary route</td></tr>
+          <tr><td style={{...t.td,...t.tdStrong}}>Convenience</td><td style={t.td}>Pre-filled pen (no preparation)</td><td style={t.td}>Vial (manual injection) or pen</td></tr>
+          <tr><td style={{...t.td,...t.tdStrong}}>Active ingredient</td><td style={t.td}>Semaglutide (GLP-1 only)</td><td style={t.td}>Tirzepatide (GLP-1 + GIP receptor)</td></tr>
+          <tr><td style={{...t.td,...t.tdStrong}}>Insurance coverage likelihood</td><td style={t.td}>Moderately common</td><td style={t.td}>Less common, more prior auth</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 style={s.h2}>What Patients Actually Report Spending</h2>
+      <p style={s.p}>Based on real user experiences from 2026:</p>
+      <ul style={s.ul}>
+        <li><strong>Ozempic via manufacturer program:</strong> $499/month + $50&ndash;$100 for telehealth visit = $550&ndash;$600/month total</li>
+        <li><strong>Mounjaro vials via Lilly Direct:</strong> $349&ndash;$499/month + $50&ndash;$100 for telehealth = $400&ndash;$600/month total</li>
+        <li><strong>Either medication with insurance:</strong> $25&ndash;$150/month copay, depending on plan</li>
+      </ul>
+
+      <h2 style={s.h2}>Bottom Line</h2>
+      <p style={s.p}>For uninsured patients, Mounjaro vials are typically $150&ndash;$200/month cheaper than Ozempic. For insured patients, the winner depends on your specific plan's coverage and copay structure. Don't assume one is cheaper without checking your actual insurance benefits&mdash;and always use manufacturer programs, not list prices, for self-pay options.</p>
+    </SeoPageLayout>
+  );
+}
+
+// ─── SEO PAGE 3: GLP-1 SELF-PAY OPTIONS AFFORDABLE ───
+const PAGE3_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Find Affordable GLP-1 Self-Pay Options",
+  "description": "Complete guide to selecting and accessing affordable GLP-1 self-pay options in 2026",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Determine if you want FDA approval",
+      "text": "Decide whether FDA approval is important to you. If cost is the only factor, compounded options are cheapest."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Choose injection format",
+      "text": "Decide between daily pills (Wegovy oral) or weekly injections (Mounjaro vials, Ozempic)."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Compare prices across providers",
+      "text": "Get quotes from manufacturer programs and telehealth providers to find the lowest price for your chosen format."
+    }
+  ]
+};
+
+function Glp1SelfPayOptions() {
+  const s = legalStyles;
+  const t = tableStyles;
+  return (
+    <SeoPageLayout
+      title="Affordable GLP-1 Self-Pay Options: Complete 2026 Guide"
+      description="Explore affordable GLP-1 self-pay options in 2026: from compounded semaglutide to brand-name vials. Find which option fits your budget & needs."
+      h1="Affordable GLP-1 Self-Pay Options: Your Complete 2026 Guide"
+      jsonLd={PAGE3_JSONLD}
+      ctaLabel="Find My Best Self-Pay Option"
+      nextTo="/cheapest-glp1-without-insurance"
+      nextLabel="Find the absolute lowest cost &rarr;"
+    >
+      <p style={s.p}>GLP-1 medications have become more accessible in 2026, but affordability still depends on knowing which options exist and how to access them. If you're paying out-of-pocket, you have more choices than ever&mdash;and they range from budget options under $200/month to premium brands that cost $500 and up.</p>
+      <p style={s.p}>This guide breaks down every self-pay option available so you can find one that fits your budget and your health needs.</p>
+
+      <h2 style={s.h2}>The Full Spectrum of Self-Pay Options (Ranked by Price)</h2>
+
+      <h3 style={s.h3}>1. Compounded Semaglutide: $117&ndash;$250/Month</h3>
+      <p style={s.p}><strong>What it is:</strong> Semaglutide (the same active ingredient as Ozempic and Wegovy) mixed by a licensed pharmacist based on a doctor's prescription. Not FDA-approved as a final product, but made by licensed pharmacies under FDA oversight.</p>
+      <p style={s.p}><strong>How to access:</strong> Telehealth providers specializing in weight loss or compounded medications can prescribe and source this for you. Companies like Ro, Calibrate, and various independent clinics offer it.</p>
+      <p style={s.p}><strong>Pros:</strong></p>
+      <ul style={s.ul}>
+        <li>Lowest price point available</li>
+        <li>Same active ingredient as brand-name options</li>
+        <li>Often includes doctor visits and support</li>
+      </ul>
+      <p style={s.p}><strong>Cons:</strong></p>
+      <ul style={s.ul}>
+        <li>Not FDA-approved as a finished medication</li>
+        <li>Less regulatory oversight on manufacturing consistency</li>
+        <li>Insurance won't cover it</li>
+        <li>Some quality variation between compounding pharmacies</li>
+      </ul>
+      <p style={s.p}><strong>Best for:</strong> Cost-conscious patients who've used semaglutide before, or those who want to try GLP-1 at the lowest risk investment before committing to brand-name medications.</p>
+
+      <h3 style={s.h3}>2. Wegovy Oral (Pill): $149&ndash;$199/Month</h3>
+      <p style={s.p}><strong>What it is:</strong> Semaglutide in pill form (Rybelsus is the generic name), manufactured by Novo Nordisk. FDA-approved, taken daily.</p>
+      <p style={s.p}><strong>Current promotion:</strong> Through August 31, 2026, eligible patients can get Wegovy oral for $149/month for the first two months. After the promotion, expect $199&ndash;$349/month.</p>
+      <p style={s.p}><strong>How to access:</strong> Through Novo Nordisk's official Wegovy program or participating telehealth providers.</p>
+      <p style={s.p}><strong>Pros:</strong></p>
+      <ul style={s.ul}>
+        <li>FDA-approved (safety and consistency guaranteed)</li>
+        <li>Unbeatable introductory price ($149/month)</li>
+        <li>Easy to take (no needles)</li>
+        <li>Direct from manufacturer (no middleman pricing)</li>
+      </ul>
+      <p style={s.p}><strong>Cons:</strong></p>
+      <ul style={s.ul}>
+        <li>Daily pill (less convenient than weekly injection)</li>
+        <li>May be slightly less effective than injectables for some people</li>
+        <li>Introductory pricing ends August 2026</li>
+      </ul>
+      <p style={s.p}><strong>Best for:</strong> Patients who want FDA approval at the cheapest price, and who don't mind taking a daily pill instead of weekly injection.</p>
+
+      <h3 style={s.h3}>3. Mounjaro/Zepbound Vials: $349&ndash;$499/Month</h3>
+      <p style={s.p}><strong>What it is:</strong> Tirzepatide (dual GLP-1/GIP receptor agonist) in single-dose vials. FDA-approved, made by Eli Lilly, self-injected weekly.</p>
+      <p style={s.p}><strong>How to access:</strong> Primarily through Eli Lilly's LillyDirect self-pay program.</p>
+      <p style={s.p}><strong>Dosing &amp; pricing:</strong></p>
+      <ul style={s.ul}>
+        <li>2.5 mg (starting dose): $349/month</li>
+        <li>5 mg and above: $499/month</li>
+      </ul>
+      <p style={s.p}><strong>Pros:</strong></p>
+      <ul style={s.ul}>
+        <li>FDA-approved brand name</li>
+        <li>Dual-action mechanism (often more effective than semaglutide-only for weight loss)</li>
+        <li>Vial format = 30&ndash;50% cheaper than pre-filled pens</li>
+        <li>Weekly injection</li>
+      </ul>
+      <p style={s.p}><strong>Cons:</strong></p>
+      <ul style={s.ul}>
+        <li>Requires manual injection from a vial (not pre-filled)</li>
+        <li>Steeper learning curve for injection technique</li>
+        <li>Slightly higher price than Ozempic at standard dose</li>
+      </ul>
+      <p style={s.p}><strong>Best for:</strong> Patients comfortable with self-injecting who want the most effective option at a reasonable price.</p>
+
+      <h3 style={s.h3}>4. Ozempic Injectables: $199&ndash;$499/Month</h3>
+      <p style={s.p}><strong>What it is:</strong> Semaglutide (same as Wegovy, but in injectable form). FDA-approved for type 2 diabetes (and widely used off-label for weight loss).</p>
+      <p style={s.p}><strong>Current promotion:</strong> $199/month for the first two months if you're a new patient through Novo Nordisk's program.</p>
+      <p style={s.p}><strong>Regular self-pay price:</strong> $499/month through Novo Nordisk's patient assistance program.</p>
+      <p style={s.p}><strong>How to access:</strong> Novo Nordisk's official program, or through telehealth providers who partner with Novo Nordisk.</p>
+      <p style={s.p}><strong>Pros:</strong></p>
+      <ul style={s.ul}>
+        <li>FDA-approved</li>
+        <li>Pre-filled pens (no drawing from vials)</li>
+        <li>Introductory pricing available ($199/month)</li>
+        <li>Weekly injection</li>
+        <li>Widely available through telehealth</li>
+      </ul>
+      <p style={s.p}><strong>Cons:</strong></p>
+      <ul style={s.ul}>
+        <li>$499/month after intro pricing (more than Mounjaro vials)</li>
+        <li>Semaglutide-only (less mechanism variety than tirzepatide)</li>
+      </ul>
+      <p style={s.p}><strong>Best for:</strong> Patients who want a pre-filled pen for maximum convenience, or who have previously done well on semaglutide.</p>
+
+      <h3 style={s.h3}>5. Mounjaro/Zepbound Pens: $900&ndash;$1,200/Month</h3>
+      <p style={s.p}><strong>What it is:</strong> Tirzepatide in pre-filled pens. FDA-approved, made by Eli Lilly.</p>
+      <p style={s.p}><strong>How to access:</strong> Through traditional pharmacies with SingleCare, GoodRx, or other discount cards. More expensive than vials because of the pre-filled convenience.</p>
+      <p style={s.p}><strong>Pros:</strong></p>
+      <ul style={s.ul}>
+        <li>FDA-approved</li>
+        <li>Pre-filled pens (easiest to use)</li>
+        <li>Dual-action mechanism</li>
+        <li>Widely available</li>
+      </ul>
+      <p style={s.p}><strong>Cons:</strong></p>
+      <ul style={s.ul}>
+        <li>Most expensive option (except brand-name list price)</li>
+        <li>Only makes sense if your insurance has good coverage</li>
+      </ul>
+      <p style={s.p}><strong>Best for:</strong> Insured patients whose plans cover Mounjaro well. If you're self-pay, get vials instead ($500&ndash;$700 cheaper per month).</p>
+
+      <h2 style={s.h2}>How to Choose the Right Self-Pay Option for You</h2>
+      <h3 style={s.h3}>Decision Tree</h3>
+      <p style={s.p}><strong>Question 1: Do you want FDA approval?</strong></p>
+      <ul style={s.ul}>
+        <li><strong>Yes:</strong> Go to Question 2</li>
+        <li><strong>No:</strong> Compounded semaglutide ($117&ndash;$250) is your answer</li>
+      </ul>
+      <p style={s.p}><strong>Question 2: Do you prefer daily pills or weekly injections?</strong></p>
+      <ul style={s.ul}>
+        <li><strong>Daily pill:</strong> Wegovy oral ($149&ndash;$199/month) is your answer</li>
+        <li><strong>Weekly injection:</strong> Go to Question 3</li>
+      </ul>
+      <p style={s.p}><strong>Question 3: Are you comfortable manually injecting from a vial, or do you want a pre-filled pen?</strong></p>
+      <ul style={s.ul}>
+        <li><strong>Vial (save money):</strong> Mounjaro vials ($349&ndash;$499) is your answer</li>
+        <li><strong>Pre-filled pen (easier):</strong> Ozempic ($199&ndash;$499) or Mounjaro pen ($900+ if no insurance)</li>
+      </ul>
+
+      <h2 style={s.h2}>Real Self-Pay Costs (All-In, Including Doctor Visits)</h2>
+      <p style={s.p}>The medication price is only part of your total cost. Most people also pay for telehealth consultations, follow-up visits, and potentially membership fees.</p>
+      <div style={{overflowX:"auto"}}>
+      <table style={t.table}>
+        <thead>
+          <tr><th style={t.th}>Option</th><th style={t.th}>Medication/mo</th><th style={t.th}>Doctor Visits/mo*</th><th style={t.th}>Total/mo</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style={{...t.td,...t.tdStrong}}>Compounded Semaglutide</td><td style={t.td}>$117&ndash;$250</td><td style={t.td}>$30&ndash;$75</td><td style={t.td}>$147&ndash;$325</td></tr>
+          <tr><td style={{...t.td,...t.tdStrong}}>Wegovy Oral ($149 promo)</td><td style={t.td}>$149</td><td style={t.td}>$25&ndash;$50</td><td style={t.td}>$174&ndash;$199</td></tr>
+          <tr><td style={{...t.td,...t.tdStrong}}>Mounjaro Vials</td><td style={t.td}>$349&ndash;$499</td><td style={t.td}>$25&ndash;$75</td><td style={t.td}>$374&ndash;$574</td></tr>
+          <tr><td style={{...t.td,...t.tdStrong}}>Ozempic ($499 regular)</td><td style={t.td}>$499</td><td style={t.td}>$25&ndash;$75</td><td style={t.td}>$524&ndash;$574</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p style={{...s.p,fontSize:12,color:"#64748b"}}>*Doctor visit costs vary; some programs bundle visits with medication, some charge separately.</p>
+
+      <h2 style={s.h2}>Strategies to Minimize Your Total Cost</h2>
+      <ol style={s.ul}>
+        <li><strong>Start with compounded or Wegovy oral.</strong> Test GLP-1 at the lowest price before upgrading to more expensive brands.</li>
+        <li><strong>Use vials instead of pens.</strong> This saves $150&ndash;$500/month for the same medication.</li>
+        <li><strong>Buy directly from manufacturers.</strong> Lilly Direct and Novo Nordisk's programs beat pharmacies and discount cards for self-pay patients.</li>
+        <li><strong>Look for bundled programs.</strong> Some telehealth providers include doctor visits, medication, and follow-up in one monthly fee (often $300&ndash;$400/month all-in).</li>
+        <li><strong>Ask about annual discounts.</strong> Some programs offer 5&ndash;10% off if you pay 3 or 6 months upfront.</li>
+        <li><strong>Monitor for promos.</strong> Novo Nordisk's current $149/month Wegovy offer is time-limited; similar programs rotate through different medications. Sign up for manufacturer newsletters to catch deals.</li>
+      </ol>
+
+      <h2 style={s.h2}>Insurance vs. Self-Pay: When Self-Pay Actually Wins</h2>
+      <p style={s.p}>It might seem like insurance is always better, but for GLP-1s, self-pay sometimes costs less:</p>
+      <ul style={s.ul}>
+        <li><strong>If your deductible is high:</strong> You might pay full price until hitting your deductible. Self-pay programs cap your cost at $149&ndash;$499/month regardless of deductible.</li>
+        <li><strong>If insurance requires prior auth:</strong> Waiting weeks for authorization while managing weight makes self-pay's speed valuable.</li>
+        <li><strong>If insurance denies coverage:</strong> Some plans exclude GLP-1s or only cover them for diabetes, not weight loss. Self-pay becomes your only option.</li>
+        <li><strong>If your copay is high:</strong> If insurance's copay is $200+/month, Wegovy oral at $149 or Mounjaro vials at $349 might be cheaper.</li>
+      </ul>
+
+      <h2 style={s.h2}>Questions to Ask Before Choosing</h2>
+      <ul style={s.ul}>
+        <li><strong>What's included in the monthly cost?</strong> (Medication only, or does it include doctor visits?)</li>
+        <li><strong>What happens after I reach my goal weight or stop?</strong> (Can I pause, refund policy?)</li>
+        <li><strong>Is there a contract or commitment?</strong> (Some require 3&ndash;6 month minimums)</li>
+        <li><strong>Are medication adjustments included?</strong> (Or will I pay extra if I need a different dose?)</li>
+        <li><strong>What if I have side effects?</strong> (Can I try a different medication at no extra cost?)</li>
+        <li><strong>How do I reach my doctor if I have questions?</strong> (24/7 support, or business hours only?)</li>
+      </ul>
+
+      <h2 style={s.h2}>Bottom Line</h2>
+      <p style={s.p}>Affordable GLP-1 self-pay options range from $117/month (compounded semaglutide) to $499/month (brand-name injectables). The cheapest FDA-approved option is Wegovy oral at $149/month during the current promotion. For longer-term affordability, Mounjaro vials at $349&ndash;$499/month offer excellent value and efficacy. Start by identifying your priorities&mdash;cost, FDA approval, injection comfort&mdash;and choose accordingly. Use our tool to compare your exact options today.</p>
+    </SeoPageLayout>
+  );
+}
+
 export default function App() {
   return (
     <Routes>
@@ -516,6 +1116,9 @@ export default function App() {
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/cheapest-glp1-without-insurance" element={<CheapestGlp1WithoutInsurance />} />
+      <Route path="/ozempic-vs-mounjaro-cost" element={<OzempicVsMounjaroCost />} />
+      <Route path="/glp1-self-pay-options" element={<Glp1SelfPayOptions />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -802,12 +1405,7 @@ function GLP1CostFinder() {
           <div ref={resultsRef} className="fade-up" style={{marginTop:8}}>
 
             {/* FTC AFFILIATE DISCLOSURE */}
-            <div style={{background:"#fefce8",border:"1px solid #fde68a",borderRadius:10,padding:"10px 14px",marginBottom:14,display:"flex",alignItems:"flex-start",gap:10}}>
-              <span aria-hidden="true" style={{fontSize:14,lineHeight:1.2,flexShrink:0,marginTop:1}}>&#9432;</span>
-              <p style={{fontSize:12,lineHeight:1.55,color:"#713f12",margin:0}}>
-                <strong>Affiliate disclosure:</strong> Some links below are affiliate links. If you sign up through one of these links, we may earn a commission at no extra cost to you. This does not influence our comparisons or recommendations.
-              </p>
-            </div>
+            <AffiliateBanner style={{marginBottom:14}} />
 
             {/* RECOMMENDATION */}
             <div style={{background:"linear-gradient(135deg, #1e3a5f, #1e40af)",borderRadius:20,padding:"32px 28px",marginBottom:16,color:"#fff",position:"relative",overflow:"hidden"}}>
