@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://glp1costfinder.com/sitemap.xml

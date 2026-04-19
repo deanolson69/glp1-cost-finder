@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 
 // ─── STATE DATA (All 50 states + DC) ───
 const stateData = {
@@ -534,6 +534,30 @@ function useSeoMeta(title, description) {
       if (metaEl && prevDesc != null) metaEl.setAttribute("content", prevDesc);
     };
   }, [title, description]);
+}
+
+// Keeps a single <link rel="canonical"> in <head> pointing at the current
+// route. Called once from <App /> inside <BrowserRouter>, so every route
+// transition updates href. If the link didn't exist before this effect ran
+// we remove it on cleanup; otherwise we leave the pre-existing element alone.
+const SITE_ORIGIN = "https://glp1costfinder.com";
+function useCanonical() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const href = SITE_ORIGIN + pathname;
+    let link = document.querySelector('link[rel="canonical"]');
+    let createdByUs = false;
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "canonical");
+      document.head.appendChild(link);
+      createdByUs = true;
+    }
+    link.setAttribute("href", href);
+    return () => {
+      if (createdByUs) link.remove();
+    };
+  }, [pathname]);
 }
 
 // Appends a JSON-LD <script> to <head> for the lifetime of the component.
@@ -1110,6 +1134,7 @@ function Glp1SelfPayOptions() {
 }
 
 export default function App() {
+  useCanonical();
   return (
     <Routes>
       <Route path="/" element={<GLP1CostFinder />} />
