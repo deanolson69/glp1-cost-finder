@@ -64,12 +64,12 @@ const medications = [
     coveredFor:"diabetes, cardiovascular risk, kidney disease",
     indicationDetail:"FDA-approved for Type 2 diabetes, reducing cardiovascular events, and kidney disease progression. Commonly prescribed off-label for weight loss.",
     howItWorks:"Mimics GLP-1 hormone to reduce appetite and slow digestion. Injected once weekly with a pre-filled pen.",
-    selfPay:{price:"$199/mo",where:"TrumpRx or GoodRx",note:"TrumpRx $199/mo. GoodRx $199 for first 2 fills through 6/30/26, then $349. Maintenance dose (2mg) $349-$499/mo at higher doses.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"GoodRx",url:"https://www.goodrx.com/ozempic"}]},
+    selfPay:{price:"$199/mo",where:"TrumpRx or GoodRx",note:"TrumpRx $199/mo. GoodRx $199 for first 2 fills through 6/30/26, then $349. Maintenance dose (2mg) $499/mo.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"GoodRx",url:"https://www.goodrx.com/ozempic"}]},
     withInsurance:{price:"$25/mo",how:"Novo Nordisk savings card",note:"If your plan covers Ozempic, the savings card drops your copay to $25/mo (max $100/mo savings). 82% of commercial plans cover it for diabetes."},
     doses:[
       {phase:"Month 1-2",dose:"0.25-0.5mg",prices:[{s:"Retail",p:"$968",hl:false},{s:"GoodRx",p:"$199",hl:true},{s:"TrumpRx",p:"$199",hl:true}]},
       {phase:"Month 3-4",dose:"1mg",prices:[{s:"Retail",p:"$968",hl:false},{s:"GoodRx",p:"$349",hl:true},{s:"TrumpRx",p:"$350",hl:true}]},
-      {phase:"Month 5+",dose:"2mg",prices:[{s:"Retail",p:"$968",hl:false},{s:"GoodRx",p:"$349",hl:true},{s:"TrumpRx",p:"$350",hl:true}]}
+      {phase:"Month 5+",dose:"2mg",prices:[{s:"Retail",p:"$968",hl:false},{s:"GoodRx",p:"$499",hl:false},{s:"TrumpRx",p:"$350",hl:true}]}
     ],
     savingsCard:{copay:"$25/mo",detail:"Commercial insurance only. Max $100/mo savings. Not available for government insurance or uninsured.",url:"https://www.ozempic.com/savings-and-resources/save-on-ozempic.html"},
     pap:{available:true,detail:"FREE via Novo Nordisk PAP. Must be uninsured, income under ~$31,200/yr, and have a diabetes prescription. Up to 12 months, renewable.",url:"https://www.novocare.com/pap.html"}
@@ -112,12 +112,12 @@ const medications = [
     coveredFor:"diabetes, sleep apnea",
     indicationDetail:"FDA-approved for Type 2 diabetes and obstructive sleep apnea. Commonly prescribed off-label for weight loss.",
     howItWorks:"Dual GIP/GLP-1 receptor agonist that targets two appetite hormones. Some studies show greater weight loss than semaglutide. Injected once weekly.",
-    selfPay:{price:"$299/mo",where:"LillyDirect",note:"LillyDirect $299/mo starting dose, $399-$449 at higher doses. TrumpRx $350/mo flat. GoodRx is not competitive for Lilly drugs ($1,097).",links:[{label:"LillyDirect",url:"https://www.lillydirect.com"},{label:"TrumpRx",url:"https://trumprx.gov"}]},
+    selfPay:{price:"$350/mo",where:"TrumpRx",note:"TrumpRx $350/mo flat at all doses. LillyDirect no longer offers Mounjaro through their self-pay program. GoodRx is not competitive for Lilly drugs ($1,097).",links:[{label:"TrumpRx",url:"https://trumprx.gov"}]},
     withInsurance:{price:"$25/mo",how:"Lilly savings card",note:"$25/mo if covered (max $1,950/yr). Even if NOT covered, up to $499 off per fill (max $8,411/yr, 13 fills). Works either way with commercial insurance."},
     doses:[
-      {phase:"Month 1-2",dose:"2.5-5mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"LillyDirect",p:"$299",hl:true},{s:"TrumpRx",p:"$350",hl:true}]},
-      {phase:"Month 3-4",dose:"7.5-10mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"LillyDirect",p:"$399",hl:true},{s:"TrumpRx",p:"$350",hl:true}]},
-      {phase:"Month 5+",dose:"12.5-15mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"LillyDirect",p:"$449",hl:false},{s:"TrumpRx",p:"$350",hl:true}]}
+      {phase:"Month 1-2",dose:"2.5-5mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"TrumpRx",p:"$350",hl:true}]},
+      {phase:"Month 3-4",dose:"7.5-10mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"TrumpRx",p:"$350",hl:true}]},
+      {phase:"Month 5+",dose:"12.5-15mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"TrumpRx",p:"$350",hl:true}]}
     ],
     savingsCard:{copay:"$25/mo (covered) or up to $499 off (not covered)",detail:"Works with commercial insurance whether your plan covers Mounjaro or not. Max 13 fills/yr. Expires 12/31/2026. Not for government insurance or uninsured.",url:"https://mounjaro.lilly.com/savings-resources"},
     pap:{available:false,detail:"Mounjaro is NOT on the Lilly Cares available medications list."}
@@ -128,11 +128,11 @@ const medications = [
     coveredFor:"weight management, sleep apnea",
     indicationDetail:"FDA-approved for chronic weight management and obstructive sleep apnea. Same active ingredient as Mounjaro (tirzepatide).",
     howItWorks:"Dual-action GIP/GLP-1 receptor agonist. Injected once weekly with a pre-filled pen.",
-    selfPay:{price:"$299/mo",where:"TrumpRx or LillyDirect",note:"TrumpRx $299/mo flat. LillyDirect $299 starting, $399-$449 at higher doses.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"LillyDirect",url:"https://www.lillydirect.com"}]},
+    selfPay:{price:"$299/mo",where:"TrumpRx or LillyDirect",note:"LillyDirect $299 (2.5mg), $399 (5mg), $449 (7.5mg+). TrumpRx $299/mo flat at all doses.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"LillyDirect",url:"https://www.lillydirect.com"}]},
     withInsurance:{price:"$25/mo",how:"Lilly savings card",note:"$25/mo if covered. If NOT covered, up to $650 off per fill. Only 30-40% of commercial plans cover Zepbound for weight loss."},
     doses:[
-      {phase:"Month 1-2",dose:"2.5-5mg",prices:[{s:"Retail",p:"$1,086",hl:false},{s:"TrumpRx",p:"$299",hl:true},{s:"LillyDirect",p:"$299",hl:true}]},
-      {phase:"Month 3-4",dose:"7.5-10mg",prices:[{s:"Retail",p:"$1,086",hl:false},{s:"TrumpRx",p:"$299",hl:true},{s:"LillyDirect",p:"$399",hl:true}]},
+      {phase:"Month 1",dose:"2.5mg",prices:[{s:"Retail",p:"$1,086",hl:false},{s:"TrumpRx",p:"$299",hl:true},{s:"LillyDirect",p:"$299",hl:true}]},
+      {phase:"Month 2-3",dose:"5-10mg",prices:[{s:"Retail",p:"$1,086",hl:false},{s:"TrumpRx",p:"$299",hl:true},{s:"LillyDirect",p:"$399-$449",hl:true}]},
       {phase:"Month 5+",dose:"12.5-15mg",prices:[{s:"Retail",p:"$1,086",hl:false},{s:"TrumpRx",p:"$299",hl:true},{s:"LillyDirect",p:"$449",hl:false}]}
     ],
     savingsCard:{copay:"$25/mo (covered) or up to $650 off (not covered)",detail:"Works with commercial insurance whether your plan covers Zepbound or not. Expires 12/31/2026. Not for government insurance or uninsured.",url:"https://zepbound.lilly.com/savings"},
@@ -169,7 +169,7 @@ const coverageTruth = [
 const telehealthOptions = [
   {name:"Hims",price:"$79-$199/mo",detail:"Oral kits from $79/mo. Branded injectables from $199/mo.",url:"https://www.forhims.com/weight-loss"},
   {name:"Ro",price:"$149-$449/mo",detail:"Semaglutide from $149 first month. Tirzepatide from $299.",url:"https://ro.co/weight-loss/"},
-  {name:"Noom Med",price:"$149-$279/mo",detail:"GLP-1 from $149 first month. Includes behavioral coaching.",url:"https://www.noom.com/med/"},
+  {name:"Noom Med",price:"$149-$349/mo",detail:"GLP-1 from $149 first month, then $349/mo ongoing. Includes behavioral coaching.",url:"https://www.noom.com/med/"},
   {name:"LifeMD",price:"Varies",detail:"Now offering Foundayo. Full medical evaluation included.",url:"https://lifemd.com/"}
 ];
 
