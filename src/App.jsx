@@ -1222,16 +1222,15 @@ function GLP1CostFinder() {
     setEmailSubmitting(true);
 
     const baseUrl = "https://olsoncoaches.us16.list-manage.com/subscribe/post-json";
-    // Mailchimp's post-json endpoint binds merge fields by positional MERGE{n}
-    // parameter name, not the friendly field tag. 7/8/9 = STATE/INSTYPE/CONDITION.
+    // Parameter names match the field tags from Mailchimp's own embed code.
     const params = new URLSearchParams({
       u: "de1492a2adba6ccde526379b6",
       id: "83c9757d1b",
       f_id: "00212be0f0",
       EMAIL: email,
-      MERGE7: selectedState || "",
-      MERGE8: insurance || "",
-      MERGE9: condition || "",
+      STATE: selectedState || "",
+      INSTYPE: insurance || "",
+      CONDITION: condition || "",
       "b_de1492a2adba6ccde526379b6_83c9757d1b": "",
     });
 
@@ -1258,11 +1257,9 @@ function GLP1CostFinder() {
       cleanup();
     };
 
-    const jsonpUrl = baseUrl + "?" + params.toString() + "&c=" + callbackName;
-    console.log("[Mailchimp] JSONP URL:", jsonpUrl);
     const script = document.createElement("script");
     script.id = callbackName;
-    script.src = jsonpUrl;
+    script.src = baseUrl + "?" + params.toString() + "&c=" + callbackName;
     script.onerror = () => {
       setEmailError("Something went wrong, please try again.");
       cleanup();
