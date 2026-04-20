@@ -516,6 +516,7 @@ function Footer() {
         {sep}<Link to="/privacy" style={linkStyle}>Privacy Policy</Link>
         {sep}<Link to="/terms" style={linkStyle}>Terms of Use</Link>
         {sep}<Link to="/contact" style={linkStyle}>Contact</Link>
+        {sep}<a href="/articles/" style={{fontSize:10,color:"#cbd5e1",textDecoration:"none"}}>Pricing Guides</a>
       </p>
       <p style={{fontSize:10,color:"#94a3b8",margin:"8px auto 0",maxWidth:640}}>
         <span style={{color:"#cbd5e1",marginRight:6}}>Guides:</span>
