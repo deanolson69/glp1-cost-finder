@@ -1,7 +1,7 @@
 # Privacy Policy for GLP-1 Cost Finder
 
 **Effective Date:** April 18, 2026  
-**Last Updated:** April 18, 2026
+**Last Updated:** April 19, 2026
 
 ## Our Commitment to Your Privacy
 
@@ -24,6 +24,16 @@ We use Google Analytics 4 to understand how people use our Website. This automat
 
 Google Analytics uses cookies and similar tracking technologies to collect this data.
 
+### Information from Microsoft Clarity
+We use Microsoft Clarity to understand how visitors interact with our Website. Clarity collects:
+- Mouse movements, clicks, and scroll behavior
+- Session recordings (anonymized replays of how you navigate the site)
+- Heatmap data (which areas of each page receive the most interaction)
+- Page performance data (load times, errors)
+- Device and browser information
+
+Clarity automatically masks sensitive content on the page. It does not collect passwords, payment information, or personal health data from form fields.
+
 ### Other Information
 - **IP Address:** Automatically logged by our hosting provider for security and analytics purposes
 - **Volunteer Information:** Any information you provide when contacting us (e.g., support inquiries)
@@ -39,9 +49,10 @@ We use your email address to:
 - Respond to your inquiries or feedback
 
 ### Analytics Data
-We use Google Analytics data to:
+We use Google Analytics and Microsoft Clarity data to:
 - Understand how visitors use our Website
 - Improve Website performance and user experience
+- Identify usability issues through session recordings and heatmaps (Clarity)
 - Test new features and content
 - Measure the effectiveness of our marketing efforts
 
@@ -80,12 +91,16 @@ Our Website contains links to telehealth providers, pharmacies, manufacturers, a
 ### Google Analytics Cookies
 Google Analytics uses cookies to track your activity on our Website. These are persistent cookies that help Google Analytics recognize you on return visits. These cookies are used solely for analytics purposes and do not identify you personally.
 
+### Microsoft Clarity Cookies
+Microsoft Clarity uses cookies and local storage to record session data, including mouse movements, clicks, and scrolling behavior. Clarity generates session recordings and heatmaps to help us understand how visitors interact with our pages. Clarity does not track you across other websites and masks sensitive content by default.
+
 ### Your Cookie Choices
 Most browsers allow you to control cookies through settings:
 - You can disable cookies in your browser settings
 - You can opt out of Google Analytics tracking by installing the [Google Analytics Opt-Out Browser Add-On](https://tools.google.com/dlpage/gaoptout)
+- You can learn more about Microsoft Clarity's data practices at [Microsoft Clarity FAQ](https://clarity.microsoft.com/faq)
 
-**We do not use cookies for purposes other than analytics.**
+**We do not use cookies for purposes other than analytics and user experience improvement.**
 
 ---
 
@@ -99,6 +114,7 @@ Most browsers allow you to control cookies through settings:
 ### We DO Share Data With:
 - **Mailchimp:** To manage our email list (subject to Mailchimp's privacy policy)
 - **Google Analytics:** To track Website usage (subject to Google's privacy policy)
+- **Microsoft Clarity:** To record session behavior and generate heatmaps (subject to Microsoft's privacy policy)
 - **Render:** Our hosting provider (subject to Render's privacy policy)
 - Legal authorities: Only if required by law or to protect our rights, your safety, or others' safety
 
@@ -107,7 +123,7 @@ Most browsers allow you to control cookies through settings:
 ## 7. Data Retention
 
 - **Email Addresses:** Retained as long as you remain subscribed to our mailing list, or until you request deletion
-- **Analytics Data:** Retained by Google Analytics according to their standard retention policies (typically 14 months of inactivity)
+- **Analytics Data:** Retained by Google Analytics according to their standard retention policies (typically 14 months of inactivity); Microsoft Clarity retains session data for up to 30 days
 - **Server Logs:** Retained by our hosting provider for up to 90 days for security purposes
 
 If you wish to have your email address deleted from our records, contact us at dean@olsoncoaches.com.
@@ -162,12 +178,13 @@ Your continued use of the Website after changes become effective constitutes you
 
 ## Summary: What You Should Know
 
-- We collect your **email address** if you sign up, and **analytics data** from Google Analytics
+- We collect your **email address** if you sign up, and **analytics data** from Google Analytics and Microsoft Clarity
+- **Microsoft Clarity** records anonymized session replays and heatmaps to help us improve the site experience
 - We **do not sell your data** or use it for purposes beyond email marketing and Website improvement
 - You can **unsubscribe anytime** from our emails
 - We use **affiliate links** and disclose this relationship
-- We work with **Mailchimp and Google Analytics**, each with their own privacy policies
-- You can **opt out of Google Analytics** tracking
+- We work with **Mailchimp, Google Analytics, and Microsoft Clarity**, each with their own privacy policies
+- You can **opt out of Google Analytics** tracking and manage cookies in your browser settings
 - **Your email is kept safe** and deleted upon request
 
 Questions? Reach out to dean@olsoncoaches.com.

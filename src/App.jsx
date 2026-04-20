@@ -200,7 +200,7 @@ function PrivacyPage() {
       <div style={inner}>
         <Link to="/" style={backBtn}>&larr; Back to Home</Link>
         <h1 style={h1}>Privacy Policy for GLP-1 Cost Finder</h1>
-        <p style={p}><strong>Effective Date:</strong> April 18, 2026<br/><strong>Last Updated:</strong> April 18, 2026</p>
+        <p style={p}><strong>Effective Date:</strong> April 18, 2026<br/><strong>Last Updated:</strong> April 19, 2026</p>
 
         <h2 style={h2}>Our Commitment to Your Privacy</h2>
         <p style={p}>GLP-1 Cost Finder ("we," "us," "our," or "Website") is committed to protecting your privacy. This Privacy Policy explains what information we collect, how we use it, and your rights regarding that information.</p>
@@ -219,6 +219,16 @@ function PrivacyPage() {
           <li>Interaction data (clicks, form submissions, scroll depth)</li>
         </ul>
         <p style={p}>Google Analytics uses cookies and similar tracking technologies to collect this data.</p>
+        <h3 style={h3}>Information from Microsoft Clarity</h3>
+        <p style={p}>We use Microsoft Clarity to understand how visitors interact with our Website. Clarity collects:</p>
+        <ul style={ul}>
+          <li>Mouse movements, clicks, and scroll behavior</li>
+          <li>Session recordings (anonymized replays of how you navigate the site)</li>
+          <li>Heatmap data (which areas of each page receive the most interaction)</li>
+          <li>Page performance data (load times, errors)</li>
+          <li>Device and browser information</li>
+        </ul>
+        <p style={p}>Clarity automatically masks sensitive content on the page. It does not collect passwords, payment information, or personal health data from form fields.</p>
         <h3 style={h3}>Other Information</h3>
         <ul style={ul}>
           <li><strong>IP Address:</strong> Automatically logged by our hosting provider for security and analytics purposes</li>
@@ -235,10 +245,11 @@ function PrivacyPage() {
           <li>Respond to your inquiries or feedback</li>
         </ul>
         <h3 style={h3}>Analytics Data</h3>
-        <p style={p}>We use Google Analytics data to:</p>
+        <p style={p}>We use Google Analytics and Microsoft Clarity data to:</p>
         <ul style={ul}>
           <li>Understand how visitors use our Website</li>
           <li>Improve Website performance and user experience</li>
+          <li>Identify usability issues through session recordings and heatmaps (Clarity)</li>
           <li>Test new features and content</li>
           <li>Measure the effectiveness of our marketing efforts</li>
         </ul>
@@ -271,13 +282,16 @@ function PrivacyPage() {
         <h2 style={h2}>5. Cookies and Tracking Technologies</h2>
         <h3 style={h3}>Google Analytics Cookies</h3>
         <p style={p}>Google Analytics uses cookies to track your activity on our Website. These are persistent cookies that help Google Analytics recognize you on return visits. These cookies are used solely for analytics purposes and do not identify you personally.</p>
+        <h3 style={h3}>Microsoft Clarity Cookies</h3>
+        <p style={p}>Microsoft Clarity uses cookies and local storage to record session data, including mouse movements, clicks, and scrolling behavior. Clarity generates session recordings and heatmaps to help us understand how visitors interact with our pages. Clarity does not track you across other websites and masks sensitive content by default.</p>
         <h3 style={h3}>Your Cookie Choices</h3>
         <p style={p}>Most browsers allow you to control cookies through settings:</p>
         <ul style={ul}>
           <li>You can disable cookies in your browser settings</li>
           <li>You can opt out of Google Analytics tracking by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={link}>Google Analytics Opt-Out Browser Add-On</a></li>
+          <li>You can learn more about Microsoft Clarity's data practices at <a href="https://clarity.microsoft.com/faq" target="_blank" rel="noopener noreferrer" style={link}>Microsoft Clarity FAQ</a></li>
         </ul>
-        <p style={p}><strong>We do not use cookies for purposes other than analytics.</strong></p>
+        <p style={p}><strong>We do not use cookies for purposes other than analytics and user experience improvement.</strong></p>
         <hr style={hr}/>
 
         <h2 style={h2}>6. Data Sharing and Third Parties</h2>
@@ -291,6 +305,7 @@ function PrivacyPage() {
         <ul style={ul}>
           <li><strong>Mailchimp:</strong> To manage our email list (subject to Mailchimp's privacy policy)</li>
           <li><strong>Google Analytics:</strong> To track Website usage (subject to Google's privacy policy)</li>
+          <li><strong>Microsoft Clarity:</strong> To record session behavior and generate heatmaps (subject to Microsoft's privacy policy)</li>
           <li><strong>Render:</strong> Our hosting provider (subject to Render's privacy policy)</li>
           <li>Legal authorities: Only if required by law or to protect our rights, your safety, or others' safety</li>
         </ul>
@@ -299,7 +314,7 @@ function PrivacyPage() {
         <h2 style={h2}>7. Data Retention</h2>
         <ul style={ul}>
           <li><strong>Email Addresses:</strong> Retained as long as you remain subscribed to our mailing list, or until you request deletion</li>
-          <li><strong>Analytics Data:</strong> Retained by Google Analytics according to their standard retention policies (typically 14 months of inactivity)</li>
+          <li><strong>Analytics Data:</strong> Retained by Google Analytics according to their standard retention policies (typically 14 months of inactivity); Microsoft Clarity retains session data for up to 30 days</li>
           <li><strong>Server Logs:</strong> Retained by our hosting provider for up to 90 days for security purposes</li>
         </ul>
         <p style={p}>If you wish to have your email address deleted from our records, contact us at <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a>.</p>
@@ -338,12 +353,13 @@ function PrivacyPage() {
 
         <h2 style={h2}>Summary: What You Should Know</h2>
         <ul style={ul}>
-          <li>We collect your <strong>email address</strong> if you sign up, and <strong>analytics data</strong> from Google Analytics</li>
+          <li>We collect your <strong>email address</strong> if you sign up, and <strong>analytics data</strong> from Google Analytics and Microsoft Clarity</li>
+          <li><strong>Microsoft Clarity</strong> records anonymized session replays and heatmaps to help us improve the site experience</li>
           <li>We <strong>do not sell your data</strong> or use it for purposes beyond email marketing and Website improvement</li>
           <li>You can <strong>unsubscribe anytime</strong> from our emails</li>
           <li>We use <strong>affiliate links</strong> and disclose this relationship</li>
-          <li>We work with <strong>Mailchimp and Google Analytics</strong>, each with their own privacy policies</li>
-          <li>You can <strong>opt out of Google Analytics</strong> tracking</li>
+          <li>We work with <strong>Mailchimp, Google Analytics, and Microsoft Clarity</strong>, each with their own privacy policies</li>
+          <li>You can <strong>opt out of Google Analytics</strong> tracking and manage cookies in your browser settings</li>
           <li><strong>Your email is kept safe</strong> and deleted upon request</li>
         </ul>
         <p style={p}>Questions? Reach out to <a href="mailto:dean@olsoncoaches.com" style={link}>dean@olsoncoaches.com</a>.</p>
