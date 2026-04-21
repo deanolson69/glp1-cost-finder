@@ -170,7 +170,10 @@ const telehealthOptions = [
   {name:"Hims",price:"$79-$199/mo",detail:"Oral kits from $79/mo. Branded injectables from $199/mo.",url:"https://www.forhims.com/weight-loss"},
   {name:"Ro",price:"$149-$449/mo",detail:"Semaglutide from $149 first month. Tirzepatide from $299.",url:"https://ro.co/weight-loss/"},
   {name:"Noom Med",price:"$149-$349/mo",detail:"GLP-1 from $149 first month, then $349/mo ongoing. Includes behavioral coaching.",url:"https://www.noom.com/med/"},
-  {name:"LifeMD",price:"Varies",detail:"Now offering Foundayo. Full medical evaluation included.",url:"https://lifemd.com/"}
+  {name:"LifeMD",price:"Varies",detail:"Now offering Foundayo. Full medical evaluation included.",url:"https://lifemd.com/"},
+  {name:"Yucca Health",price:"$146-$275/mo",detail:"Compounded semaglutide+ from $175 first month. Tirzepatide from $258. No live visit required.",url:"https://track.revoffers.com/aff_c?offer_id=1460&aff_id=12255"},
+  {name:"Sprout Health",price:"$199-$299/mo",detail:"Compounded semaglutide from $199 first month. Tirzepatide from $249. No hidden fees.",url:"https://track.revoffers.com/aff_c?offer_id=1286&aff_id=12255"},
+  {name:"Strut Health",price:"From $99/mo",detail:"Oral semaglutide from $99/mo with auto-refill. Injectable options available.",url:"https://track.revoffers.com/aff_c?offer_id=384&aff_id=12255"}
 ];
 
 // ─── INTAKE OPTIONS ───
