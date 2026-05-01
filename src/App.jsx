@@ -80,7 +80,7 @@ const medications = [
     coveredFor:"weight management, cardiovascular risk, MASH",
     indicationDetail:"FDA-approved for weight management (BMI 30+, or 27+ with related condition), reducing cardiovascular events, and noncirrhotic MASH (liver disease).",
     howItWorks:"Same active ingredient as Ozempic (semaglutide) at higher doses for weight loss. Injected once weekly.",
-    selfPay:{price:"$199/mo",where:"TrumpRx",note:"TrumpRx $199/mo at all dose levels. GoodRx $199 first 2 fills then $349. NovoCare self-pay $349/mo.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"NovoCare",url:"https://www.novocare.com/wegovy/savings-offer.html"}]},
+    selfPay:{price:"$199/mo",where:"TrumpRx",note:"TrumpRx, GoodRx, and NovoCare all offer $199/mo for the first 2 fills (0.25mg/0.5mg only) through 6/30/26. After that, $349/mo for 0.25-2.4mg doses; $399/mo for HD 7.2mg.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"NovoCare",url:"https://www.novocare.com/wegovy/savings-offer.html"}]},
     withInsurance:{price:"$25/mo",how:"Novo Nordisk savings card",note:"If covered, savings card drops copay to $25/mo. Only 30-40% of commercial plans cover Wegovy for weight loss."},
     doses:[
       {phase:"Month 1",dose:"0.25mg",prices:[{s:"Retail",p:"$1,350",hl:false},{s:"TrumpRx",p:"$199",hl:true},{s:"GoodRx",p:"$199",hl:true}]},
@@ -96,7 +96,7 @@ const medications = [
     coveredFor:"weight management",
     indicationDetail:"Oral semaglutide approved Dec 2025 for weight management. Same ingredient as Wegovy injection in pill form.",
     howItWorks:"Take daily on an empty stomach with a small sip of water. Wait 30 minutes before eating or taking other medications.",
-    selfPay:{price:"$149/mo",where:"TrumpRx, NovoCare, or GoodRx",note:"Starting dose (1.5mg) $149/mo through 8/31/26. Maintenance (25mg) $299/mo. TrumpRx $149/mo at all doses.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"NovoCare",url:"https://www.novocare.com/wegovy/savings-offer.html"}]},
+    selfPay:{price:"$149/mo",where:"TrumpRx, NovoCare, or GoodRx",note:"1.5mg permanently $149/mo. 4mg $149/mo through 8/31/26, then $199/mo. Maintenance 9mg and 25mg are $299/mo on TrumpRx and NovoCare.",links:[{label:"TrumpRx",url:"https://trumprx.gov"},{label:"NovoCare",url:"https://www.novocare.com/wegovy/savings-offer.html"}]},
     withInsurance:{price:"$25/mo",how:"Novo Nordisk savings card",note:"Coverage for oral Wegovy is still emerging. If covered, savings card drops copay to $25/mo."},
     doses:[
       {phase:"Starting",dose:"1.5mg",prices:[{s:"Retail",p:"$1,349",hl:false},{s:"TrumpRx",p:"$149",hl:true},{s:"NovoCare",p:"$149",hl:true}]},
@@ -112,7 +112,7 @@ const medications = [
     coveredFor:"diabetes, sleep apnea",
     indicationDetail:"FDA-approved for Type 2 diabetes and obstructive sleep apnea. Commonly prescribed off-label for weight loss.",
     howItWorks:"Dual GIP/GLP-1 receptor agonist that targets two appetite hormones. Some studies show greater weight loss than semaglutide. Injected once weekly.",
-    selfPay:{price:"$350/mo",where:"TrumpRx",note:"TrumpRx $350/mo flat at all doses. LillyDirect no longer offers Mounjaro through their self-pay program. GoodRx is not competitive for Lilly drugs ($1,097).",links:[{label:"TrumpRx",url:"https://trumprx.gov"}]},
+    selfPay:{price:"$350/mo",where:"TrumpRx",note:"Mounjaro is NOT currently listed on TrumpRx (page returns 404 as of May 2026) and is not offered through LillyDirect self-pay. GoodRx ~$1,097/mo is the only verified self-pay channel. Most patients use commercial insurance + Lilly savings card ($25/mo if covered).",links:[{label:"TrumpRx",url:"https://trumprx.gov"}]},
     withInsurance:{price:"$25/mo",how:"Lilly savings card",note:"$25/mo if covered (max $1,950/yr). Even if NOT covered, up to $499 off per fill (max $8,411/yr, 13 fills). Works either way with commercial insurance."},
     doses:[
       {phase:"Month 1-2",dose:"2.5-5mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"TrumpRx",p:"$350",hl:true}]},
@@ -144,7 +144,7 @@ const medications = [
     coveredFor:"weight management",
     indicationDetail:"FDA-approved April 1, 2026. Newest GLP-1 on the market. 12.4% body weight loss in Phase 3 trials at highest dose (17.2mg).",
     howItWorks:"Oral orforglipron. Unlike the Wegovy pill, does NOT require an empty stomach. Take once daily at any time, with or without food.",
-    selfPay:{price:"$149/mo",where:"LillyDirect, Amazon Pharmacy, or GoodRx",note:"Starting dose (0.8mg) $149/mo. Maintenance (9-17.2mg) $299/mo with 45-day refill, $349/mo standard. The most affordable GLP-1 available.",links:[{label:"LillyDirect",url:"https://www.lillydirect.com"},{label:"Amazon Pharmacy",url:"https://pharmacy.amazon.com"}]},
+    selfPay:{price:"$149/mo",where:"LillyDirect, Amazon Pharmacy, or GoodRx",note:"LillyDirect: 0.8mg $149/mo, 2.5mg $199/mo, 5.5mg and 9mg $299/mo (no refill rule). 14.5mg and 17.2mg are $299/mo with 45-day refill, $349/mo otherwise. Amazon Pharmacy matches at $149/mo cash, $25/mo with insurance. The most affordable GLP-1 available.",links:[{label:"LillyDirect",url:"https://www.lillydirect.com"},{label:"Amazon Pharmacy",url:"https://pharmacy.amazon.com"}]},
     withInsurance:{price:"$25/mo",how:"Lilly savings card",note:"$25/fill, max $100/mo savings, $1,000/yr cap, 10 fills/yr. Foundayo is only weeks old so most insurers haven't made coverage decisions yet."},
     doses:[
       {phase:"Starting",dose:"0.8mg",prices:[{s:"Retail",p:"~$900",hl:false},{s:"LillyDirect",p:"$149",hl:true},{s:"Amazon",p:"$149",hl:true}]},
@@ -1367,7 +1367,7 @@ function GLP1CostFinder() {
       {/* TRUST BAR */}
       <div style={{background:"#fff",borderBottom:"1px solid #e2e8f0",padding:"8px 24px"}}>
         <div style={{maxWidth:720,margin:"0 auto",display:"flex",justifyContent:"center",alignItems:"center",gap:16,flexWrap:"wrap"}}>
-          <span style={{fontSize:11,fontWeight:600,color:"#10b981",display:"flex",alignItems:"center",gap:4}}>&#9679; Prices verified April 2026</span>
+          <span style={{fontSize:11,fontWeight:600,color:"#10b981",display:"flex",alignItems:"center",gap:4}}>&#9679; Prices verified May 2026</span>
           <span style={{fontSize:11,color:"#cbd5e1"}}>|</span>
           <span style={{fontSize:11,color:"#64748b"}}>Sources: FDA, CMS, GoodRx, LillyDirect, NovoCare, TrumpRx.gov</span>
         </div>
@@ -1867,7 +1867,7 @@ function GLP1CostFinder() {
                 {/* DISCLAIMER */}
                 <div style={{background:"#f8fafc",borderRadius:10,padding:16,marginBottom:16}}>
                   <p style={{fontSize:11,color:"#94a3b8",lineHeight:1.7,margin:0}}>
-                    <strong style={{color:"#64748b"}}>Medical disclaimer:</strong> This site provides cost comparison information only and is not medical advice. The condition you selected is used only to show relevant pricing and coverage information. Consult your healthcare provider before starting or changing medication. Prices are estimates and may vary. Data last verified April 2026. Some links are affiliate links.
+                    <strong style={{color:"#64748b"}}>Medical disclaimer:</strong> This site provides cost comparison information only and is not medical advice. The condition you selected is used only to show relevant pricing and coverage information. Consult your healthcare provider before starting or changing medication. Prices are estimates and may vary. Data last verified May 2026. Some links are affiliate links.
                   </p>
                 </div>
 
