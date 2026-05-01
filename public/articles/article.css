@@ -227,7 +227,42 @@ main.article td.strong { color: var(--ink); font-weight: 700; }
   font-weight: 700 !important;
 }
 .related ul { margin: 0; padding-left: 18px; }
-.related li { margin: 0 0 6px; }
+.related li { margin: 0 0 14px; }
+.related li:last-child { margin-bottom: 0; }
+.related li a { font-weight: 600; }
+.related li p.desc { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: var(--body); }
+
+.midcta {
+  margin: 28px 0;
+  padding: 18px 20px 20px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  text-align: center;
+}
+.midcta p.heading {
+  margin: 0 0 4px;
+  font-weight: 800;
+  color: var(--brand);
+  font-size: 16px;
+}
+.midcta p.sub {
+  margin: 0 0 14px;
+  color: var(--body);
+  font-size: 14px;
+}
+.midcta a.btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--brand), var(--brand-alt));
+  color: #fff !important;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(30, 58, 95, 0.2);
+}
+.midcta a.btn:hover { background: var(--brand-alt); }
 
 /* Index page: category cards */
 .index-hero { text-align: center; margin: 8px 0 28px; }
