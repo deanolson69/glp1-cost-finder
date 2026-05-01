@@ -112,12 +112,12 @@ const medications = [
     coveredFor:"diabetes, sleep apnea",
     indicationDetail:"FDA-approved for Type 2 diabetes and obstructive sleep apnea. Commonly prescribed off-label for weight loss.",
     howItWorks:"Dual GIP/GLP-1 receptor agonist that targets two appetite hormones. Some studies show greater weight loss than semaglutide. Injected once weekly.",
-    selfPay:{price:"$350/mo",where:"TrumpRx",note:"Mounjaro is NOT currently listed on TrumpRx (page returns 404 as of May 2026) and is not offered through LillyDirect self-pay. GoodRx ~$1,097/mo is the only verified self-pay channel. Most patients use commercial insurance + Lilly savings card ($25/mo if covered).",links:[{label:"TrumpRx",url:"https://trumprx.gov"}]},
+    selfPay:{price:"$1,097/mo",where:"GoodRx",note:"If you're self-pay, Zepbound (same active ingredient — tirzepatide) is $299/mo and is the right choice for most uninsured patients. Mounjaro itself is NOT on TrumpRx (404) and not offered through LillyDirect self-pay; GoodRx ~$1,097/mo is the only verified Mounjaro self-pay channel. With commercial insurance, the Lilly savings card brings copay to $25/mo (~82% of plans cover Mounjaro for diabetes).",links:[{label:"GoodRx",url:"https://www.goodrx.com/mounjaro"}]},
     withInsurance:{price:"$25/mo",how:"Lilly savings card",note:"$25/mo if covered (max $1,950/yr). Even if NOT covered, up to $499 off per fill (max $8,411/yr, 13 fills). Works either way with commercial insurance."},
     doses:[
-      {phase:"Month 1-2",dose:"2.5-5mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"TrumpRx",p:"$350",hl:true}]},
-      {phase:"Month 3-4",dose:"7.5-10mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"TrumpRx",p:"$350",hl:true}]},
-      {phase:"Month 5+",dose:"12.5-15mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"TrumpRx",p:"$350",hl:true}]}
+      {phase:"Month 1-2",dose:"2.5-5mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"GoodRx",p:"$1,097",hl:false}]},
+      {phase:"Month 3-4",dose:"7.5-10mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"GoodRx",p:"$1,097",hl:false}]},
+      {phase:"Month 5+",dose:"12.5-15mg",prices:[{s:"Retail",p:"$1,070",hl:false},{s:"GoodRx",p:"$1,097",hl:false}]}
     ],
     savingsCard:{copay:"$25/mo (covered) or up to $499 off (not covered)",detail:"Works with commercial insurance whether your plan covers Mounjaro or not. Max 13 fills/yr. Expires 12/31/2026. Not for government insurance or uninsured.",url:"https://mounjaro.lilly.com/savings-resources"},
     pap:{available:false,detail:"Mounjaro is NOT on the Lilly Cares available medications list."}
@@ -795,8 +795,8 @@ const PAGE2_JSONLD = {
       "offers": {
         "@type": "Offer",
         "priceCurrency": "USD",
-        "price": "349",
-        "description": "Monthly self-pay price with vials via Lilly Direct"
+        "price": "1097",
+        "description": "Monthly self-pay price via GoodRx (TrumpRx and LillyDirect no longer offer Mounjaro)"
       }
     }
   ]
