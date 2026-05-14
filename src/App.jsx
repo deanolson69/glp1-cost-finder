@@ -172,7 +172,9 @@ const telehealthOptions = [
   {name:"Noom Med",price:"$149-$349/mo",detail:"GLP-1 from $149 first month, then $349/mo ongoing. Includes behavioral coaching.",url:"https://www.noom.com/med/"},
   {name:"LifeMD",price:"Varies",detail:"Now offering Foundayo. Full medical evaluation included.",url:"https://lifemd.com/"},
   {name:"Yucca Health",price:"$146-$275/mo",detail:"Compounded semaglutide+ from $175 first month. Tirzepatide from $258. No live visit required.",url:"https://track.revoffers.com/aff_c?offer_id=1460&aff_id=12255"},
+  {name:"Oak",price:"From $199/mo",detail:"Physician-guided compounded semaglutide. No insurance or membership fees. Ongoing medical support, direct shipping, available in all 50 states. Pricing varies — check current rates.",url:"https://track.revoffers.com/aff_c?offer_id=1581&aff_id=12255"},
   {name:"Sprout Health",price:"$199-$299/mo",detail:"Compounded semaglutide from $199 first month. Tirzepatide from $249. No hidden fees.",url:"https://track.revoffers.com/aff_c?offer_id=1286&aff_id=12255"},
+  {name:"SHED",price:"From $249/mo",detail:"Compounded semaglutide and tirzepatide with health coaching and supplements bundled. Available in all 50 states. Pricing varies by dose and medication — check current rates.",url:"https://track.revoffers.com/aff_c?offer_id=1516&aff_id=12255"},
   {name:"Strut Health",price:"From $99/mo",detail:"Oral semaglutide from $99/mo with auto-refill. Injectable options available.",url:"https://track.revoffers.com/aff_c?offer_id=384&aff_id=12255"}
 ];
 
