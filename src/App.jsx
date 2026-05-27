@@ -596,24 +596,15 @@ function useCanonical() {
 
 // Appends a JSON-LD <script> to <head> for the lifetime of the component.
 function JsonLd({ data }) {
-  useEffect(() => {
-    const text = JSON.stringify(data);
-    // If the prerender step already inserted this exact JSON-LD into <head>,
-    // adopt that script element instead of duplicating it. Cleanup then
-    // removes it on route change so stale JSON-LD doesn't accumulate during
-    // SPA navigation between prerendered pages.
-    let script = Array.from(
-      document.head.querySelectorAll('script[type="application/ld+json"]')
-    ).find((s) => s.text === text);
-    if (!script) {
-      script = document.createElement("script");
-      script.type = "application/ld+json";
-      script.text = text;
-      document.head.appendChild(script);
-    }
-    return () => { script.remove(); };
-  }, [data]);
-  return null;
+  // Render the JSON-LD script tag directly into the React tree so it appears
+  // in both SSR-rendered HTML (for crawlers) and client-rendered output. Google
+  // accepts JSON-LD anywhere in the document, including inside <body>.
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
 }
 
 // FTC disclosure banner used on the comparison tool and every SEO page.

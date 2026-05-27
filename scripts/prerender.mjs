@@ -1,136 +1,161 @@
 // Build-time prerender pass.
 //
-// 1. Spawns `vite preview` against the just-built dist/.
-// 2. Loads each React-router route in headless Chromium.
-// 3. Waits for #root to render and useEffect side effects to fire (so the
-//    title set by useSeoMeta and the canonical link set by useCanonical are
-//    present in the live DOM).
-// 4. Writes the post-hydration HTML to dist/<route>/index.html so Render's
-//    static-file resolver serves a fully-formed page before any JS executes.
+// Approach: pure-Node SSR (no headless browser needed, works in any Render
+// build environment). Vite produces two builds:
 //
-// Article pages in public/articles/*.html are already static HTML and ship
-// through Vite's public/ copy step; they don't go through this script.
+//   1. `vite build` -> dist/ (client bundle + index.html template)
+//   2. `vite build --ssr src/entry-server.jsx --outDir dist/server`
+//      -> dist/server/entry-server.js (imports App + renderToString)
 //
-// Run via `npm run build` (which chains vite build → this script) or
-// `npm run prerender` standalone after a vite build.
+// This script then:
+//   - imports the SSR bundle's `render(url)` function,
+//   - renders each React route to an HTML string,
+//   - injects route-specific <title>, <meta description>, and canonical link
+//     into the client index.html template,
+//   - writes the result to dist/<route>/index.html so Render's static-file
+//     resolver serves it before the SPA rewrite fires.
+//
+// useSeoMeta and useCanonical run inside useEffect, which doesn't fire during
+// SSR -- so this script injects title/description/canonical from the
+// ROUTES_META table below. Keep that table in sync with the matching values
+// in src/App.jsx (the React components handle client-side navigation; this
+// script handles first-paint HTML). Drift would show up as a mismatch between
+// the prerendered <head> and what a user sees after navigating in-app.
+//
+// JSON-LD is now rendered directly inside the React tree (see JsonLd in
+// App.jsx) so it lands in SSR output automatically. No extra injection here.
+//
+// Article pages in public/articles/*.html are NOT in scope -- they're already
+// static HTML and ship through Vite's public/ copy step.
 
-import puppeteer from "puppeteer";
-import { spawn } from "node:child_process";
-import { setTimeout as sleep } from "node:timers/promises";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
+const ORIGIN = "https://glp1costfinder.com";
 
-const ROUTES = [
-  "/",
-  "/privacy",
-  "/terms",
-  "/contact",
-  "/cheapest-glp1-without-insurance",
-  "/ozempic-vs-mounjaro-cost",
-  "/glp1-self-pay-options",
-];
+const ROUTES_META = {
+  "/": {
+    title: "GLP-1 Cost Finder — Find the Cheapest Way to Get Your GLP-1",
+    description:
+      "Find the cheapest way to get GLP-1 medications like Ozempic, Wegovy, Mounjaro, Zepbound, and Foundayo. Compare real self-pay prices by insurance type and condition. No jargon. No guesswork.",
+  },
+  "/privacy": {
+    title: "Privacy Policy | GLP-1 Cost Finder",
+    description:
+      "How GLP-1 Cost Finder collects, uses, and protects your information. Email capture, analytics, affiliate links, and your rights.",
+  },
+  "/terms": {
+    title: "Terms of Use | GLP-1 Cost Finder",
+    description:
+      "Terms of use for GLP-1 Cost Finder. Site purpose, medical disclaimer, affiliate disclosure, limitations of liability, governing law.",
+  },
+  "/contact": {
+    title: "Contact | GLP-1 Cost Finder",
+    description:
+      "Contact GLP-1 Cost Finder. Email dean@olsoncoaches.com for questions, partnerships, or to report a pricing issue. Response within 48 hours.",
+  },
+  "/cheapest-glp1-without-insurance": {
+    title: "Cheapest GLP-1 Without Insurance in 2026 | GLP-1 Cost Finder",
+    description:
+      "Compare the cheapest ways to get Ozempic, Wegovy, Mounjaro, and Zepbound without insurance. Real self-pay prices from 9+ telehealth providers.",
+  },
+  "/ozempic-vs-mounjaro-cost": {
+    title: "Ozempic vs Mounjaro Cost Comparison 2026 | GLP-1 Cost Finder",
+    description:
+      "Side-by-side cost comparison of Ozempic vs Mounjaro — insurance, copay cards, telehealth, and self-pay prices compared.",
+  },
+  "/glp1-self-pay-options": {
+    title: "GLP-1 Self-Pay Options Ranked by Price | GLP-1 Cost Finder",
+    description:
+      "Every GLP-1 self-pay option ranked by real monthly cost. Telehealth providers, compounding pharmacies, and manufacturer programs compared.",
+  },
+};
 
-const PORT = 4173;
-const HOST = `http://localhost:${PORT}`;
-
-function startPreview() {
-  const isWin = process.platform === "win32";
-  const npxCmd = isWin ? "npx.cmd" : "npx";
-  const child = spawn(
-    npxCmd,
-    ["vite", "preview", "--port", String(PORT), "--strictPort"],
-    {
-      cwd: projectRoot,
-      stdio: ["ignore", "pipe", "pipe"],
-      shell: isWin,
-    }
+const ssrEntryPath = path.join(projectRoot, "dist", "server", "entry-server.js");
+if (!fs.existsSync(ssrEntryPath)) {
+  console.error(`SSR bundle not found at ${ssrEntryPath}`);
+  console.error(
+    `Run "vite build --ssr src/entry-server.jsx --outDir dist/server" first.`
   );
-  child.stdout.on("data", () => {});
-  child.stderr.on("data", () => {});
-  return child;
+  process.exit(1);
 }
 
-async function waitForServer() {
-  for (let i = 0; i < 60; i++) {
-    try {
-      const res = await fetch(`${HOST}/`);
-      if (res.ok) return;
-    } catch (_) {}
-    await sleep(500);
-  }
-  throw new Error("preview server did not become ready in 30 seconds");
+const { render } = await import(pathToFileURL(ssrEntryPath).href);
+const templatePath = path.join(projectRoot, "dist", "index.html");
+const template = fs.readFileSync(templatePath, "utf8");
+
+function escAttr(s) {
+  return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+function escText(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-const preview = startPreview();
+function buildPage(route, meta, appHtml) {
+  const canonical = ORIGIN + route;
+  let out = template
+    .replace(
+      /<title>[\s\S]*?<\/title>/,
+      `<title>${escText(meta.title)}</title>`
+    )
+    .replace(
+      /<meta name="description" content="[^"]*"\s*\/?>/,
+      `<meta name="description" content="${escAttr(meta.description)}" />`
+    )
+    .replace(
+      '<div id="root"></div>',
+      `<div id="root">${appHtml}</div>`
+    );
 
-try {
-  await waitForServer();
-  console.log(`preview server ready on ${HOST}`);
-
-  const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-
-  const failures = [];
-
-  for (const route of ROUTES) {
-    const url = `${HOST}${route}`;
-    process.stdout.write(`prerender ${route.padEnd(38)} `);
-    const page = await browser.newPage();
-    try {
-      await page.goto(url, { waitUntil: "networkidle0", timeout: 30000 });
-
-      // Wait for React to mount AND useEffect side effects to land.
-      await page.waitForFunction(
-        () => {
-          const root = document.getElementById("root");
-          return (
-            root &&
-            root.children.length > 0 &&
-            document.title &&
-            document.title.length > 0
-          );
-        },
-        { timeout: 10000 }
-      );
-
-      // Settle for any trailing effects (canonical link, JSON-LD injection,
-      // any other useEffect-based head mutations).
-      await sleep(300);
-
-      const html = await page.content();
-      const title = await page.title();
-      const outPath =
-        route === "/"
-          ? path.join(projectRoot, "dist", "index.html")
-          : path.join(projectRoot, "dist", route.replace(/^\//, ""), "index.html");
-      fs.mkdirSync(path.dirname(outPath), { recursive: true });
-      fs.writeFileSync(outPath, html);
-      console.log(`→ ${path.relative(projectRoot, outPath)}`);
-      console.log(`    title: "${title}"`);
-    } catch (err) {
-      failures.push({ route, error: err.message });
-      console.log(`FAIL: ${err.message}`);
-    } finally {
-      await page.close();
-    }
-  }
-
-  await browser.close();
-
-  if (failures.length > 0) {
-    console.error("\nprerender failures:");
-    for (const f of failures) console.error(`  ${f.route}: ${f.error}`);
-    process.exitCode = 1;
+  if (/rel="canonical"/.test(out)) {
+    out = out.replace(
+      /<link rel="canonical"[^>]*\/?>/,
+      `<link rel="canonical" href="${canonical}" />`
+    );
   } else {
-    console.log(`\nprerender complete: ${ROUTES.length} routes`);
+    out = out.replace(
+      "</head>",
+      `    <link rel="canonical" href="${canonical}" />\n  </head>`
+    );
   }
-} finally {
-  preview.kill("SIGTERM");
-  // Give the OS a moment to release the port before this script exits.
-  await sleep(500);
+  return out;
 }
+
+const failures = [];
+for (const [route, meta] of Object.entries(ROUTES_META)) {
+  process.stdout.write(`prerender ${route.padEnd(38)} `);
+  let appHtml;
+  try {
+    appHtml = render(route);
+  } catch (err) {
+    failures.push({ route, error: err.message });
+    console.log(`FAIL render: ${err.message}`);
+    continue;
+  }
+
+  const html = buildPage(route, meta, appHtml);
+  const outPath =
+    route === "/"
+      ? path.join(projectRoot, "dist", "index.html")
+      : path.join(projectRoot, "dist", route.slice(1), "index.html");
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, html);
+  console.log(`→ ${path.relative(projectRoot, outPath)}`);
+  console.log(`    title: "${meta.title}"`);
+}
+
+// Clean up the SSR bundle — it's only needed during the build, not deployed.
+const serverDir = path.join(projectRoot, "dist", "server");
+if (fs.existsSync(serverDir)) {
+  fs.rmSync(serverDir, { recursive: true, force: true });
+}
+
+if (failures.length > 0) {
+  console.error("\nprerender failures:");
+  for (const f of failures) console.error(`  ${f.route}: ${f.error}`);
+  process.exit(1);
+}
+console.log(`\nprerender complete: ${Object.keys(ROUTES_META).length} routes`);
