@@ -199,6 +199,10 @@ const allStateCodes = Object.keys(stateData).sort((a,b) => stateData[a].name.loc
 // ─── PRIVACY POLICY PAGE ───
 // Source of truth is privacy-policy.md at repo root; mirror changes here.
 function PrivacyPage() {
+  useSeoMeta(
+    "Privacy Policy | GLP-1 Cost Finder",
+    "How GLP-1 Cost Finder collects, uses, and protects your information. Email capture, analytics, affiliate links, and your rights."
+  );
   const { wrap, inner, h1, h2, h3, p, ul, hr, link, backBtn } = legalStyles;
   return (
     <div style={wrap}>
@@ -394,6 +398,10 @@ const legalStyles = {
 
 // ─── TERMS OF USE PAGE ───
 function TermsPage() {
+  useSeoMeta(
+    "Terms of Use | GLP-1 Cost Finder",
+    "Terms of use for GLP-1 Cost Finder. Site purpose, medical disclaimer, affiliate disclosure, limitations of liability, governing law."
+  );
   const s = legalStyles;
   return (
     <div style={s.wrap}>
@@ -468,6 +476,10 @@ function TermsPage() {
 
 // ─── CONTACT PAGE ───
 function ContactPage() {
+  useSeoMeta(
+    "Contact | GLP-1 Cost Finder",
+    "Contact GLP-1 Cost Finder. Email dean@olsoncoaches.com for questions, partnerships, or to report a pricing issue. Response within 48 hours."
+  );
   const s = legalStyles;
   return (
     <div style={s.wrap}>
@@ -585,10 +597,20 @@ function useCanonical() {
 // Appends a JSON-LD <script> to <head> for the lifetime of the component.
 function JsonLd({ data }) {
   useEffect(() => {
-    const script = document.createElement("script");
-    script.type = "application/ld+json";
-    script.text = JSON.stringify(data);
-    document.head.appendChild(script);
+    const text = JSON.stringify(data);
+    // If the prerender step already inserted this exact JSON-LD into <head>,
+    // adopt that script element instead of duplicating it. Cleanup then
+    // removes it on route change so stale JSON-LD doesn't accumulate during
+    // SPA navigation between prerendered pages.
+    let script = Array.from(
+      document.head.querySelectorAll('script[type="application/ld+json"]')
+    ).find((s) => s.text === text);
+    if (!script) {
+      script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.text = text;
+      document.head.appendChild(script);
+    }
     return () => { script.remove(); };
   }, [data]);
   return null;
@@ -686,8 +708,8 @@ function CheapestGlp1WithoutInsurance() {
   const s = legalStyles;
   return (
     <SeoPageLayout
-      title="Cheapest GLP-1 Without Insurance: 2026 Price Guide"
-      description="Compare GLP-1 costs without insurance. Find affordable semaglutide, tirzepatide & other options from $117-$499/month. Manufacturer discounts & savings programs inside."
+      title="Cheapest GLP-1 Without Insurance in 2026 | GLP-1 Cost Finder"
+      description="Compare the cheapest ways to get Ozempic, Wegovy, Mounjaro, and Zepbound without insurance. Real self-pay prices from 9+ telehealth providers."
       h1="Cheapest GLP-1 Without Insurance: Your 2026 Pricing Guide"
       jsonLd={PAGE1_JSONLD}
       ctaLabel="Compare GLP-1 Prices Now"
@@ -809,8 +831,8 @@ function OzempicVsMounjaroCost() {
   const t = tableStyles;
   return (
     <SeoPageLayout
-      title="Ozempic vs Mounjaro Cost: 2026 Price Comparison"
-      description="Compare Ozempic vs Mounjaro costs for 2026. See self-pay pricing, insurance coverage, manufacturer programs & how to get the best price on each medication."
+      title="Ozempic vs Mounjaro Cost Comparison 2026 | GLP-1 Cost Finder"
+      description="Side-by-side cost comparison of Ozempic vs Mounjaro — insurance, copay cards, telehealth, and self-pay prices compared."
       h1="Ozempic vs Mounjaro Cost: Complete 2026 Price Comparison"
       jsonLd={PAGE2_JSONLD}
       ctaLabel="Find Your Best Price"
@@ -975,8 +997,8 @@ function Glp1SelfPayOptions() {
   const t = tableStyles;
   return (
     <SeoPageLayout
-      title="Affordable GLP-1 Self-Pay Options: Complete 2026 Guide"
-      description="Explore affordable GLP-1 self-pay options in 2026: from compounded semaglutide to brand-name vials. Find which option fits your budget & needs."
+      title="GLP-1 Self-Pay Options Ranked by Price | GLP-1 Cost Finder"
+      description="Every GLP-1 self-pay option ranked by real monthly cost. Telehealth providers, compounding pharmacies, and manufacturer programs compared."
       h1="Affordable GLP-1 Self-Pay Options: Your Complete 2026 Guide"
       jsonLd={PAGE3_JSONLD}
       ctaLabel="Find My Best Self-Pay Option"
