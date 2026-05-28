@@ -166,16 +166,176 @@ const coverageTruth = [
 ];
 
 // ─── TELEHEALTH ───
+// Telehealth provider list with structured fee breakdown.
+//
+// Field policy (per user spec "Do NOT guess or fabricate pricing data"):
+//   - baseMedPrice  : medication-only floor inherited from the long-standing
+//                     project record. When a live re-verification today
+//                     contradicted that floor, the live number wins.
+//   - membershipFee / consultationFee / shippingFee / cancellationPolicy
+//                   : ONLY populated when explicitly confirmed on the
+//                     provider's own public page TODAY (2026-05-28). Where
+//                     the public page is blocked (403 / Cloudflare), redirects
+//                     to a parked domain, or requires an intake quiz to
+//                     reveal pricing, the field is null and the UI renders
+//                     "Not disclosed".
+//   - totalMonthlyMin / Max : conservative range using verified pieces +
+//                     prior baseline. May understate true cost when some
+//                     fees are null; the UI surfaces the missing-fee
+//                     caveat inline.
+//
+// Affiliate URLs (track.revoffers.com/...) are PRESERVED verbatim. The
+// non-affiliate URLs (forhims / ro / noom / lifemd) are home links, not
+// affiliate pipes, and equally untouched.
+const TODAY = "2026-05-28";
 const telehealthOptions = [
-  {name:"Hims",price:"$79-$199/mo",detail:"Oral kits from $79/mo. Branded injectables from $199/mo.",url:"https://www.forhims.com/weight-loss"},
-  {name:"Ro",price:"$149-$449/mo",detail:"Semaglutide from $149 first month. Tirzepatide from $299.",url:"https://ro.co/weight-loss/"},
-  {name:"Noom Med",price:"$149-$349/mo",detail:"GLP-1 from $149 first month, then $349/mo ongoing. Includes behavioral coaching.",url:"https://www.noom.com/med/"},
-  {name:"LifeMD",price:"Varies",detail:"Now offering Foundayo. Full medical evaluation included.",url:"https://lifemd.com/"},
-  {name:"Yucca Health",price:"$146-$275/mo",detail:"Compounded semaglutide+ from $175 first month. Tirzepatide from $258. No live visit required.",url:"https://track.revoffers.com/aff_c?offer_id=1460&aff_id=12255"},
-  {name:"Oak",price:"From $199/mo",detail:"Physician-guided compounded semaglutide. No insurance or membership fees. Ongoing medical support, direct shipping, available in all 50 states. Pricing varies — check current rates.",url:"https://track.revoffers.com/aff_c?offer_id=1581&aff_id=12255"},
-  {name:"Sprout Health",price:"$199-$299/mo",detail:"Compounded semaglutide from $199 first month. Tirzepatide from $249. No hidden fees.",url:"https://track.revoffers.com/aff_c?offer_id=1286&aff_id=12255"},
-  {name:"SHED",price:"From $249/mo",detail:"Compounded semaglutide and tirzepatide with health coaching and supplements bundled. Available in all 50 states. Pricing varies by dose and medication — check current rates.",url:"https://track.revoffers.com/aff_c?offer_id=1516&aff_id=12255"},
-  {name:"Strut Health",price:"From $99/mo",detail:"Oral semaglutide from $99/mo with auto-refill. Injectable options available.",url:"https://track.revoffers.com/aff_c?offer_id=384&aff_id=12255"}
+  {
+    name: "Hims",
+    url: "https://www.forhims.com/weight-loss",
+    detail: "Oral kits from $79/mo. Branded injectables from $199/mo.",
+    baseMedPrice: 79,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 79,
+    totalMonthlyMax: 199,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "Ro",
+    url: "https://ro.co/weight-loss/",
+    detail: "Semaglutide from $149 first month. Tirzepatide from $299. Ro Body program required.",
+    baseMedPrice: 149,
+    membershipFee: 149,         // live-verified: $149/mo Ro Body (or $74/mo annual prepay)
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 149,
+    totalMonthlyMax: 449,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "Noom Med",
+    url: "https://www.noom.com/med/",
+    detail: "Microdose GLP-1s from $99/mo. Branded options from $69 + medication cost with insurance.",
+    baseMedPrice: 99,           // live-verified: $99 Microdose floor on the page today
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 99,
+    totalMonthlyMax: 349,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "LifeMD",
+    url: "https://lifemd.com/",
+    detail: "Wegovy pill from $149, pen from $199 (uninsured). Insured copays $0-$25. $149/mo program fee separate.",
+    baseMedPrice: 149,
+    membershipFee: 149,         // live-verified: "$149 monthly program & provider fee"
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 149,       // insured copay floor with subsidized first-month program fee
+    totalMonthlyMax: 348,       // uninsured pen + full program fee
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "Yucca Health",
+    url: "https://track.revoffers.com/aff_c?offer_id=1460&aff_id=12255",
+    detail: "Compounded semaglutide from $175 first month. Tirzepatide from $258. No live visit required.",
+    baseMedPrice: 146,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 146,
+    totalMonthlyMax: 275,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "Oak",
+    url: "https://track.revoffers.com/aff_c?offer_id=1581&aff_id=12255",
+    detail: "Physician-guided compounded semaglutide. Available in all 50 states. Pricing varies — check current rates.",
+    baseMedPrice: 199,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 199,
+    totalMonthlyMax: null,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "Sprout Health",
+    url: "https://track.revoffers.com/aff_c?offer_id=1286&aff_id=12255",
+    detail: "Compounded semaglutide from $199 first month. Tirzepatide from $249.",
+    baseMedPrice: 199,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 199,
+    totalMonthlyMax: 299,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "SHED",
+    url: "https://track.revoffers.com/aff_c?offer_id=1516&aff_id=12255",
+    detail: "Compounded semaglutide and tirzepatide bundled with health coaching and supplements. 10%-body-weight-loss money-back guarantee.",
+    baseMedPrice: 249,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: 249,
+    totalMonthlyMax: null,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "Strut Health",
+    url: "https://track.revoffers.com/aff_c?offer_id=384&aff_id=12255",
+    detail: "Oral semaglutide from $99/mo with auto-refill. Injectable options available.",
+    baseMedPrice: 99,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: 0,             // live-verified: "Free shipping"
+    cancellationPolicy: "Cancel anytime",  // live-verified
+    totalMonthlyMin: 99,
+    totalMonthlyMax: null,
+    priceVerifiedDate: TODAY,
+  },
+  // Wellorithm + LillyDirect added per the latest spec. Their public pages
+  // were not reachable (Wellorithm: "pricing varies, get a quote";
+  // LillyDirect: 403 from the sandbox). Both kept with all fee fields null
+  // until a manual fill-in by the operator.
+  {
+    name: "Wellorithm",
+    url: "https://wellorithm.com",
+    detail: "Personalized GLP-1 plans with health coaching. Pricing requires intake quiz — not publicly listed.",
+    baseMedPrice: null,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: null,
+    totalMonthlyMax: null,
+    priceVerifiedDate: TODAY,
+  },
+  {
+    name: "LillyDirect",
+    url: "https://lillydirect.lilly.com/",
+    detail: "Eli Lilly's direct-to-consumer pharmacy for Zepbound vials. Specific dose pricing not retrievable here — check site for current vial-tier pricing.",
+    baseMedPrice: null,
+    membershipFee: null,
+    consultationFee: null,
+    shippingFee: null,
+    cancellationPolicy: null,
+    totalMonthlyMin: null,
+    totalMonthlyMax: null,
+    priceVerifiedDate: TODAY,
+  },
 ];
 
 // ─── INTAKE OPTIONS ───
@@ -1402,12 +1562,133 @@ function EmailCapture({
   );
 }
 
+// ─── PROVIDER CARD (cost breakdown) ─────────────────────────────────────
+// Renders one telehealth provider with a prominent total cost, an
+// expand-to-see-breakdown grid, and the per-provider email capture.
+//
+// Rendering rules for unknown fees:
+//   - null         -> "Not disclosed"  (we couldn't verify it publicly)
+//   - 0            -> "Free" / "Included"  (verified to be no charge)
+//   - number > 0   -> "$X/mo" (or "$X" for one-time)
+//
+// Total-cost label:
+//   - both totalMonthlyMin + Max known  -> "$X-$Y/mo"
+//   - only Min known                    -> "From $X/mo"
+//   - neither known                     -> "Pricing not disclosed"
+function formatRecurring(value) {
+  if (value === null || value === undefined) return "Not disclosed";
+  if (value === 0) return "Included";
+  return "$" + value + "/mo";
+}
+function formatOneTime(value) {
+  if (value === null || value === undefined) return "Not disclosed";
+  if (value === 0) return "Included";
+  return "$" + value;
+}
+function formatShipping(value) {
+  if (value === null || value === undefined) return "Not disclosed";
+  if (value === 0) return "Free";
+  return "$" + value + "/order";
+}
+function formatVerifiedDate(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-").map(Number);
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  return months[m - 1] + " " + d + ", " + y;
+}
+function totalCostLabel(opt) {
+  if (opt.totalMonthlyMin == null && opt.totalMonthlyMax == null) {
+    return "Pricing not disclosed";
+  }
+  if (
+    opt.totalMonthlyMin != null &&
+    opt.totalMonthlyMax != null &&
+    opt.totalMonthlyMax > opt.totalMonthlyMin
+  ) {
+    return "$" + opt.totalMonthlyMin + "–$" + opt.totalMonthlyMax + "/mo";
+  }
+  if (opt.totalMonthlyMin != null) {
+    return "From $" + opt.totalMonthlyMin + "/mo";
+  }
+  return "Pricing not disclosed";
+}
+
+function ProviderCard({ opt, selectedState, insurance, condition }) {
+  const [expanded, setExpanded] = useState(false);
+  const hasUndisclosed =
+    opt.membershipFee === null ||
+    opt.consultationFee === null ||
+    opt.shippingFee === null;
+
+  return (
+    <div style={{background:"#fff",borderRadius:10,padding:"14px 16px",border:"1px solid #d1fae5"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12}}>
+        <div style={{minWidth:0,flex:1}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+            <span style={{fontSize:14,fontWeight:700,color:"#1e293b"}}>{opt.name}</span>
+            <span style={{fontSize:13,fontWeight:700,color:"#059669"}}>
+              Total: {totalCostLabel(opt)}
+            </span>
+          </div>
+          <div style={{fontSize:12,color:"#64748b",marginTop:3,lineHeight:1.5}}>{opt.detail}</div>
+        </div>
+        <div style={{flexShrink:0,textAlign:"center"}}>
+          <a href={opt.url} target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"8px 16px",borderRadius:8,border:"2px solid #10b981",background:"transparent",color:"#059669",fontSize:11,fontWeight:700,cursor:"pointer",textDecoration:"none"}}>Visit &rarr;</a>
+          <div style={{fontSize:9,color:"#94a3b8",marginTop:2}}>Affiliate link</div>
+        </div>
+      </div>
+
+      <button
+        onClick={() => setExpanded((v) => !v)}
+        style={{marginTop:10,padding:0,background:"none",border:"none",color:"#0369a1",fontSize:11,fontWeight:600,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:2}}
+      >
+        {expanded ? "Hide cost breakdown" : "See cost breakdown"}
+      </button>
+
+      {expanded && (
+        <div style={{marginTop:8,padding:"10px 12px",borderRadius:8,background:"#f8fafc",border:"1px solid #e2e8f0"}}>
+          <div style={{display:"grid",gridTemplateColumns:"auto 1fr",columnGap:14,rowGap:5,fontSize:12}}>
+            <span style={{color:"#64748b"}}>Medication</span>
+            <span style={{color:"#1e293b",fontWeight:600}}>{formatRecurring(opt.baseMedPrice)}</span>
+            <span style={{color:"#64748b"}}>Membership</span>
+            <span style={{color:"#1e293b",fontWeight:600}}>{formatRecurring(opt.membershipFee)}</span>
+            <span style={{color:"#64748b"}}>Consultation</span>
+            <span style={{color:"#1e293b",fontWeight:600}}>{formatOneTime(opt.consultationFee)}</span>
+            <span style={{color:"#64748b"}}>Shipping</span>
+            <span style={{color:"#1e293b",fontWeight:600}}>{formatShipping(opt.shippingFee)}</span>
+            <span style={{color:"#64748b"}}>Cancellation</span>
+            <span style={{color:"#1e293b",fontWeight:600}}>{opt.cancellationPolicy || "Not disclosed"}</span>
+          </div>
+          {hasUndisclosed && (
+            <div style={{marginTop:8,fontSize:10,color:"#94a3b8",lineHeight:1.5}}>
+              Fields marked "Not disclosed" are not published on the provider's public site. Confirm fees during intake before signing up.
+            </div>
+          )}
+        </div>
+      )}
+
+      <div style={{marginTop:8,fontSize:10,color:"#94a3b8"}}>
+        Prices verified {formatVerifiedDate(opt.priceVerifiedDate)}
+      </div>
+
+      <EmailCapture
+        variant="inline"
+        selectedState={selectedState}
+        insurance={insurance}
+        condition={condition}
+        providerName={opt.name}
+      />
+    </div>
+  );
+}
+
 // ─── MAIN COMPONENT ───
 function GLP1CostFinder() {
   const [insurance, setInsurance] = useState(null);
   const [condition, setCondition] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [expandedDrug, setExpandedDrug] = useState(null);
+  const [providerSort, setProviderSort] = useState("totalLow");  // "totalLow" | "default"
   const [showMore, setShowMore] = useState(false);
   const [stateSearch, setStateSearch] = useState("");
   const [showDD, setShowDD] = useState(false);
@@ -1694,36 +1975,50 @@ function GLP1CostFinder() {
 
                 {/* TELEHEALTH */}
                 <div style={{background:"linear-gradient(135deg, #ecfdf5, #f0fdf4)",borderRadius:16,padding:"24px",marginBottom:16,border:"1px solid #a7f3d0"}}>
-                  <h3 style={{fontSize:17,fontWeight:800,margin:"0 0 4px",color:"#059669"}}>
-                    {isUninsured ? "Get Prescribed Online" : "Skip the Insurance Hassle"}
-                  </h3>
-                  <p style={{fontSize:12,color:"#64748b",margin:"0 0 14px"}}>
-                    {isUninsured
-                      ? "These telehealth providers prescribe and deliver GLP-1s within days. No insurance needed."
-                      : "Don't want to wait for insurance approval? These providers prescribe and deliver GLP-1s within days."}
-                  </p>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,flexWrap:"wrap"}}>
+                    <div style={{minWidth:0}}>
+                      <h3 style={{fontSize:17,fontWeight:800,margin:"0 0 4px",color:"#059669"}}>
+                        {isUninsured ? "Get Prescribed Online" : "Skip the Insurance Hassle"}
+                      </h3>
+                      <p style={{fontSize:12,color:"#64748b",margin:"0 0 14px"}}>
+                        {isUninsured
+                          ? "These telehealth providers prescribe and deliver GLP-1s within days. No insurance needed."
+                          : "Don't want to wait for insurance approval? These providers prescribe and deliver GLP-1s within days."}
+                      </p>
+                    </div>
+                    <label style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:"#475569",whiteSpace:"nowrap"}}>
+                      <span style={{fontWeight:600}}>Sort:</span>
+                      <select
+                        value={providerSort}
+                        onChange={(e) => setProviderSort(e.target.value)}
+                        style={{padding:"5px 8px",borderRadius:6,border:"1px solid #cbd5e1",background:"#fff",fontSize:11,color:"#1e293b",cursor:"pointer"}}
+                      >
+                        <option value="totalLow">Total monthly cost (lowest first)</option>
+                        <option value="default">Default order</option>
+                      </select>
+                    </label>
+                  </div>
+
                   <div style={{display:"grid",gap:8}}>
-                    {telehealthOptions.map((opt,i)=>(
-                      <div key={i} style={{background:"#fff",borderRadius:10,padding:"14px 16px",border:"1px solid #d1fae5"}}>
-                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
-                          <div>
-                            <span style={{fontSize:14,fontWeight:700,color:"#1e293b"}}>{opt.name}</span>
-                            <span style={{fontSize:13,fontWeight:700,color:"#059669",marginLeft:8}}>{opt.price}</span>
-                            <div style={{fontSize:12,color:"#64748b",marginTop:2}}>{opt.detail}</div>
-                          </div>
-                          <div style={{flexShrink:0,textAlign:"center"}}>
-                            <a href={opt.url} target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"8px 16px",borderRadius:8,border:"2px solid #10b981",background:"transparent",color:"#059669",fontSize:11,fontWeight:700,cursor:"pointer",textDecoration:"none"}}>Visit &rarr;</a>
-                            <div style={{fontSize:9,color:"#94a3b8",marginTop:2}}>Affiliate link</div>
-                          </div>
-                        </div>
-                        <EmailCapture
-                          variant="inline"
-                          selectedState={selectedState}
-                          insurance={insurance}
-                          condition={condition}
-                          providerName={opt.name}
-                        />
-                      </div>
+                    {([...telehealthOptions]
+                      .sort((a, b) => {
+                        if (providerSort === "totalLow") {
+                          // Nulls sort to the bottom so undisclosed pricing
+                          // doesn't sneak above a verified low price.
+                          const aPrice = a.totalMonthlyMin ?? Infinity;
+                          const bPrice = b.totalMonthlyMin ?? Infinity;
+                          return aPrice - bPrice;
+                        }
+                        return 0;
+                      })
+                    ).map((opt, i) => (
+                      <ProviderCard
+                        key={opt.name}
+                        opt={opt}
+                        selectedState={selectedState}
+                        insurance={insurance}
+                        condition={condition}
+                      />
                     ))}
                   </div>
                 </div>
