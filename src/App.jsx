@@ -1184,16 +1184,183 @@ export default function App() {
   );
 }
 
+// ─── EMAIL CAPTURE (reusable, non-blocking) ───
+// Submits to the same Mailchimp list with the same MERGE fields the old gated
+// form used (STATE, INSTYPE, CONDITION). variant="banner" is the downstream
+// "price drop alerts" card; variant="inline" is the per-provider expand-on-click
+// form on each telehealth card. Provider name is shown in the UI for context
+// but not submitted as a separate MERGE field -- the audience doesn't have a
+// PROVIDER field set up, and adding unknown fields causes Mailchimp to reject
+// the submission. Segmentation by provider can be added later by setting up a
+// PROVIDER merge field in Mailchimp and passing it through here.
+function EmailCapture({
+  selectedState,
+  insurance,
+  condition,
+  variant = "banner",
+  headline,
+  description,
+  buttonLabel = "Subscribe",
+  providerName,
+}) {
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
+  const [error, setError] = useState("");
+  const [expanded, setExpanded] = useState(false);
+
+  const submit = () => {
+    if (!email || !email.includes("@") || !email.includes(".")) {
+      setError("Please enter a valid email");
+      return;
+    }
+    setError("");
+    setSubmitting(true);
+
+    const baseUrl = "https://olsoncoaches.us16.list-manage.com/subscribe/post-json";
+    const params = new URLSearchParams({
+      u: "de1492a2adba6ccde526379b6",
+      id: "83c9757d1b",
+      f_id: "00212be0f0",
+      EMAIL: email,
+      STATE: selectedState || "",
+      INSTYPE: insurance || "",
+      CONDITION: condition || "",
+      "b_de1492a2adba6ccde526379b6_83c9757d1b": "",
+    });
+
+    const callbackName = "mc_callback_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
+    let settled = false;
+    const cleanup = () => {
+      if (settled) return;
+      settled = true;
+      setSubmitting(false);
+      try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+      const s = document.getElementById(callbackName);
+      if (s) s.remove();
+    };
+
+    window[callbackName] = (data) => {
+      if (data && data.result === "success") {
+        setSubmitted(true);
+      } else if (data && data.msg && /already subscribed/i.test(data.msg)) {
+        setAlreadySubscribed(true);
+        setSubmitted(true);
+      } else {
+        setError("Subscription failed. Please try again.");
+      }
+      cleanup();
+    };
+
+    const script = document.createElement("script");
+    script.id = callbackName;
+    script.src = baseUrl + "?" + params.toString() + "&c=" + callbackName;
+    script.onerror = () => {
+      setError("Something went wrong, please try again.");
+      cleanup();
+    };
+    document.body.appendChild(script);
+
+    setTimeout(() => {
+      if (!settled) {
+        setError("Something went wrong, please try again.");
+        cleanup();
+      }
+    }, 8000);
+  };
+
+  // ── INLINE (per-provider) ──
+  if (variant === "inline") {
+    if (submitted) {
+      return (
+        <div style={{fontSize:11,color:"#059669",fontWeight:600,marginTop:8}}>
+          {alreadySubscribed
+            ? "✓ You're already on the list — we'll keep you posted."
+            : "✓ Got it. We'll alert you when " + (providerName || "this provider") + " moves on price."}
+        </div>
+      );
+    }
+    if (!expanded) {
+      return (
+        <button
+          onClick={() => setExpanded(true)}
+          style={{marginTop:8,padding:0,background:"none",border:"none",color:"#0369a1",fontSize:11,fontWeight:600,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:2}}
+        >
+          Get price alerts for {providerName}
+        </button>
+      );
+    }
+    return (
+      <div style={{marginTop:8,display:"flex",flexDirection:"column",gap:4}}>
+        <div style={{display:"flex",gap:6}}>
+          <input
+            type="email"
+            placeholder={"Email for " + providerName + " alerts"}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && !submitting && submit()}
+            disabled={submitting}
+            style={{flex:1,padding:"6px 10px",borderRadius:6,border:error?"1px solid #f43f5e":"1px solid #cbd5e1",fontSize:12,background:"#fff",color:"#1e293b",minWidth:0}}
+          />
+          <button
+            onClick={submit}
+            disabled={submitting}
+            style={{padding:"6px 12px",borderRadius:6,border:"none",background:"#0369a1",color:"#fff",fontSize:11,fontWeight:700,cursor:submitting?"wait":"pointer",whiteSpace:"nowrap",opacity:submitting?0.7:1}}
+          >
+            {submitting ? "…" : "Alert me"}
+          </button>
+        </div>
+        {error && <div style={{color:"#f43f5e",fontSize:10}}>{error}</div>}
+      </div>
+    );
+  }
+
+  // ── BANNER (downstream) ──
+  if (submitted) {
+    return (
+      <div style={{background:"#f0fdf4",borderRadius:12,padding:"14px 18px",marginBottom:16,textAlign:"center",border:"1px solid #bbf7d0"}}>
+        <span style={{fontSize:13,color:"#059669",fontWeight:600}}>
+          {alreadySubscribed
+            ? "✓ You're already subscribed — we'll keep sending you alerts."
+            : "✓ You're in. We'll email you when GLP-1 prices move."}
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div style={{background:"#fff",borderRadius:16,padding:"22px 24px",marginBottom:16,boxShadow:"0 1px 3px rgba(0,0,0,.06)",border:"1px solid #e2e8f0"}}>
+      <div style={{fontSize:16,fontWeight:800,color:"#1e293b",marginBottom:4}}>{headline}</div>
+      <div style={{fontSize:13,color:"#64748b",marginBottom:14,lineHeight:1.55}}>{description}</div>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+        <input
+          type="email"
+          placeholder="Your email address"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && !submitting && submit()}
+          disabled={submitting}
+          style={{flex:"1 1 200px",padding:"10px 14px",borderRadius:8,border:error?"2px solid #f43f5e":"1px solid #cbd5e1",background:"#fff",color:"#1e293b",fontSize:14,minWidth:0}}
+        />
+        <button
+          onClick={submit}
+          disabled={submitting}
+          style={{padding:"10px 20px",borderRadius:8,border:"none",background:"#0369a1",color:"#fff",fontSize:13,fontWeight:700,cursor:submitting?"wait":"pointer",whiteSpace:"nowrap",opacity:submitting?0.7:1}}
+        >
+          {submitting ? "Sending…" : buttonLabel}
+        </button>
+      </div>
+      {error && <div style={{color:"#f43f5e",fontSize:12,marginTop:6}}>{error}</div>}
+      <div style={{fontSize:11,color:"#94a3b8",marginTop:8}}>No spam. Unsubscribe anytime.</div>
+    </div>
+  );
+}
+
 // ─── MAIN COMPONENT ───
 function GLP1CostFinder() {
   const [insurance, setInsurance] = useState(null);
   const [condition, setCondition] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
-  const [email, setEmail] = useState("");
-  const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [emailSubmitting, setEmailSubmitting] = useState(false);
-  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
   const [expandedDrug, setExpandedDrug] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const [stateSearch, setStateSearch] = useState("");
@@ -1248,71 +1415,8 @@ function GLP1CostFinder() {
 
   const selectState = (c) => { setSelectedState(c); setStateSearch(stateData[c].name); setShowDD(false); };
 
-  const handleEmail = () => {
-    if (!email || !email.includes("@") || !email.includes(".")) {
-      setEmailError("Please enter a valid email");
-      return;
-    }
-    setEmailError("");
-    setEmailSubmitting(true);
-
-    const baseUrl = "https://olsoncoaches.us16.list-manage.com/subscribe/post-json";
-    // Parameter names match the field tags from Mailchimp's own embed code.
-    const params = new URLSearchParams({
-      u: "de1492a2adba6ccde526379b6",
-      id: "83c9757d1b",
-      f_id: "00212be0f0",
-      EMAIL: email,
-      STATE: selectedState || "",
-      INSTYPE: insurance || "",
-      CONDITION: condition || "",
-      "b_de1492a2adba6ccde526379b6_83c9757d1b": "",
-    });
-
-    const callbackName = "mc_callback_" + Date.now();
-    let settled = false;
-    const cleanup = () => {
-      if (settled) return;
-      settled = true;
-      setEmailSubmitting(false);
-      try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
-      const s = document.getElementById(callbackName);
-      if (s) s.remove();
-    };
-
-    window[callbackName] = (data) => {
-      if (data && data.result === "success") {
-        setEmailSubmitted(true);
-      } else if (data && data.msg && /already subscribed/i.test(data.msg)) {
-        setAlreadySubscribed(true);
-        setEmailSubmitted(true);
-      } else {
-        setEmailError("Subscription failed. Please try again.");
-      }
-      cleanup();
-    };
-
-    const script = document.createElement("script");
-    script.id = callbackName;
-    script.src = baseUrl + "?" + params.toString() + "&c=" + callbackName;
-    script.onerror = () => {
-      setEmailError("Something went wrong, please try again.");
-      cleanup();
-    };
-    document.body.appendChild(script);
-
-    setTimeout(() => {
-      if (!settled) {
-        setEmailError("Something went wrong, please try again.");
-        cleanup();
-      }
-    }, 8000);
-  };
-
   const startOver = () => {
     setInsurance(null); setCondition(null); setSelectedState(null);
-    setEmail(""); setEmailSubmitted(false); setEmailError("");
-    setEmailSubmitting(false); setAlreadySubscribed(false);
     setExpandedDrug(null); setShowMore(false); setStateSearch(""); setShowDD(false);
   };
 
@@ -1520,50 +1624,8 @@ function GLP1CostFinder() {
               </div>
             </div>
 
-            {/* EMAIL SOFT GATE */}
-            {!emailSubmitted ? (
-              <div style={{background:"#fff",borderRadius:16,padding:"28px 24px",marginBottom:16,boxShadow:"0 2px 8px rgba(0,0,0,.08)",textAlign:"center",border:"1px solid #e2e8f0"}}>
-                <div style={{fontSize:18,fontWeight:800,color:"#1e293b",marginBottom:6}}>See where to get this price</div>
-                <div style={{fontSize:13,color:"#64748b",marginBottom:16,maxWidth:400,margin:"0 auto 16px"}}>Enter your email to unlock pharmacy links, telehealth options, step-by-step instructions, and price drop alerts.</div>
-                <div style={{display:"flex",gap:8,maxWidth:440,margin:"0 auto"}}>
-                  <input type="email" placeholder="Your email address" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!emailSubmitting&&handleEmail()} disabled={emailSubmitting}
-                    style={{flex:1,padding:"12px 16px",borderRadius:10,border:emailError?"2px solid #f43f5e":"1px solid #e2e8f0",background:"#fff",color:"#1e293b",fontSize:15}}/>
-                  <button onClick={handleEmail} disabled={emailSubmitting} style={{padding:"12px 24px",borderRadius:10,border:"none",background:"#3b82f6",color:"#fff",fontSize:14,fontWeight:700,cursor:emailSubmitting?"wait":"pointer",whiteSpace:"nowrap",opacity:emailSubmitting?0.7:1}}>{emailSubmitting?"Sending\u2026":"Unlock"}</button>
-                </div>
-                {emailError && <div style={{color:"#f43f5e",fontSize:12,marginTop:6}}>{emailError}</div>}
-                <div style={{fontSize:11,color:"#94a3b8",marginTop:10}}>No spam. Unsubscribe anytime. We never share your email.</div>
-
-                {/* BLURRED PREVIEW */}
-                <div style={{marginTop:20,position:"relative",overflow:"hidden",borderRadius:12,height:180}}>
-                  <div style={{filter:"blur(6px)",opacity:.5,pointerEvents:"none",padding:16}}>
-                    <div style={{background:"#f0fdf4",borderRadius:10,padding:14,marginBottom:8,textAlign:"left",borderLeft:"3px solid #10b981"}}>
-                      <div style={{fontSize:13,fontWeight:700,color:"#059669"}}>Step-by-step instructions</div>
-                      <div style={{fontSize:12,color:"#64748b"}}>Personalized next steps based on your insurance...</div>
-                    </div>
-                    <div style={{background:"#eff6ff",borderRadius:10,padding:14,marginBottom:8,textAlign:"left",borderLeft:"3px solid #3b82f6"}}>
-                      <div style={{fontSize:13,fontWeight:700,color:"#1d4ed8"}}>Pharmacy links and pricing</div>
-                      <div style={{fontSize:12,color:"#64748b"}}>Direct links to the lowest prices at each pharmacy...</div>
-                    </div>
-                    <div style={{background:"#ecfdf5",borderRadius:10,padding:14,textAlign:"left",borderLeft:"3px solid #10b981"}}>
-                      <div style={{fontSize:13,fontWeight:700,color:"#059669"}}>Telehealth providers</div>
-                      <div style={{fontSize:12,color:"#64748b"}}>Get prescribed and delivered within days...</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div style={{background:"#f0fdf4",borderRadius:12,padding:"12px 16px",marginBottom:16,textAlign:"center",border:"1px solid #bbf7d0"}}>
-                <span style={{fontSize:13,color:"#059669",fontWeight:600}}>
-                  {alreadySubscribed
-                    ? "\u2713 You're already subscribed \u2014 here's your full results."
-                    : "\u2713 We'll send price alerts to " + email}
-                </span>
-              </div>
-            )}
-
-            {/* ====== GATED CONTENT ====== */}
-            {emailSubmitted && (
-              <div className="fade-up">
+            {/* ====== RESULTS (no longer gated; visible immediately) ====== */}
+            <div className="fade-up">
 
                 {/* HERE'S WHAT TO DO */}
                 <div style={{background:"#fff",borderRadius:16,padding:"24px",marginBottom:16,boxShadow:"0 1px 3px rgba(0,0,0,.06)"}}>
@@ -1596,16 +1658,25 @@ function GLP1CostFinder() {
                   </p>
                   <div style={{display:"grid",gap:8}}>
                     {telehealthOptions.map((opt,i)=>(
-                      <div key={i} style={{background:"#fff",borderRadius:10,padding:"14px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,border:"1px solid #d1fae5"}}>
-                        <div>
-                          <span style={{fontSize:14,fontWeight:700,color:"#1e293b"}}>{opt.name}</span>
-                          <span style={{fontSize:13,fontWeight:700,color:"#059669",marginLeft:8}}>{opt.price}</span>
-                          <div style={{fontSize:12,color:"#64748b",marginTop:2}}>{opt.detail}</div>
+                      <div key={i} style={{background:"#fff",borderRadius:10,padding:"14px 16px",border:"1px solid #d1fae5"}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
+                          <div>
+                            <span style={{fontSize:14,fontWeight:700,color:"#1e293b"}}>{opt.name}</span>
+                            <span style={{fontSize:13,fontWeight:700,color:"#059669",marginLeft:8}}>{opt.price}</span>
+                            <div style={{fontSize:12,color:"#64748b",marginTop:2}}>{opt.detail}</div>
+                          </div>
+                          <div style={{flexShrink:0,textAlign:"center"}}>
+                            <a href={opt.url} target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"8px 16px",borderRadius:8,border:"2px solid #10b981",background:"transparent",color:"#059669",fontSize:11,fontWeight:700,cursor:"pointer",textDecoration:"none"}}>Visit &rarr;</a>
+                            <div style={{fontSize:9,color:"#94a3b8",marginTop:2}}>Affiliate link</div>
+                          </div>
                         </div>
-                        <div style={{flexShrink:0,textAlign:"center"}}>
-                          <a href={opt.url} target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"8px 16px",borderRadius:8,border:"2px solid #10b981",background:"transparent",color:"#059669",fontSize:11,fontWeight:700,cursor:"pointer",textDecoration:"none"}}>Visit &rarr;</a>
-                          <div style={{fontSize:9,color:"#94a3b8",marginTop:2}}>Affiliate link</div>
-                        </div>
+                        <EmailCapture
+                          variant="inline"
+                          selectedState={selectedState}
+                          insurance={insurance}
+                          condition={condition}
+                          providerName={opt.name}
+                        />
                       </div>
                     ))}
                   </div>
@@ -1879,6 +1950,17 @@ function GLP1CostFinder() {
                   </div>
                 )}
 
+                {/* PRICE-DROP ALERTS (downstream, non-blocking) */}
+                <EmailCapture
+                  variant="banner"
+                  selectedState={selectedState}
+                  insurance={insurance}
+                  condition={condition}
+                  headline="Get notified when prices drop"
+                  description="We check GLP-1 prices monthly. Enter your email to get alerts when any provider lowers their price."
+                  buttonLabel="Subscribe"
+                />
+
                 {/* DISCLAIMER */}
                 <div style={{background:"#f8fafc",borderRadius:10,padding:16,marginBottom:16}}>
                   <p style={{fontSize:11,color:"#94a3b8",lineHeight:1.7,margin:0}}>
@@ -1890,7 +1972,6 @@ function GLP1CostFinder() {
                   <button onClick={startOver} style={{padding:"10px 24px",borderRadius:8,border:"1px solid #e2e8f0",background:"#fff",color:"#64748b",fontSize:12,fontWeight:600,cursor:"pointer"}}>&larr; Start Over</button>
                 </div>
               </div>
-            )}
           </div>
         )}
 
