@@ -10,6 +10,7 @@
     "build:ssr": "vite build --ssr src/entry-server.jsx --outDir dist/server",
     "prerender": "node scripts/prerender.mjs",
     "og:image": "node scripts/generate-og-image.mjs",
+    "seo:audit": "node scripts/seo-audit.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
