@@ -9,6 +9,7 @@
     "build:no-prerender": "vite build",
     "build:ssr": "vite build --ssr src/entry-server.jsx --outDir dist/server",
     "prerender": "node scripts/prerender.mjs",
+    "og:image": "node scripts/generate-og-image.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "sharp": "^0.34.5",
     "vite": "^6.0.0"
   }
 }

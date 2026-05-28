@@ -36,43 +36,58 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
 const ORIGIN = "https://glp1costfinder.com";
 
+// Route table.
+//
+// `breadcrumb` is an array of {name, url} pairs ordered Home -> deepest. Empty
+// (or omitted) on the homepage, since a one-item breadcrumb is a smell. The
+// `breadcrumbName` is the visible label used in the BreadcrumbList JSON-LD.
 const ROUTES_META = {
   "/": {
     title: "GLP-1 Cost Finder — Find the Cheapest Way to Get Your GLP-1",
     description:
       "Find the cheapest way to get GLP-1 medications like Ozempic, Wegovy, Mounjaro, Zepbound, and Foundayo. Compare real self-pay prices by insurance type and condition. No jargon. No guesswork.",
+    breadcrumb: [],
+    includeWebApplication: true,
   },
   "/privacy": {
     title: "Privacy Policy | GLP-1 Cost Finder",
     description:
       "How GLP-1 Cost Finder collects, uses, and protects your information. Email capture, analytics, affiliate links, and your rights.",
+    breadcrumb: [{ name: "Privacy Policy", url: "/privacy" }],
   },
   "/terms": {
     title: "Terms of Use | GLP-1 Cost Finder",
     description:
       "Terms of use for GLP-1 Cost Finder. Site purpose, medical disclaimer, affiliate disclosure, limitations of liability, governing law.",
+    breadcrumb: [{ name: "Terms of Use", url: "/terms" }],
   },
   "/contact": {
     title: "Contact | GLP-1 Cost Finder",
     description:
       "Contact GLP-1 Cost Finder. Email dean@olsoncoaches.com for questions, partnerships, or to report a pricing issue. Response within 48 hours.",
+    breadcrumb: [{ name: "Contact", url: "/contact" }],
   },
   "/cheapest-glp1-without-insurance": {
     title: "Cheapest GLP-1 Without Insurance in 2026 | GLP-1 Cost Finder",
     description:
       "Compare the cheapest ways to get Ozempic, Wegovy, Mounjaro, and Zepbound without insurance. Real self-pay prices from 9+ telehealth providers.",
+    breadcrumb: [{ name: "Cheapest GLP-1 Without Insurance", url: "/cheapest-glp1-without-insurance" }],
   },
   "/ozempic-vs-mounjaro-cost": {
     title: "Ozempic vs Mounjaro Cost Comparison 2026 | GLP-1 Cost Finder",
     description:
       "Side-by-side cost comparison of Ozempic vs Mounjaro — insurance, copay cards, telehealth, and self-pay prices compared.",
+    breadcrumb: [{ name: "Ozempic vs Mounjaro Cost", url: "/ozempic-vs-mounjaro-cost" }],
   },
   "/glp1-self-pay-options": {
     title: "GLP-1 Self-Pay Options Ranked by Price | GLP-1 Cost Finder",
     description:
       "Every GLP-1 self-pay option ranked by real monthly cost. Telehealth providers, compounding pharmacies, and manufacturer programs compared.",
+    breadcrumb: [{ name: "GLP-1 Self-Pay Options", url: "/glp1-self-pay-options" }],
   },
 };
+
+const OG_IMAGE_URL = ORIGIN + "/og-image.png";
 
 const ssrEntryPath = path.join(projectRoot, "dist", "server", "entry-server.js");
 if (!fs.existsSync(ssrEntryPath)) {
@@ -94,6 +109,67 @@ function escText(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+// Rewrites a meta tag with a given property/name; appends one before </head>
+// if it doesn't yet exist. Two helpers so we don't construct two slightly
+// different regexes inline at every call site.
+function setMetaProperty(html, property, content) {
+  const re = new RegExp(`<meta property="${property}" content="[^"]*"\\s*/?>`);
+  const tag = `<meta property="${property}" content="${escAttr(content)}" />`;
+  if (re.test(html)) return html.replace(re, tag);
+  return html.replace("</head>", `    ${tag}\n  </head>`);
+}
+function setMetaName(html, name, content) {
+  const re = new RegExp(`<meta name="${name}" content="[^"]*"\\s*/?>`);
+  const tag = `<meta name="${name}" content="${escAttr(content)}" />`;
+  if (re.test(html)) return html.replace(re, tag);
+  return html.replace("</head>", `    ${tag}\n  </head>`);
+}
+
+// Per-route JSON-LD. Site-wide Organization + WebSite already live in the
+// index.html template, so this script only adds the route-specific layers:
+// WebApplication (homepage) and BreadcrumbList (anything deeper than home).
+function buildRouteJsonLd(route, meta) {
+  const graph = [];
+
+  if (meta.includeWebApplication) {
+    graph.push({
+      "@type": "WebApplication",
+      name: "GLP-1 Cost Comparison Tool",
+      url: ORIGIN + "/",
+      applicationCategory: "HealthApplication",
+      operatingSystem: "Any",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      provider: { "@id": ORIGIN + "/#organization" },
+    });
+  }
+
+  if (meta.breadcrumb && meta.breadcrumb.length > 0) {
+    const items = [
+      { "@type": "ListItem", position: 1, name: "Home", item: ORIGIN + "/" },
+    ];
+    meta.breadcrumb.forEach((crumb, i) => {
+      items.push({
+        "@type": "ListItem",
+        position: i + 2,
+        name: crumb.name,
+        item: ORIGIN + crumb.url,
+      });
+    });
+    graph.push({ "@type": "BreadcrumbList", itemListElement: items });
+  }
+
+  if (graph.length === 0) return "";
+  const doc = { "@context": "https://schema.org", "@graph": graph };
+  return `    <script type="application/ld+json">\n${JSON.stringify(doc, null, 2)
+    .split("\n")
+    .map((l) => "    " + l)
+    .join("\n")}\n    </script>\n  `;
+}
+
 function buildPage(route, meta, appHtml) {
   const canonical = ORIGIN + route;
   let out = template
@@ -110,6 +186,7 @@ function buildPage(route, meta, appHtml) {
       `<div id="root">${appHtml}</div>`
     );
 
+  // Canonical
   if (/rel="canonical"/.test(out)) {
     out = out.replace(
       /<link rel="canonical"[^>]*\/?>/,
@@ -121,6 +198,33 @@ function buildPage(route, meta, appHtml) {
       `    <link rel="canonical" href="${canonical}" />\n  </head>`
     );
   }
+
+  // Open Graph (per-route values). og:type stays "website" for all React
+  // routes -- only static article HTMLs use og:type="article".
+  out = setMetaProperty(out, "og:type", "website");
+  out = setMetaProperty(out, "og:site_name", "GLP-1 Cost Finder");
+  out = setMetaProperty(out, "og:title", meta.title);
+  out = setMetaProperty(out, "og:description", meta.description);
+  out = setMetaProperty(out, "og:url", canonical);
+  out = setMetaProperty(out, "og:image", OG_IMAGE_URL);
+  out = setMetaProperty(out, "og:image:width", "1200");
+  out = setMetaProperty(out, "og:image:height", "630");
+  out = setMetaProperty(out, "og:image:alt", "GLP-1 Cost Finder — compare real GLP-1 prices");
+
+  // Twitter
+  out = setMetaName(out, "twitter:card", "summary_large_image");
+  out = setMetaName(out, "twitter:title", meta.title);
+  out = setMetaName(out, "twitter:description", meta.description);
+  out = setMetaName(out, "twitter:image", OG_IMAGE_URL);
+
+  // Per-route JSON-LD (WebApplication / BreadcrumbList). Injected just
+  // before </head> so it sits alongside the site-wide Organization +
+  // WebSite block already in the template.
+  const routeJsonLd = buildRouteJsonLd(route, meta);
+  if (routeJsonLd) {
+    out = out.replace("</head>", `${routeJsonLd}</head>`);
+  }
+
   return out;
 }
 
