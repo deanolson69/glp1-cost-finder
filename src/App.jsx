@@ -475,6 +475,50 @@ function TermsPage() {
 }
 
 // ─── CONTACT PAGE ───
+// ─── ABOUT PAGE ───
+function AboutPage() {
+  useSeoMeta(
+    "About GLP-1 Cost Finder",
+    "GLP-1 Cost Finder is an independent cost comparison tool. Learn about our methodology, editorial standards, and how we verify pricing."
+  );
+  const s = legalStyles;
+  return (
+    <div style={s.wrap}>
+      <div style={s.inner}>
+        <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        <h1 style={s.h1}>About GLP-1 Cost Finder</h1>
+        <p style={s.p}>GLP-1 Cost Finder is an independent research tool that helps consumers compare the real cost of GLP-1 medications like Ozempic, Wegovy, Mounjaro, Zepbound, and Foundayo across telehealth providers, pharmacies, and assistance programs.</p>
+
+        <h2 style={s.h2}>Who We Are</h2>
+        <p style={s.p}>This site is built and maintained by <strong>Dean Olson</strong>, an independent researcher and consumer advocate. GLP-1 Cost Finder is not affiliated with any pharmaceutical company, telehealth provider, or insurance company.</p>
+
+        <h2 style={s.h2}>Our Methodology</h2>
+        <p style={s.p}>Pricing data is collected directly from provider websites and verified monthly. We include the <strong>full cost</strong> &mdash; not just the medication price, but membership fees, consultation charges, shipping, and dose escalation costs where applicable. When we can't verify a price directly, we say so.</p>
+
+        <h2 style={s.h2}>How We Make Money</h2>
+        <p style={s.p}>Some links on this site are affiliate links. If you click through and make a purchase, we may earn a commission at no additional cost to you. <strong>This never affects our rankings or recommendations.</strong> Providers cannot pay for higher placement. Our full affiliate disclosure is available on every page with affiliate links.</p>
+
+        <h2 style={s.h2}>Editorial Standards</h2>
+        <ul style={s.ul}>
+          <li>We never recommend a provider we haven't independently verified.</li>
+          <li>Pricing is updated monthly and dated so you know how current it is.</li>
+          <li>We disclose affiliate relationships on every page where they exist.</li>
+          <li>We do not accept paid placements or sponsored content.</li>
+          <li>If a provider's pricing changes, we update within 30 days.</li>
+        </ul>
+
+        <h2 style={s.h2}>Contact</h2>
+        <p style={s.p}>Questions, corrections, or pricing updates? Email <a href="mailto:dean@olsoncoaches.com" style={s.link}>dean@olsoncoaches.com</a>.</p>
+
+        <div style={{marginTop:36,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
+          <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        </div>
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
 function ContactPage() {
   useSeoMeta(
     "Contact | GLP-1 Cost Finder",
@@ -530,6 +574,7 @@ function Footer() {
     <div style={{textAlign:"center",marginTop:40,paddingTop:20,borderTop:"1px solid #e2e8f0"}}>
       <p style={{fontSize:11,color:"#94a3b8",margin:0}}>
         &copy; 2026 Olson Coaches
+        {sep}<Link to="/about" style={linkStyle}>About</Link>
         {sep}<Link to="/privacy" style={linkStyle}>Privacy Policy</Link>
         {sep}<Link to="/terms" style={linkStyle}>Terms of Use</Link>
         {sep}<Link to="/contact" style={linkStyle}>Contact</Link>
@@ -1173,6 +1218,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<GLP1CostFinder />} />
+      <Route path="/about" element={<AboutPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/contact" element={<ContactPage />} />

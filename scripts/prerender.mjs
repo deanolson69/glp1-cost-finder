@@ -49,6 +49,13 @@ const ROUTES_META = {
     breadcrumb: [],
     includeWebApplication: true,
   },
+  "/about": {
+    title: "About GLP-1 Cost Finder",
+    description:
+      "GLP-1 Cost Finder is an independent cost comparison tool. Learn about our methodology, editorial standards, and how we verify pricing.",
+    breadcrumb: [{ name: "About", url: "/about" }],
+    pageType: "AboutPage",
+  },
   "/privacy": {
     title: "Privacy Policy | GLP-1 Cost Finder",
     description:
@@ -144,6 +151,22 @@ function buildRouteJsonLd(route, meta) {
         priceCurrency: "USD",
       },
       provider: { "@id": ORIGIN + "/#organization" },
+    });
+  }
+
+  // pageType is the schema.org WebPage subtype this route represents -- e.g.
+  // "AboutPage" for /about. Only emit when explicitly set; most routes don't
+  // need a specific WebPage subtype since they're either the homepage
+  // (WebApplication covers it) or just generic content.
+  if (meta.pageType) {
+    graph.push({
+      "@type": meta.pageType,
+      "@id": ORIGIN + route + "#" + meta.pageType.toLowerCase(),
+      url: ORIGIN + route,
+      name: meta.title,
+      description: meta.description,
+      isPartOf: { "@id": ORIGIN + "/#website" },
+      about: { "@id": ORIGIN + "/#organization" },
     });
   }
 
