@@ -1975,6 +1975,45 @@ function GLP1CostFinder() {
           </div>
         )}
 
+        {/* ABOUT — static, always visible, no interaction required.
+            Lives outside the {ready && ...} block so it's in the SSR
+            output regardless of whether the visitor has picked options.
+            Adds context for first-time visitors and standing content
+            for crawlers (the comparison results are conditionally
+            rendered, so the SSR shell would otherwise look thin). */}
+        <div style={{background:"#fff",borderRadius:16,padding:"28px 24px",marginTop:8,marginBottom:16,boxShadow:"0 1px 3px rgba(0,0,0,.06)",border:"1px solid #e2e8f0"}}>
+          <h2 style={{fontSize:20,fontWeight:800,color:"#1e293b",margin:"0 0 12px",letterSpacing:"-0.01em"}}>What this tool does</h2>
+          <p style={{fontSize:14,color:"#475569",lineHeight:1.65,margin:"0 0 14px"}}>
+            GLP-1 medications — Ozempic, Wegovy, Mounjaro, Zepbound, Foundayo, and others — can cost anywhere from <strong>$79 to over $1,300 per month</strong> depending on how you get them. Insurance coverage varies dramatically by condition, plan type, and state. Self-pay prices differ across telehealth providers, compounding pharmacies, and manufacturer programs. The right path for you depends on a few specific questions that most price articles never ask.
+          </p>
+          <p style={{fontSize:14,color:"#475569",lineHeight:1.65,margin:"0 0 18px"}}>
+            This tool surfaces the cheapest realistic path for your situation in under a minute.
+          </p>
+
+          <div style={{display:"grid",gap:14}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:800,color:"#1e293b",marginBottom:3}}>How the comparison works</div>
+              <div style={{fontSize:13,color:"#64748b",lineHeight:1.6}}>Pick your insurance type and the condition you're treating. If you're on Medicaid, pick your state too — Medicaid coverage for GLP-1s varies enormously between states, from fully covered to entirely excluded. We then show the cheapest real-world path, naming the specific pharmacy, telehealth provider, or manufacturer program where you'd actually get that price.</div>
+            </div>
+            <div>
+              <div style={{fontSize:13,fontWeight:800,color:"#1e293b",marginBottom:3}}>What we cover</div>
+              <div style={{fontSize:13,color:"#64748b",lineHeight:1.6}}>All major GLP-1s for diabetes, weight loss, heart health, and sleep apnea: Ozempic, Wegovy, Wegovy Pill, Mounjaro, Zepbound, Foundayo, Saxenda, and Trulicity. We also track the compounded semaglutide and tirzepatide sold through national telehealth providers, manufacturer savings cards from Novo Nordisk and Eli Lilly, the LillyDirect and TrumpRx direct-to-consumer programs, the Medicare GLP-1 Bridge launching July 2026, and state-level Medicaid coverage.</div>
+            </div>
+            <div>
+              <div style={{fontSize:13,fontWeight:800,color:"#1e293b",marginBottom:3}}>Why the price spread is so wide</div>
+              <div style={{fontSize:13,color:"#64748b",lineHeight:1.6}}>Brand-name GLP-1s are still under patent protection in the US, which keeps retail prices above $1,000/mo for most. The cheaper paths exist because of specific regulatory carve-outs — the FDA shortage list (which made compounded semaglutide and tirzepatide legal under licensed compounding pharmacies), manufacturer-funded patient assistance programs, and copay cards tied to commercial insurance. Each carve-out has real tradeoffs in quality control, availability, and continuity, which we name explicitly in each comparison rather than skipping past.</div>
+            </div>
+            <div>
+              <div style={{fontSize:13,fontWeight:800,color:"#1e293b",marginBottom:3}}>What we don't do</div>
+              <div style={{fontSize:13,color:"#64748b",lineHeight:1.6}}>We don't prescribe medications, sell them, or run a pharmacy. We're an independent comparison tool. Some telehealth provider links in the results are affiliate links — we earn a small commission if you sign up through one. Every affiliate link is disclosed inline, and rankings reflect real prices, not commission rates.</div>
+            </div>
+            <div>
+              <div style={{fontSize:13,fontWeight:800,color:"#1e293b",marginBottom:3}}>What to expect</div>
+              <div style={{fontSize:13,color:"#64748b",lineHeight:1.6}}>Prices change. We re-verify monthly across all providers, manufacturer programs, and state Medicaid policies, and stamp the verification date on every result. Where we can't verify a number directly, we say so and link to the source. Where one option is clearly better than another for your specific situation, we say that — instead of treating every option as equally valid.</div>
+            </div>
+          </div>
+        </div>
+
         {/* FOOTER */}
         <Footer />
       </div>
