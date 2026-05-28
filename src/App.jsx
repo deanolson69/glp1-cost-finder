@@ -916,6 +916,215 @@ function Progress({ visible, total }) {
   );
 }
 
+// ─── PROVIDER LEGITIMACY CHECKER ───
+//
+// Consumer-safety reference page. Not an article -- a checklist + red-flag
+// guide + verified-provider snapshot. Schema deliberately omits Article
+// (per spec) and lives in prerender.mjs as a FAQPage + BreadcrumbList
+// alongside the site-wide Organization + WebSite.
+const PROVIDER_CHECK_STYLE = {
+  intro: { fontSize: 15, lineHeight: 1.7, color: "#334155", margin: "0 0 14px" },
+  numCircle: { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 26, height: 26, borderRadius: "50%", background: "#0369a1", color: "#fff", fontSize: 13, fontWeight: 800, flexShrink: 0 },
+  step: { display: "flex", gap: 14, alignItems: "flex-start", padding: "14px 0", borderBottom: "1px solid #e2e8f0" },
+  stepBody: { flex: 1, minWidth: 0 },
+  stepTitle: { fontSize: 15, fontWeight: 800, color: "#0f172a", margin: "0 0 4px" },
+  stepText: { fontSize: 14, color: "#475569", lineHeight: 1.6, margin: "0 0 6px" },
+  stepLink: { fontSize: 13, color: "#0369a1", textDecoration: "underline", wordBreak: "break-word" },
+  warnBox: { background: "#fef3c7", border: "1px solid #fde68a", borderRadius: 12, padding: "18px 20px", margin: "8px 0 18px" },
+  warnTitle: { fontSize: 16, fontWeight: 800, color: "#78350f", margin: "0 0 10px" },
+  warnList: { margin: 0, paddingLeft: 0, listStyle: "none" },
+  warnItem: { fontSize: 14, color: "#78350f", lineHeight: 1.55, padding: "6px 0", paddingLeft: 26, position: "relative" },
+  warnIcon: { position: "absolute", left: 0, top: 6, color: "#b45309", fontWeight: 800 },
+  table: { width: "100%", borderCollapse: "collapse", margin: "10px 0 14px", fontSize: 13, background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #e2e8f0" },
+  tableWrap: { overflowX: "auto", margin: "12px 0 14px" },
+  th: { textAlign: "left", padding: "10px 12px", background: "#1e3a5f", color: "#fff", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: 0.5 },
+  td: { padding: "10px 12px", borderBottom: "1px solid #f1f5f9", verticalAlign: "top", color: "#334155", lineHeight: 1.5 },
+  verifiedBadge: { display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 700, color: "#047857" },
+  resourceItem: { padding: "10px 0", borderBottom: "1px solid #e2e8f0" },
+  resourceName: { fontSize: 14, fontWeight: 800, color: "#0f172a", margin: "0 0 3px" },
+  resourceDesc: { fontSize: 13, color: "#475569", lineHeight: 1.55, margin: "0 0 4px" },
+  resourceLink: { fontSize: 12, color: "#0369a1", textDecoration: "underline", wordBreak: "break-all" },
+};
+
+const VERIFIED_PROVIDERS = [
+  { name: "Hims", domain: "forhims.com", notes: "Publicly traded (NYSE: HIMS). Licensed telehealth platform. Prescriptions filled by licensed pharmacies." },
+  { name: "Ro", domain: "ro.co", notes: "Licensed telehealth platform. Backed by major healthcare investors. Prescriptions filled by licensed pharmacies." },
+  { name: "Noom Med", domain: "noom.com/med", notes: "Established digital health company. Medical program staffed by licensed clinicians." },
+  { name: "LillyDirect", domain: "lilly.com/lillydirect", notes: "Direct from Eli Lilly (NYSE: LLY), the manufacturer of Zepbound, Mounjaro, and Foundayo." },
+  { name: "Oak Weight Loss", domain: "oaklovesyou.com", notes: "Telehealth platform by Oak Longevity. Business registration verified." },
+  { name: "Yucca Health", domain: "tryyucca.com", notes: "Licensed telehealth provider. Business registration verified." },
+  { name: "Sprout Health", domain: "joinsprouthealth.com", notes: "Licensed telehealth provider. Business registration verified." },
+  { name: "SHED", domain: "tryshed.com", notes: "Licensed telehealth provider. Business registration verified." },
+  { name: "Wellorithm", domain: "wellorithm.com", notes: "Licensed telehealth provider. Business registration verified." },
+];
+
+const PROVIDER_CHECK_FAQ = [
+  { q: "How do I know if a GLP-1 provider is legitimate?", a: "Work through the six-step checklist on this page: check the FDA warning letter database, verify state pharmacy licensing via NABP, confirm a named licensed prescriber reviews your medical history, look up the business on your Secretary of State registry or BBB.org, confirm the provider requires a real prescription, and inspect any medication you receive for FDA-approved labels from the manufacturer with your name and prescriber on the pharmacy label." },
+  { q: "What are the red flags for fake GLP-1 providers?", a: "Top warning signs: no medical questionnaire or prescriber consultation, prices far below market rate, no verifiable pharmacy license or prescriber credentials, no clear cancellation/refund policy, high-pressure urgency tactics, claims of \"exclusive\" formulations, plain or foreign-language packaging on received medication, no physical address or About page, payment by crypto or wire transfer only, and unsolicited social-media or email ads selling GLP-1s without a prescription." },
+  { q: "Is it safe to buy GLP-1 medications from a telehealth provider?", a: "Yes, when the provider is a licensed telehealth platform that requires a real medical questionnaire, has a named licensed prescriber sign off on your prescription, and fills through a state-licensed pharmacy. Major telehealth providers like Hims, Ro, Noom Med, and the others verified on this page meet those criteria. The risk is not telehealth itself -- it's illegitimate sellers who skip those steps." },
+  { q: "How can I check if a pharmacy is licensed in my state?", a: "Use the National Association of Boards of Pharmacy (NABP) state-board directory at nabp.pharmacy/members/boards-of-pharmacy/ to find your state's pharmacy licensing board, then look up the pharmacy by name. NABP's safe.pharmacy site also lists VIPPS-accredited online pharmacies. Verify the license is active in YOUR state, not just the state the pharmacy is based in." },
+  { q: "What should I do if I think I received counterfeit GLP-1 medication?", a: "Stop using it immediately and don't dispose of it -- you'll need it for any investigation. Report to the FDA MedWatch program (fda.gov/safety/medwatch), file an FTC complaint at reportfraud.ftc.gov, and contact your prescriber to discuss what to do next. If you paid by credit card, contact your card issuer to dispute the charge. If you have safety concerns, contact your doctor or poison control (1-800-222-1222)." },
+  { q: "Are compounded GLP-1 medications safe?", a: "Compounded medications occupy a different regulatory category from FDA-approved drugs. FDA-registered 503B outsourcing facilities can legally compound certain medications during drug shortages, and 503A pharmacies can compound on a per-prescription basis. Compounded products are NOT FDA-approved, and the FDA has issued warnings about some compounded semaglutide products. Check whether your specific medication comes from a 503B facility (more oversight) vs. a 503A pharmacy. The GLP-1 shortage situation has been evolving -- check FDA.gov for the current status of any specific drug shortage before relying on compounded as a long-term option." },
+];
+
+function ProviderCheckPage() {
+  useSeoMeta(
+    "Is This GLP-1 Provider Legitimate? | Provider Safety Checker",
+    "Check if a telehealth GLP-1 provider is legitimate. Verification checklist, red flags to watch for, and verified provider status for 9 major telehealth platforms."
+  );
+  const s = legalStyles;
+  const p = PROVIDER_CHECK_STYLE;
+
+  const verificationSteps = [
+    { title: "Check for FDA warning letters", body: "Search the FDA's pharmaceutical warning letter database for the provider or pharmacy name. Look for warning letters about unapproved GLP-1 products, compounding violations, or misleading claims.", linkLabel: "FDA Warning Letters Database", linkHref: "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/compliance-actions-and-activities/warning-letters" },
+    { title: "Verify the pharmacy is state-licensed", body: "Every pharmacy dispensing medication must be licensed in the state it ships to. Use the NABP state-board directory to find YOUR state's pharmacy board, then verify the pharmacy's license is active in your state -- not just the state they're based in. NABP also publishes a list of VIPPS-accredited online pharmacies.", linkLabel: "NABP state-board directory + VIPPS lookup", linkHref: "https://safe.pharmacy/" },
+    { title: "Confirm a licensed prescriber reviews your medical history", body: "Legitimate providers require a medical questionnaire, health-history review, and prescriber sign-off before dispensing. Look for a named, verifiable prescriber (MD, DO, NP, PA) -- not just \"our medical team.\" Red flag: any provider that ships medication without collecting health information.", linkLabel: null, linkHref: null },
+    { title: "Check for a physical business address", body: "Legitimate companies have a verifiable business address, not just a PO box or no address at all. Search the company name on your state's Secretary of State business registry, or look the company up on BBB.org.", linkLabel: "BBB business lookup", linkHref: "https://www.bbb.org/search" },
+    { title: "Verify they require a prescription", body: "GLP-1 medications are prescription-only in the U.S. Any provider that sells them without requiring a prescription is operating illegally. This includes sites that claim to sell \"research-grade\" or \"peptide\" semaglutide/tirzepatide without a prescription -- those products are not legal for human use and are not what real telehealth providers dispense.", linkLabel: null, linkHref: null },
+    { title: "Check that medication has proper FDA labeling", body: "When you receive medication, it should have an FDA-approved label from the manufacturer (Novo Nordisk for Wegovy / Ozempic; Eli Lilly for Zepbound / Mounjaro / Foundayo), dispensed by a named pharmacy with your name and prescriber on the label. Red flag: medication arriving without proper pharmacy labeling, in plain packaging, or with foreign-language labels.", linkLabel: null, linkHref: null },
+  ];
+
+  const redFlags = [
+    "No medical questionnaire or doctor consultation required",
+    "Prices significantly below market rate (e.g., \"Wegovy for $50/month\" without Medicare)",
+    "No verifiable pharmacy license or prescriber credentials",
+    "No clear cancellation or refund policy",
+    "High-pressure sales tactics or urgency language (\"Only 3 left!\" \"Price expires tonight!\")",
+    "Claims of \"exclusive\" or \"special\" formulations not available elsewhere",
+    "No FDA-approved medication labels on received products",
+    "Website has no About page, no physical address, no contact information",
+    "Payment only via cryptocurrency, wire transfer, or non-refundable methods",
+    "Unsolicited emails, texts, or social media ads offering GLP-1s without a prescription",
+  ];
+
+  const resources = [
+    { name: "FDA Warning Letters Database", desc: "Search for warning letters issued to pharmaceutical companies and pharmacies.", href: "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/compliance-actions-and-activities/warning-letters" },
+    { name: "FDA BeSafeRx", desc: "FDA's program for safe online medication purchasing.", href: "https://www.fda.gov/drugs/quick-tips-buying-medicines-over-internet/besaferx-your-source-online-pharmacy-information" },
+    { name: "NABP Safe Pharmacy", desc: "Verify a pharmacy's VIPPS accreditation (Verified Internet Pharmacy Practice Sites).", href: "https://safe.pharmacy/" },
+    { name: "State Boards of Pharmacy", desc: "Find your state's pharmacy licensing board.", href: "https://nabp.pharmacy/members/boards-of-pharmacy/" },
+    { name: "DEA Registration Verification", desc: "Verify a provider's DEA registration (GLP-1s aren't controlled, but DEA registration is one signal of provider legitimacy).", href: "https://www.deadiversion.usdoj.gov/drugreg/" },
+    { name: "BBB Business Lookup", desc: "Check ratings and complaints for any business.", href: "https://www.bbb.org/search" },
+    { name: "FTC Complaint Filing", desc: "Report a suspected scam provider.", href: "https://reportfraud.ftc.gov/" },
+    { name: "FDA MedWatch", desc: "Report a suspected counterfeit or unsafe medication.", href: "https://www.fda.gov/safety/medwatch-fda-safety-information-and-adverse-event-reporting-program" },
+  ];
+
+  return (
+    <div style={s.wrap}>
+      <div style={s.inner}>
+        <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        <h1 style={s.h1}>Is this GLP-1 provider legitimate?</h1>
+        <p className="updated" style={{fontSize:12,color:"#94a3b8",margin:"4px 0 18px"}}>Last updated: May 28, 2026</p>
+
+        <div style={{background:"#fef3c7",border:"1px solid #fde68a",borderRadius:10,padding:"12px 16px",marginBottom:20,fontSize:12,color:"#78350f",lineHeight:1.55}}>
+          <strong>Consumer-protection resource.</strong> This page is informational and not medical, legal, or financial advice. Always verify provider legitimacy through official channels (FDA, NABP, your state board of pharmacy). Report suspected fraud to the FTC and any safety concerns to FDA MedWatch.
+        </div>
+
+        {/* Section 1 — Intro */}
+        <p style={p.intro}>The GLP-1 market has exploded, and so have illegitimate sellers offering counterfeit, improperly compounded, or completely fake medications. The FDA has issued multiple warning letters to unapproved GLP-1 sellers over the past two years, and the agency has flagged compounded semaglutide products that don't meet safety standards.</p>
+        <p style={p.intro}>Consumers are right to be cautious. The price difference between a legitimate telehealth provider and a scam site can look superficially small &mdash; until you receive a product with no proper labeling, no clear ingredient list, and no way to trace it back to a licensed pharmacy. The damage from a bad GLP-1 purchase is health damage, not just a refund headache.</p>
+        <p style={p.intro}>This guide gives you a working checklist to verify any GLP-1 provider before you give them money or personal health information. We've also published our internal verification snapshot for the providers we link to in the comparison tool &mdash; below. <strong>Verification doesn't equal endorsement</strong> &mdash; do your own due diligence regardless.</p>
+
+        {/* Section 2 — Verification checklist */}
+        <h2 style={s.h2}>How to verify a GLP-1 telehealth provider</h2>
+        <p style={p.intro}>Work through these six steps for any provider you're considering. None of them require special expertise &mdash; just a few minutes with the official lookup tools below.</p>
+        <div style={{margin:"4px 0 20px"}}>
+          {verificationSteps.map((step, i) => (
+            <div key={i} style={p.step}>
+              <div style={p.numCircle}>{i + 1}</div>
+              <div style={p.stepBody}>
+                <div style={p.stepTitle}>{step.title}</div>
+                <div style={p.stepText}>{step.body}</div>
+                {step.linkHref && (
+                  <a href={step.linkHref} target="_blank" rel="noopener noreferrer" style={p.stepLink}>
+                    {step.linkLabel} &rarr;
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Section 3 — Red flags */}
+        <h2 style={s.h2}>Red flags &mdash; warning signs of a scam provider</h2>
+        <p style={p.intro}>Any single one of these is reason to walk away. Two or more, and you're almost certainly looking at a scam.</p>
+        <div style={p.warnBox}>
+          <div style={p.warnTitle}>Stop and reconsider if you see:</div>
+          <ul style={p.warnList}>
+            {redFlags.map((flag, i) => (
+              <li key={i} style={p.warnItem}>
+                <span style={p.warnIcon}>&#9888;</span>
+                {flag}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Section 4 — Verified providers */}
+        <h2 style={s.h2}>Our verified provider snapshot</h2>
+        <p style={p.intro}>These are the providers featured in our comparison tool. For each, we've confirmed business registration and that they operate as licensed telehealth platforms with real prescribers and licensed-pharmacy fulfillment.</p>
+        <div style={p.tableWrap}>
+          <table style={p.table}>
+            <thead>
+              <tr>
+                <th style={p.th}>Provider</th>
+                <th style={p.th}>Website</th>
+                <th style={p.th}>Status</th>
+                <th style={p.th}>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {VERIFIED_PROVIDERS.map((row, i) => (
+                <tr key={i} style={{background: i % 2 === 0 ? "#fff" : "#fafafa"}}>
+                  <td style={{...p.td, fontWeight: 700, color: "#0f172a", whiteSpace: "nowrap"}}>{row.name}</td>
+                  <td style={{...p.td, color: "#0369a1", whiteSpace: "nowrap"}}>{row.domain}</td>
+                  <td style={p.td}>
+                    <span style={p.verifiedBadge}>
+                      <span aria-hidden="true">&#10003;</span>
+                      <span>Verified</span>
+                    </span>
+                  </td>
+                  <td style={p.td}>{row.notes}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:10,padding:"12px 16px",fontSize:12,color:"#475569",lineHeight:1.6,margin:"4px 0 14px"}}>
+          <strong>Important:</strong> Verification means we have confirmed the provider's business registration and that they operate as a licensed telehealth platform. It does <strong>not</strong> constitute an endorsement or guarantee of service quality, clinical outcomes, or fitness for your specific situation. Always do your own due diligence using the steps above before signing up.
+        </div>
+        <Link to="/" style={{display:"inline-block",padding:"10px 18px",borderRadius:8,background:"#0369a1",color:"#fff",fontSize:13,fontWeight:700,textDecoration:"none",margin:"4px 0 22px"}}>Compare prices from these verified providers &rarr;</Link>
+
+        {/* Section 5 — External resources */}
+        <h2 style={s.h2}>Useful external resources</h2>
+        <p style={p.intro}>Government and standards-body tools you can use to verify any provider, pharmacy, or medication. All open in new tabs.</p>
+        <div style={{margin:"4px 0 22px"}}>
+          {resources.map((r, i) => (
+            <div key={i} style={p.resourceItem}>
+              <div style={p.resourceName}>{r.name}</div>
+              <div style={p.resourceDesc}>{r.desc}</div>
+              <a href={r.href} target="_blank" rel="noopener noreferrer" style={p.resourceLink}>{r.href}</a>
+            </div>
+          ))}
+        </div>
+
+        {/* Section 6 — FAQ */}
+        <h2 style={s.h2}>Frequently asked questions</h2>
+        {PROVIDER_CHECK_FAQ.map((item, i) => (
+          <div key={i}>
+            <h3 style={{...s.h3, marginTop: i === 0 ? 8 : 18}}>{item.q}</h3>
+            <p style={s.p}>{item.a}</p>
+          </div>
+        ))}
+
+        <div style={{marginTop:36,paddingTop:20,borderTop:"1px solid #e2e8f0",textAlign:"center"}}>
+          <Link to="/" style={s.backBtn}>&larr; Back to Home</Link>
+        </div>
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
 // ─── ABOUT PAGE ───
 function AboutPage() {
   useSeoMeta(
@@ -941,7 +1150,7 @@ function AboutPage() {
 
         <h2 style={s.h2}>Editorial Standards</h2>
         <ul style={s.ul}>
-          <li>We never recommend a provider we haven't independently verified.</li>
+          <li>We never recommend a provider we haven't independently verified through our <Link to="/provider-check" style={s.link}>provider legitimacy checker</Link> process &mdash; business registration, licensed prescriber sign-off, and licensed-pharmacy fulfillment.</li>
           <li>Pricing is updated monthly and dated so you know how current it is.</li>
           <li>We disclose affiliate relationships on every page where they exist.</li>
           <li>We do not accept paid placements or sponsored content.</li>
@@ -1030,9 +1239,13 @@ function Footer() {
         <Link to="/glp1-self-pay-options" style={guideLinkStyle}>Self-Pay Options</Link>
       </p>
       <p style={{fontSize:10,color:"#94a3b8",margin:"6px auto 0",maxWidth:640}}>
-        <span style={{color:"#cbd5e1",marginRight:6}}>Medicare:</span>
-        <Link to="/medicare-glp1-eligibility" style={guideLinkStyle}>Bridge eligibility checker</Link>
+        <span style={{color:"#cbd5e1",marginRight:6}}>Tools:</span>
+        <Link to="/medicare-glp1-eligibility" style={guideLinkStyle}>Medicare Bridge eligibility checker</Link>
         <span style={{margin:"0 6px",color:"#cbd5e1"}}>&middot;</span>
+        <Link to="/provider-check" style={guideLinkStyle}>Provider legitimacy checker</Link>
+      </p>
+      <p style={{fontSize:10,color:"#94a3b8",margin:"6px auto 0",maxWidth:640}}>
+        <span style={{color:"#cbd5e1",marginRight:6}}>Medicare:</span>
         <a href="/articles/medicare-glp1-bridge-program-2026.html" style={guideLinkStyle}>Bridge Program 2026 guide</a>
       </p>
       <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.6,maxWidth:560,margin:"10px auto 0"}}>
@@ -1667,6 +1880,7 @@ export default function App() {
       <Route path="/" element={<GLP1CostFinder />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/medicare-glp1-eligibility" element={<MedicareGlp1Eligibility />} />
+      <Route path="/provider-check" element={<ProviderCheckPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/contact" element={<ContactPage />} />
@@ -2259,6 +2473,17 @@ function GLP1CostFinder() {
 
             {/* ====== RESULTS (no longer gated; visible immediately) ====== */}
             <div className="fade-up">
+
+                {/* PROVIDER LEGITIMACY BANNER — sits above the results so
+                    it's the first safety-relevant thing a visitor sees once
+                    they've picked their selections. */}
+                <div style={{background:"#fffbeb",border:"1px solid #fde68a",borderRadius:14,padding:"12px 16px",marginBottom:14,display:"flex",justifyContent:"space-between",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+                  <div style={{minWidth:0,flex:"1 1 280px"}}>
+                    <div style={{fontSize:13,fontWeight:800,color:"#78350f",marginBottom:2}}>Not sure about a provider?</div>
+                    <div style={{fontSize:12,color:"#92400e",lineHeight:1.5}}>Check our legitimacy guide before you buy &mdash; 6-step checklist plus the verified-provider snapshot for every brand below.</div>
+                  </div>
+                  <Link to="/provider-check" style={{flexShrink:0,padding:"8px 14px",borderRadius:8,background:"#b45309",color:"#fff",fontSize:12,fontWeight:700,textDecoration:"none",whiteSpace:"nowrap"}}>Provider check &rarr;</Link>
+                </div>
 
                 {/* MEDICARE BRIDGE BANNER — surfaces the $50/mo program for
                     Medicare-enrolled visitors and the eligibility checker for
