@@ -11,6 +11,7 @@
     "prerender": "node scripts/prerender.mjs",
     "og:image": "node scripts/generate-og-image.mjs",
     "seo:audit": "node scripts/seo-audit.mjs",
+    "price:check": "node scripts/price-check.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

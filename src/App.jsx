@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import providersData from "./data/providers.json";
 
 // ─── STATE DATA (All 50 states + DC) ───
 const stateData = {
@@ -166,177 +167,16 @@ const coverageTruth = [
 ];
 
 // ─── TELEHEALTH ───
-// Telehealth provider list with structured fee breakdown.
+// Telehealth provider list -- single source of truth lives in
+// src/data/providers.json. Monthly verification pass edits that JSON file
+// only, no React code changes needed. `scripts/price-check.mjs` reports
+// which entries are stale (>35 days since priceVerifiedDate) or have all-
+// null pricing.
 //
-// Field policy (per user spec "Do NOT guess or fabricate pricing data"):
-//   - baseMedPrice  : medication-only floor inherited from the long-standing
-//                     project record. When a live re-verification today
-//                     contradicted that floor, the live number wins.
-//   - membershipFee / consultationFee / shippingFee / cancellationPolicy
-//                   : ONLY populated when explicitly confirmed on the
-//                     provider's own public page TODAY (2026-05-28). Where
-//                     the public page is blocked (403 / Cloudflare), redirects
-//                     to a parked domain, or requires an intake quiz to
-//                     reveal pricing, the field is null and the UI renders
-//                     "Not disclosed".
-//   - totalMonthlyMin / Max : conservative range using verified pieces +
-//                     prior baseline. May understate true cost when some
-//                     fees are null; the UI surfaces the missing-fee
-//                     caveat inline.
-//
-// Affiliate URLs (track.revoffers.com/...) are PRESERVED verbatim. The
-// non-affiliate URLs (forhims / ro / noom / lifemd) are home links, not
-// affiliate pipes, and equally untouched.
-const TODAY = "2026-05-28";
-const telehealthOptions = [
-  {
-    name: "Hims",
-    url: "https://www.forhims.com/weight-loss",
-    detail: "Oral kits from $79/mo. Branded injectables from $199/mo.",
-    baseMedPrice: 79,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 79,
-    totalMonthlyMax: 199,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "Ro",
-    url: "https://ro.co/weight-loss/",
-    detail: "Semaglutide from $149 first month. Tirzepatide from $299. Ro Body program required.",
-    baseMedPrice: 149,
-    membershipFee: 149,         // live-verified: $149/mo Ro Body (or $74/mo annual prepay)
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 149,
-    totalMonthlyMax: 449,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "Noom Med",
-    url: "https://www.noom.com/med/",
-    detail: "Microdose GLP-1s from $99/mo. Branded options from $69 + medication cost with insurance.",
-    baseMedPrice: 99,           // live-verified: $99 Microdose floor on the page today
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 99,
-    totalMonthlyMax: 349,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "LifeMD",
-    url: "https://lifemd.com/",
-    detail: "Wegovy pill from $149, pen from $199 (uninsured). Insured copays $0-$25. $149/mo program fee separate.",
-    baseMedPrice: 149,
-    membershipFee: 149,         // live-verified: "$149 monthly program & provider fee"
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 149,       // insured copay floor with subsidized first-month program fee
-    totalMonthlyMax: 348,       // uninsured pen + full program fee
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "Yucca Health",
-    url: "https://track.revoffers.com/aff_c?offer_id=1460&aff_id=12255",
-    detail: "Compounded semaglutide from $175 first month. Tirzepatide from $258. No live visit required.",
-    baseMedPrice: 146,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 146,
-    totalMonthlyMax: 275,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "Oak",
-    url: "https://track.revoffers.com/aff_c?offer_id=1581&aff_id=12255",
-    detail: "Physician-guided compounded semaglutide. Available in all 50 states. Pricing varies — check current rates.",
-    baseMedPrice: 199,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 199,
-    totalMonthlyMax: null,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "Sprout Health",
-    url: "https://track.revoffers.com/aff_c?offer_id=1286&aff_id=12255",
-    detail: "Compounded semaglutide from $199 first month. Tirzepatide from $249.",
-    baseMedPrice: 199,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 199,
-    totalMonthlyMax: 299,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "SHED",
-    url: "https://track.revoffers.com/aff_c?offer_id=1516&aff_id=12255",
-    detail: "Compounded semaglutide and tirzepatide bundled with health coaching and supplements. 10%-body-weight-loss money-back guarantee.",
-    baseMedPrice: 249,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: 249,
-    totalMonthlyMax: null,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "Strut Health",
-    url: "https://track.revoffers.com/aff_c?offer_id=384&aff_id=12255",
-    detail: "Oral semaglutide from $99/mo with auto-refill. Injectable options available.",
-    baseMedPrice: 99,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: 0,             // live-verified: "Free shipping"
-    cancellationPolicy: "Cancel anytime",  // live-verified
-    totalMonthlyMin: 99,
-    totalMonthlyMax: null,
-    priceVerifiedDate: TODAY,
-  },
-  // Wellorithm + LillyDirect added per the latest spec. Their public pages
-  // were not reachable (Wellorithm: "pricing varies, get a quote";
-  // LillyDirect: 403 from the sandbox). Both kept with all fee fields null
-  // until a manual fill-in by the operator.
-  {
-    name: "Wellorithm",
-    url: "https://wellorithm.com",
-    detail: "Personalized GLP-1 plans with health coaching. Pricing requires intake quiz — not publicly listed.",
-    baseMedPrice: null,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: null,
-    totalMonthlyMax: null,
-    priceVerifiedDate: TODAY,
-  },
-  {
-    name: "LillyDirect",
-    url: "https://lillydirect.lilly.com/",
-    detail: "Eli Lilly's direct-to-consumer pharmacy for Zepbound vials. Specific dose pricing not retrievable here — check site for current vial-tier pricing.",
-    baseMedPrice: null,
-    membershipFee: null,
-    consultationFee: null,
-    shippingFee: null,
-    cancellationPolicy: null,
-    totalMonthlyMin: null,
-    totalMonthlyMax: null,
-    priceVerifiedDate: TODAY,
-  },
-];
+// `active: false` entries (e.g. Strut Health currently offline) are
+// preserved in the JSON so the data can be re-enabled later, but are
+// filtered out of the rendered list here.
+const telehealthOptions = providersData.filter((p) => p.active !== false);
 
 // ─── INTAKE OPTIONS ───
 const insuranceOptions = [
@@ -1630,6 +1470,11 @@ function ProviderCard({ opt, selectedState, insurance, condition }) {
               Total: {totalCostLabel(opt)}
             </span>
           </div>
+          {opt.website && (
+            <div style={{fontSize:10,color:"#94a3b8",marginTop:1}}>
+              {opt.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+            </div>
+          )}
           <div style={{fontSize:12,color:"#64748b",marginTop:3,lineHeight:1.5}}>{opt.detail}</div>
         </div>
         <div style={{flexShrink:0,textAlign:"center"}}>
@@ -1651,7 +1496,14 @@ function ProviderCard({ opt, selectedState, insurance, condition }) {
             <span style={{color:"#64748b"}}>Medication</span>
             <span style={{color:"#1e293b",fontWeight:600}}>{formatRecurring(opt.baseMedPrice)}</span>
             <span style={{color:"#64748b"}}>Membership</span>
-            <span style={{color:"#1e293b",fontWeight:600}}>{formatRecurring(opt.membershipFee)}</span>
+            <span style={{color:"#1e293b",fontWeight:600}}>
+              {formatRecurring(opt.membershipFee)}
+              {opt.membershipFeeNote && (
+                <span style={{display:"block",fontSize:10,fontWeight:500,color:"#94a3b8",marginTop:2}}>
+                  ({opt.membershipFeeNote})
+                </span>
+              )}
+            </span>
             <span style={{color:"#64748b"}}>Consultation</span>
             <span style={{color:"#1e293b",fontWeight:600}}>{formatOneTime(opt.consultationFee)}</span>
             <span style={{color:"#64748b"}}>Shipping</span>
