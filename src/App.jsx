@@ -475,6 +475,447 @@ function TermsPage() {
 }
 
 // ─── CONTACT PAGE ───
+// ─── MEDICARE GLP-1 BRIDGE ELIGIBILITY CHECKER ───
+//
+// Five-step quiz. Early exits at Q1 (no Medicare) and Q2 (BMI < 27).
+// Conditional Q3 only fires when Q2's BMI tier needs comorbidity check.
+// Q4 / Q5 are answered for context, never disqualify on their own.
+//
+// SSR rendering: default `step === 1`, so Q1 is in the prerender HTML and
+// crawlers see real content (per spec). useEffect-based GA4 events only
+// fire client-side via the typeof-window guard.
+//
+// gtag emits four events: quiz_started, quiz_completed, quiz_result_type,
+// email_captured. All wrapped in try-catch -- analytics failure should
+// never break the quiz.
+function fireGtag(name, params) {
+  if (typeof window === "undefined") return;
+  try {
+    if (typeof window.gtag === "function") {
+      window.gtag("event", name, params || {});
+    }
+  } catch (e) { /* swallow; analytics shouldn't break UX */ }
+}
+
+const MEDICARE_BRIDGE_STYLE = {
+  wrap: { minHeight: "100vh", background: "#f8fafc", color: "#1e293b" },
+  inner: { maxWidth: 720, margin: "0 auto", padding: "28px 20px 64px" },
+  disclaimer: { background: "#fef3c7", border: "1px solid #fde68a", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 12, color: "#78350f", lineHeight: 1.55 },
+  h1: { fontSize: 26, fontWeight: 800, color: "#0f172a", margin: "12px 0 6px", letterSpacing: "-0.01em" },
+  sub: { fontSize: 14, color: "#475569", lineHeight: 1.55, margin: "0 0 24px" },
+  progress: { fontSize: 11, fontWeight: 700, color: "#0369a1", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 },
+  progressBar: { background: "#e2e8f0", borderRadius: 999, height: 6, marginBottom: 24, overflow: "hidden" },
+  progressFill: { background: "linear-gradient(90deg,#0369a1,#0891b2)", height: "100%", transition: "width .25s ease" },
+  card: { background: "#fff", borderRadius: 16, padding: "26px 22px", boxShadow: "0 1px 3px rgba(0,0,0,.06)", border: "1px solid #e2e8f0", marginBottom: 16 },
+  qHeading: { fontSize: 18, fontWeight: 800, color: "#0f172a", margin: "0 0 14px", lineHeight: 1.35 },
+  option: { display: "block", width: "100%", textAlign: "left", padding: "14px 16px", borderRadius: 10, border: "1.5px solid #e2e8f0", background: "#fff", cursor: "pointer", marginBottom: 8, fontSize: 14, color: "#1e293b", fontWeight: 600, transition: "all .15s ease" },
+  optionHover: { borderColor: "#0369a1", background: "#f0f9ff" },
+  backBtn: { marginTop: 12, padding: "8px 14px", borderRadius: 8, border: "1px solid #cbd5e1", background: "transparent", color: "#475569", fontSize: 12, fontWeight: 600, cursor: "pointer" },
+  resultBanner: (color) => ({ background: color.bg, border: "1px solid " + color.border, borderRadius: 12, padding: "16px 18px", marginBottom: 16 }),
+  resultTitle: (color) => ({ fontSize: 18, fontWeight: 800, color: color.title, margin: "0 0 4px" }),
+  resultBody: { fontSize: 14, color: "#334155", lineHeight: 1.6, margin: 0 },
+  stepsList: { margin: "10px 0 0", paddingLeft: 22, fontSize: 14, color: "#334155", lineHeight: 1.7 },
+  note: { background: "#fef3c7", border: "1px solid #fde68a", borderRadius: 10, padding: "12px 16px", marginTop: 14, fontSize: 13, color: "#78350f", lineHeight: 1.55 },
+  cta: { display: "inline-block", marginTop: 16, padding: "10px 18px", borderRadius: 8, background: "#0369a1", color: "#fff", fontSize: 13, fontWeight: 700, textDecoration: "none" },
+  ctaSecondary: { display: "inline-block", marginTop: 8, marginLeft: 8, padding: "10px 18px", borderRadius: 8, background: "transparent", color: "#0369a1", fontSize: 13, fontWeight: 700, textDecoration: "underline" },
+};
+
+function MedicareGlp1Eligibility() {
+  useSeoMeta(
+    "Am I Eligible for the Medicare GLP-1 Bridge Program? | Free Eligibility Checker",
+    "Answer 5 quick questions to check if you qualify for the Medicare GLP-1 Bridge Program starting July 2026. Free, instant results — no email required."
+  );
+
+  const s = MEDICARE_BRIDGE_STYLE;
+  const [step, setStep] = useState(1);
+  const [answers, setAnswers] = useState({
+    medicare: null,    // "partd" | "ma" | "no"
+    bmi: null,         // "35+" | "30-34" | "27-29" | "<27" | "unknown"
+    conditions: null,  // condition string | "none"
+    medication: null,  // "wegovy" | "zepbound" | "foundayo" | "ozempic" | "mounjaro" | "other"
+    lis: null,         // "yes" | "no" | "unsure"
+  });
+
+  // Fire quiz_started exactly once on client mount.
+  useEffect(() => {
+    fireGtag("quiz_started", { quiz: "medicare_bridge_eligibility" });
+  }, []);
+
+  // Total step count for the progress bar. Q3 only counted when reachable.
+  const needsQ3 = answers.bmi === "30-34" || answers.bmi === "27-29";
+  const totalSteps = needsQ3 ? 5 : 4;
+  const visibleStep =
+    step === 1 ? 1 :
+    step === 2 ? 2 :
+    step === 3 ? 3 :
+    step === 4 ? (needsQ3 ? 4 : 3) :
+    step === 5 ? (needsQ3 ? 5 : 4) : 0;
+
+  function setAnswer(key, value, nextStep) {
+    setAnswers((prev) => ({ ...prev, [key]: value }));
+    if (typeof nextStep === "string" || typeof nextStep === "number") {
+      setStep(nextStep);
+    }
+  }
+
+  // ── EARLY EXITS ──────────────────────────────────────────────────────
+  function ExitNoMedicare() {
+    useEffect(() => {
+      fireGtag("quiz_completed", { quiz: "medicare_bridge_eligibility", exit: "no_medicare" });
+      fireGtag("quiz_result_type", { result: "likely_not_eligible", reason: "no_medicare" });
+    }, []);
+    return (
+      <div style={s.card}>
+        <div style={s.resultBanner({ bg: "#f1f5f9", border: "#cbd5e1", title: "#334155" })}>
+          <h2 style={s.resultTitle({ title: "#334155" })}>The Bridge Program requires Medicare drug coverage</h2>
+          <p style={s.resultBody}>You'll need to be enrolled in Medicare Part D or a Medicare Advantage plan with drug coverage to access the Bridge. If you're not on Medicare yet, this program won't apply to you.</p>
+        </div>
+        <p style={{fontSize:14,color:"#475569",lineHeight:1.6}}>While you wait, you can still compare current self-pay GLP-1 prices across all major telehealth providers.</p>
+        <Link to="/" style={s.cta}>Compare self-pay GLP-1 prices &rarr;</Link>
+        <Link to="/articles/medicare-glp1-bridge-program-2026.html" style={s.ctaSecondary}>Read full program details</Link>
+        <button onClick={() => setStep(1)} style={s.backBtn}>&larr; Start over</button>
+      </div>
+    );
+  }
+
+  function ExitLowBmi() {
+    useEffect(() => {
+      fireGtag("quiz_completed", { quiz: "medicare_bridge_eligibility", exit: "low_bmi" });
+      fireGtag("quiz_result_type", { result: "likely_not_eligible", reason: "low_bmi" });
+    }, []);
+    return (
+      <div style={s.card}>
+        <div style={s.resultBanner({ bg: "#f1f5f9", border: "#cbd5e1", title: "#334155" })}>
+          <h2 style={s.resultTitle({ title: "#334155" })}>BMI below current Bridge thresholds</h2>
+          <p style={s.resultBody}>Current eligibility criteria require a BMI of at least 27 with qualifying health conditions. Based on your answer, you may not qualify — but self-pay options are available and don't require Medicare.</p>
+        </div>
+        <Link to="/" style={s.cta}>Compare self-pay GLP-1 prices &rarr;</Link>
+        <Link to="/articles/medicare-glp1-bridge-program-2026.html" style={s.ctaSecondary}>Read full program details</Link>
+        <button onClick={() => setStep(1)} style={s.backBtn}>&larr; Start over</button>
+      </div>
+    );
+  }
+
+  function ExitNoConditions() {
+    useEffect(() => {
+      fireGtag("quiz_completed", { quiz: "medicare_bridge_eligibility", exit: "no_conditions" });
+      fireGtag("quiz_result_type", { result: "likely_not_eligible", reason: "no_conditions" });
+    }, []);
+    return (
+      <div style={s.card}>
+        <div style={s.resultBanner({ bg: "#f1f5f9", border: "#cbd5e1", title: "#334155" })}>
+          <h2 style={s.resultTitle({ title: "#334155" })}>You may not qualify based on current rules</h2>
+          <p style={s.resultBody}>The Bridge requires a qualifying health condition at your BMI level. Talk to your doctor — they can review your full medical history. Eligibility criteria may also be updated by CMS.</p>
+        </div>
+        <Link to="/" style={s.cta}>Compare self-pay GLP-1 prices &rarr;</Link>
+        <Link to="/articles/medicare-glp1-bridge-program-2026.html" style={s.ctaSecondary}>Read full program details</Link>
+        <button onClick={() => setStep(1)} style={s.backBtn}>&larr; Start over</button>
+      </div>
+    );
+  }
+
+  // ── FULL RESULT ──────────────────────────────────────────────────────
+  function FullResult() {
+    // Tier logic:
+    //   - bmi "unknown" -> "may be eligible" tier (yellow)
+    //   - else -> "likely eligible" tier (green)
+    const tier = answers.bmi === "unknown" ? "may" : "likely";
+    const isDiabetesMed =
+      answers.medication === "ozempic" || answers.medication === "mounjaro";
+    const isExtraHelp = answers.lis === "yes";
+
+    useEffect(() => {
+      fireGtag("quiz_completed", { quiz: "medicare_bridge_eligibility" });
+      fireGtag("quiz_result_type", {
+        result: tier === "likely" ? "likely_eligible" : "may_be_eligible",
+        bmi: answers.bmi,
+        medication: answers.medication,
+        lis: answers.lis,
+      });
+    }, []);
+
+    const colors = tier === "likely"
+      ? { bg: "#ecfdf5", border: "#a7f3d0", title: "#047857" }
+      : { bg: "#fef9c3", border: "#fde68a", title: "#854d0e" };
+
+    return (
+      <div>
+        <div style={{...s.card, padding: 0, overflow: "hidden"}}>
+          <div style={{padding:"20px 22px",...s.resultBanner(colors),margin:0,borderRadius:0,borderLeft:0,borderRight:0,borderTop:0}}>
+            <h2 style={s.resultTitle(colors)}>
+              {tier === "likely"
+                ? "Based on your answers, you likely qualify for the Medicare GLP-1 Bridge Program."
+                : "You may qualify — we need a bit more information to be sure."}
+            </h2>
+            <p style={s.resultBody}>
+              {tier === "likely"
+                ? "Your responses match the published CMS eligibility criteria. The next step is confirming with your doctor and submitting prior authorization."
+                : "Your BMI determines part of your eligibility. Your doctor can confirm it from your most recent measurements."}
+            </p>
+          </div>
+
+          <div style={{padding:"18px 22px"}}>
+            <h3 style={{fontSize:14,fontWeight:800,color:"#0f172a",margin:"0 0 8px"}}>What to do next</h3>
+            <ol style={s.stepsList}>
+              {tier === "likely" ? (
+                <>
+                  <li>Talk to your doctor about the Bridge Program and prior authorization.</li>
+                  <li>The program starts <strong>July 1, 2026</strong> — you can discuss this at your next appointment.</li>
+                  <li>Your doctor submits a prior authorization request to the central CMS processor (operated by Humana, not your individual plan).</li>
+                  <li>If approved, your pharmacy fills the prescription at the $50/month copay.</li>
+                </>
+              ) : (
+                <>
+                  <li>Confirm your BMI with your doctor (height + most recent weight).</li>
+                  <li>Discuss whether you have any of the qualifying conditions for your BMI tier.</li>
+                  <li>If you meet the criteria, your doctor can submit the prior authorization when the program opens July 1, 2026.</li>
+                </>
+              )}
+            </ol>
+
+            {isDiabetesMed && (
+              <div style={s.note}>
+                <strong>Heads up:</strong> Ozempic and Mounjaro are <strong>not</strong> covered under the Bridge — they're FDA-approved for diabetes, not weight loss. If you take them for diabetes, your standard Part D coverage doesn't change. If your goal is weight loss, ask your doctor about Wegovy, Zepbound (KwikPen), or Foundayo, all of which can run through the Bridge if you qualify.
+              </div>
+            )}
+
+            {isExtraHelp && (
+              <div style={s.note}>
+                <strong>Important — Extra Help recipients:</strong> The Bridge's $50/month copay <strong>does not</strong> use your Low-Income Subsidy cost-sharing. Depending on your existing Part D coverage of Wegovy or Zepbound, you might actually pay <em>less</em> under your regular plan. Ask your Part D plan what your current copay would be before opting in.
+              </div>
+            )}
+
+            <div style={{marginTop:16}}>
+              <Link to="/articles/medicare-glp1-bridge-program-2026.html" style={s.cta}>Read full program details &rarr;</Link>
+              <Link to="/" style={s.ctaSecondary}>Compare current self-pay prices</Link>
+            </div>
+            <button onClick={() => setStep(1)} style={s.backBtn}>&larr; Start over</button>
+          </div>
+        </div>
+
+        {/* Non-blocking email capture */}
+        <EmailCapture
+          variant="banner"
+          headline="Get notified when the Bridge Program opens enrollment"
+          description="We'll send you a reminder when enrollment begins and alert you to any program changes."
+          buttonLabel="Notify Me"
+          tags="medicare-bridge"
+        />
+      </div>
+    );
+  }
+
+  // ── RENDER ──────────────────────────────────────────────────────────
+
+  // Question 1
+  if (step === 1) {
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Am I eligible for the Medicare GLP-1 Bridge Program?</h1>
+          <p style={s.sub}>Five quick questions, instant result. No email required. Based on CMS eligibility criteria as of May 28, 2026.</p>
+
+          {/* Quiz context — pre-question framing. Always visible in SSR
+              regardless of quiz step (initial render). Boosts indexable
+              content depth and gives first-time visitors the "what is
+              this?" answer before they start clicking. */}
+          <div style={{...s.card, marginBottom: 18}}>
+            <h2 style={{fontSize:16,fontWeight:800,color:"#0f172a",margin:"0 0 10px"}}>About the Bridge Program</h2>
+            <p style={{fontSize:14,color:"#334155",lineHeight:1.65,margin:"0 0 10px"}}>
+              The <strong>Medicare GLP-1 Bridge Program</strong> is a temporary CMS payment demonstration launching <strong>July 1, 2026</strong>. It allows eligible Medicare beneficiaries to access certain GLP-1 weight-loss medications &mdash; Wegovy, Zepbound (KwikPen formulation only), and Foundayo &mdash; for a flat <strong>$50/month copay</strong> through their existing Part D or Medicare Advantage drug plan.
+            </p>
+            <p style={{fontSize:14,color:"#334155",lineHeight:1.65,margin:"0 0 10px"}}>
+              The Bridge is not a permanent benefit. It runs through <strong>December 31, 2027</strong>. Ozempic and Mounjaro are <strong>not</strong> covered because they're FDA-approved for diabetes, not weight loss &mdash; their standard Part D coverage is unaffected. The program does not change Medicare's general policy on GLP-1s for weight loss; it sits on top as a separate, time-limited program.
+            </p>
+            <p style={{fontSize:14,color:"#334155",lineHeight:1.65,margin:"0 0 14px"}}>
+              This checker walks through the five eligibility factors CMS uses: drug-plan enrollment, BMI threshold, qualifying health conditions at lower BMI tiers, the specific medication you're considering, and whether you receive Low-Income Subsidy (Extra Help). It takes about a minute. Your answers are not stored or sent anywhere.
+            </p>
+            <div style={{padding:"10px 14px",background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:8,fontSize:13,color:"#475569",lineHeight:1.55}}>
+              Want the full picture first? Read the <Link to="/articles/medicare-glp1-bridge-program-2026.html" style={{color:"#0369a1",textDecoration:"underline",fontWeight:600}}>complete 2026 Bridge Program guide</Link> (covered medications, prior authorization process, post-2027 outlook).
+            </div>
+          </div>
+
+          <Progress visible={visibleStep} total={totalSteps} />
+          <div style={s.card}>
+            <h2 style={s.qHeading}>Are you currently enrolled in Medicare Part D or a Medicare Advantage plan with drug coverage?</h2>
+            <button style={s.option} onClick={() => setAnswer("medicare", "partd", 2)}>Yes, Medicare Part D (standalone)</button>
+            <button style={s.option} onClick={() => setAnswer("medicare", "ma", 2)}>Yes, Medicare Advantage with drug coverage</button>
+            <button style={s.option} onClick={() => setAnswer("medicare", "no", "exit-no-medicare")}>No / I'm not sure</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "exit-no-medicare") {
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Your result</h1>
+          <ExitNoMedicare />
+        </div>
+      </div>
+    );
+  }
+
+  // Question 2
+  if (step === 2) {
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Am I eligible for the Medicare GLP-1 Bridge Program?</h1>
+          <Progress visible={visibleStep} total={totalSteps} />
+          <div style={s.card}>
+            <h2 style={s.qHeading}>What is your BMI (or what was it when you started or were prescribed GLP-1 medication)?</h2>
+            <button style={s.option} onClick={() => setAnswer("bmi", "35+", 4)}>35 or higher</button>
+            <button style={s.option} onClick={() => setAnswer("bmi", "30-34", 3)}>30 to 34.9</button>
+            <button style={s.option} onClick={() => setAnswer("bmi", "27-29", 3)}>27 to 29.9</button>
+            <button style={s.option} onClick={() => setAnswer("bmi", "<27", "exit-low-bmi")}>Below 27</button>
+            <button style={s.option} onClick={() => setAnswer("bmi", "unknown", 4)}>I don't know my BMI</button>
+            <button onClick={() => setStep(1)} style={s.backBtn}>&larr; Previous</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "exit-low-bmi") {
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Your result</h1>
+          <ExitLowBmi />
+        </div>
+      </div>
+    );
+  }
+
+  // Question 3 — conditional on Q2's BMI tier
+  if (step === 3) {
+    const bmi30 = answers.bmi === "30-34";
+    const bmi27 = answers.bmi === "27-29";
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Am I eligible for the Medicare GLP-1 Bridge Program?</h1>
+          <Progress visible={visibleStep} total={totalSteps} />
+          <div style={s.card}>
+            <h2 style={s.qHeading}>Do you have any of the following conditions?</h2>
+            {bmi30 && (
+              <>
+                <button style={s.option} onClick={() => setAnswer("conditions", "heart_failure", 4)}>Heart failure</button>
+                <button style={s.option} onClick={() => setAnswer("conditions", "uncontrolled_hypertension", 4)}>Uncontrolled hypertension</button>
+                <button style={s.option} onClick={() => setAnswer("conditions", "ckd_3a_plus", 4)}>Chronic kidney disease (stage 3a or higher)</button>
+              </>
+            )}
+            {bmi27 && (
+              <>
+                <button style={s.option} onClick={() => setAnswer("conditions", "prediabetes", 4)}>Pre-diabetes</button>
+                <button style={s.option} onClick={() => setAnswer("conditions", "prior_heart_attack", 4)}>Prior heart attack</button>
+                <button style={s.option} onClick={() => setAnswer("conditions", "prior_stroke", 4)}>Prior stroke</button>
+                <button style={s.option} onClick={() => setAnswer("conditions", "pad", 4)}>Symptomatic peripheral artery disease</button>
+              </>
+            )}
+            <button style={s.option} onClick={() => setAnswer("conditions", "none", "exit-no-conditions")}>None of the above</button>
+            <button onClick={() => setStep(2)} style={s.backBtn}>&larr; Previous</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "exit-no-conditions") {
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Your result</h1>
+          <ExitNoConditions />
+        </div>
+      </div>
+    );
+  }
+
+  // Question 4
+  if (step === 4) {
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Am I eligible for the Medicare GLP-1 Bridge Program?</h1>
+          <Progress visible={visibleStep} total={totalSteps} />
+          <div style={s.card}>
+            <h2 style={s.qHeading}>Which medication are you taking or considering?</h2>
+            <button style={s.option} onClick={() => setAnswer("medication", "wegovy", 5)}>Wegovy (semaglutide for weight loss)</button>
+            <button style={s.option} onClick={() => setAnswer("medication", "zepbound", 5)}>Zepbound (tirzepatide for weight loss)</button>
+            <button style={s.option} onClick={() => setAnswer("medication", "foundayo", 5)}>Foundayo (orforglipron)</button>
+            <button style={s.option} onClick={() => setAnswer("medication", "ozempic", 5)}>Ozempic (semaglutide for diabetes)</button>
+            <button style={s.option} onClick={() => setAnswer("medication", "mounjaro", 5)}>Mounjaro (tirzepatide for diabetes)</button>
+            <button style={s.option} onClick={() => setAnswer("medication", "other", 5)}>Other / Not sure</button>
+            <button onClick={() => setStep(needsQ3 ? 3 : 2)} style={s.backBtn}>&larr; Previous</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Question 5
+  if (step === 5) {
+    return (
+      <div style={s.wrap}>
+        <div style={s.inner}>
+          <Disclaimer />
+          <h1 style={s.h1}>Am I eligible for the Medicare GLP-1 Bridge Program?</h1>
+          <Progress visible={visibleStep} total={totalSteps} />
+          <div style={s.card}>
+            <h2 style={s.qHeading}>Do you currently receive Medicare's Low-Income Subsidy (Extra Help) for prescription drugs?</h2>
+            <button style={s.option} onClick={() => setAnswer("lis", "yes", "result")}>Yes</button>
+            <button style={s.option} onClick={() => setAnswer("lis", "no", "result")}>No</button>
+            <button style={s.option} onClick={() => setAnswer("lis", "unsure", "result")}>I'm not sure</button>
+            <button onClick={() => setStep(4)} style={s.backBtn}>&larr; Previous</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Result
+  return (
+    <div style={s.wrap}>
+      <div style={s.inner}>
+        <Disclaimer />
+        <h1 style={s.h1}>Your result</h1>
+        <FullResult />
+      </div>
+    </div>
+  );
+}
+
+function Disclaimer() {
+  return (
+    <div style={MEDICARE_BRIDGE_STYLE.disclaimer}>
+      <strong>This tool provides general guidance only.</strong> It is not a determination of eligibility. Only CMS and your Medicare plan can confirm your eligibility. Program details are based on CMS announcements as of May 28, 2026 and may change.
+    </div>
+  );
+}
+
+function Progress({ visible, total }) {
+  const pct = Math.min(100, Math.round((visible / total) * 100));
+  return (
+    <>
+      <div style={MEDICARE_BRIDGE_STYLE.progress}>Step {visible} of {total}</div>
+      <div style={MEDICARE_BRIDGE_STYLE.progressBar}>
+        <div style={{...MEDICARE_BRIDGE_STYLE.progressFill, width: pct + "%"}} />
+      </div>
+    </>
+  );
+}
+
 // ─── ABOUT PAGE ───
 function AboutPage() {
   useSeoMeta(
@@ -587,6 +1028,12 @@ function Footer() {
         <Link to="/ozempic-vs-mounjaro-cost" style={guideLinkStyle}>Ozempic vs Mounjaro Cost</Link>
         <span style={{margin:"0 6px",color:"#cbd5e1"}}>&middot;</span>
         <Link to="/glp1-self-pay-options" style={guideLinkStyle}>Self-Pay Options</Link>
+      </p>
+      <p style={{fontSize:10,color:"#94a3b8",margin:"6px auto 0",maxWidth:640}}>
+        <span style={{color:"#cbd5e1",marginRight:6}}>Medicare:</span>
+        <Link to="/medicare-glp1-eligibility" style={guideLinkStyle}>Bridge eligibility checker</Link>
+        <span style={{margin:"0 6px",color:"#cbd5e1"}}>&middot;</span>
+        <a href="/articles/medicare-glp1-bridge-program-2026.html" style={guideLinkStyle}>Bridge Program 2026 guide</a>
       </p>
       <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.6,maxWidth:560,margin:"10px auto 0"}}>
         <strong>Affiliate Disclosure:</strong> We may earn commissions from partner links.
@@ -1219,6 +1666,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<GLP1CostFinder />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/medicare-glp1-eligibility" element={<MedicareGlp1Eligibility />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/contact" element={<ContactPage />} />
@@ -1248,6 +1696,7 @@ function EmailCapture({
   description,
   buttonLabel = "Subscribe",
   providerName,
+  tags,           // optional Mailchimp tag(s) to associate with this signup
 }) {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -1275,6 +1724,11 @@ function EmailCapture({
       CONDITION: condition || "",
       "b_de1492a2adba6ccde526379b6_83c9757d1b": "",
     });
+    // Mailchimp tag pre-assignment. Passed as `tags=tag1,tag2` on the
+    // signup URL; whether the audience actually applies the tag depends
+    // on how the form/audience is configured in Mailchimp. Safe to pass
+    // either way -- Mailchimp ignores it if not configured.
+    if (tags) params.set("tags", Array.isArray(tags) ? tags.join(",") : tags);
 
     const callbackName = "mc_callback_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
     let settled = false;
@@ -1805,6 +2259,19 @@ function GLP1CostFinder() {
 
             {/* ====== RESULTS (no longer gated; visible immediately) ====== */}
             <div className="fade-up">
+
+                {/* MEDICARE BRIDGE BANNER — surfaces the $50/mo program for
+                    Medicare-enrolled visitors and the eligibility checker for
+                    everyone else evaluating their options. */}
+                {insurance === "medicare" && (
+                  <div style={{background:"linear-gradient(135deg,#eff6ff,#dbeafe)",border:"1px solid #93c5fd",borderRadius:14,padding:"16px 18px",marginBottom:14,display:"flex",justifyContent:"space-between",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+                    <div style={{minWidth:0,flex:"1 1 300px"}}>
+                      <div style={{fontSize:14,fontWeight:800,color:"#1e3a5f",marginBottom:3}}>On Medicare? You may qualify for $50/month GLP-1 medications starting July 2026.</div>
+                      <div style={{fontSize:12,color:"#475569",lineHeight:1.55}}>The Medicare GLP-1 Bridge covers Wegovy, Zepbound (KwikPen), and Foundayo at a flat $50 copay for qualifying beneficiaries.</div>
+                    </div>
+                    <Link to="/medicare-glp1-eligibility" style={{flexShrink:0,padding:"10px 18px",borderRadius:8,background:"#1d4ed8",color:"#fff",fontSize:12,fontWeight:700,textDecoration:"none",whiteSpace:"nowrap"}}>Check eligibility &rarr;</Link>
+                  </div>
+                )}
 
                 {/* HERE'S WHAT TO DO */}
                 <div style={{background:"#fff",borderRadius:16,padding:"24px",marginBottom:16,boxShadow:"0 1px 3px rgba(0,0,0,.06)"}}>

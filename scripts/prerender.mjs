@@ -56,6 +56,13 @@ const ROUTES_META = {
     breadcrumb: [{ name: "About", url: "/about" }],
     pageType: "AboutPage",
   },
+  "/medicare-glp1-eligibility": {
+    title: "Am I Eligible for the Medicare GLP-1 Bridge Program? | Free Eligibility Checker",
+    description:
+      "Answer 5 quick questions to check if you qualify for the Medicare GLP-1 Bridge Program starting July 2026. Free, instant results — no email required.",
+    breadcrumb: [{ name: "Medicare Bridge eligibility checker", url: "/medicare-glp1-eligibility" }],
+    includeWebApplication: true,
+  },
   "/privacy": {
     title: "Privacy Policy | GLP-1 Cost Finder",
     description:
@@ -139,10 +146,16 @@ function buildRouteJsonLd(route, meta) {
   const graph = [];
 
   if (meta.includeWebApplication) {
+    // Homepage uses the long-standing comparison-tool name; other routes
+    // (e.g. /medicare-glp1-eligibility) get a route-specific name derived
+    // from their page title.
+    const isHome = route === "/";
     graph.push({
       "@type": "WebApplication",
-      name: "GLP-1 Cost Comparison Tool",
-      url: ORIGIN + "/",
+      name: isHome
+        ? "GLP-1 Cost Comparison Tool"
+        : meta.title.replace(/\s*\|.*$/, "").trim(),
+      url: ORIGIN + route,
       applicationCategory: "HealthApplication",
       operatingSystem: "Any",
       offers: {
