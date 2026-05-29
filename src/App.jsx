@@ -2882,7 +2882,7 @@ function GLP1CostFinder() {
             </div>
             <div>
               <div style={{fontSize:13,fontWeight:800,color:"#1e293b",marginBottom:3}}>What we cover</div>
-              <div style={{fontSize:13,color:"#64748b",lineHeight:1.6}}>All major GLP-1s for diabetes, weight loss, heart health, and sleep apnea: Ozempic, Wegovy, Wegovy Pill, Mounjaro, Zepbound, Foundayo, Saxenda, and Trulicity. We also track the compounded semaglutide and tirzepatide sold through national telehealth providers, manufacturer savings cards from Novo Nordisk and Eli Lilly, the LillyDirect and TrumpRx direct-to-consumer programs, the Medicare GLP-1 Bridge launching July 2026, and state-level Medicaid coverage.</div>
+              <div style={{fontSize:13,color:"#64748b",lineHeight:1.6}}>All major GLP-1s for diabetes, weight loss, heart health, and sleep apnea: Ozempic, Wegovy, Wegovy Pill, Mounjaro, Zepbound, Foundayo, Saxenda, and Trulicity. We also track the compounded semaglutide and tirzepatide sold through national telehealth providers, <a href="/articles/glp1-savings-cards-patient-assistance.html" style={{color:"#0369a1",textDecoration:"underline"}}>manufacturer savings cards and patient assistance programs</a> from Novo Nordisk and Eli Lilly, the LillyDirect and TrumpRx direct-to-consumer programs, the Medicare GLP-1 Bridge launching July 2026, and state-level Medicaid coverage.</div>
             </div>
             <div>
               <div style={{fontSize:13,fontWeight:800,color:"#1e293b",marginBottom:3}}>Why the price spread is so wide</div>
