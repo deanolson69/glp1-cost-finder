@@ -1125,6 +1125,408 @@ function ProviderCheckPage() {
   );
 }
 
+// ─── PROVIDER DETAIL PAGES ───
+//
+// Long-form provider landing pages -- one per high-intent provider where the
+// "see cost breakdown" expandable card in the comparison tool isn't enough
+// surface area. Each page covers: bottom-line all-in cost, how the billing
+// model actually works (including any first-month promo distortion), what's
+// included vs not, a short comparison table, and explicit pricing sources.
+//
+// Architecture:
+//   - ProviderDetailShell handles the page chrome (header, verdict, footer
+//     CTA, "get notified" email capture, Footer)
+//   - BottomLineBox is the prominent "this is what it actually costs" card
+//     at the top of each page
+//   - Each provider (Ro / Hims / Noom) has its own component that wraps
+//     ProviderDetailShell with the spec content
+//
+// Schema: Article (datePublished / dateModified = 2026-05-30). Injected via
+// JsonLd in the React tree so the entity lands in SSR output.
+
+const PROVIDER_DETAIL_STYLE = {
+  verdict: { fontSize: 16, fontWeight: 600, color: "#334155", lineHeight: 1.55, margin: "8px 0 14px" },
+  bottomLineBox: { background: "linear-gradient(135deg,#ecfdf5,#d1fae5)", border: "2px solid #10b981", borderRadius: 14, padding: "20px 22px", margin: "10px 0 24px", boxShadow: "0 2px 6px rgba(16,185,129,0.10)" },
+  bottomLineLabel: { fontSize: 11, fontWeight: 800, color: "#047857", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 },
+  bottomLineTotal: { fontSize: 28, fontWeight: 900, color: "#0f172a", lineHeight: 1.15, marginBottom: 10 },
+  lineItem: { display: "flex", gap: 8, padding: "4px 0", fontSize: 14, color: "#1e293b", lineHeight: 1.5 },
+  lineItemPrefix: { color: "#94a3b8", flexShrink: 0, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" },
+  bottomLineNote: { fontSize: 12, color: "#047857", marginTop: 12, fontStyle: "italic", lineHeight: 1.5 },
+  ctaBtn: { display: "inline-block", padding: "12px 22px", borderRadius: 8, background: "#0369a1", color: "#fff", fontSize: 14, fontWeight: 700, textDecoration: "none", margin: "6px 0" },
+  table: { width: "100%", borderCollapse: "collapse", margin: "12px 0 18px", fontSize: 13, background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #e2e8f0" },
+  tableWrap: { overflowX: "auto", margin: "12px 0" },
+  th: { textAlign: "left", padding: "10px 12px", background: "#1e3a5f", color: "#fff", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" },
+  td: { padding: "10px 12px", borderBottom: "1px solid #f1f5f9", verticalAlign: "top", color: "#334155", lineHeight: 1.5 },
+  tdHighlight: { padding: "10px 12px", borderBottom: "1px solid #f1f5f9", verticalAlign: "top", color: "#0f172a", lineHeight: 1.5, fontWeight: 700, background: "#f0fdf4" },
+  sourceList: { margin: "10px 0 20px", padding: 0, listStyle: "none" },
+  sourceItem: { padding: "10px 0", borderBottom: "1px solid #e2e8f0", fontSize: 13, color: "#334155", lineHeight: 1.55 },
+  sourceLabel: { fontWeight: 700, color: "#0f172a", display: "block", marginBottom: 2 },
+  sourceLink: { fontSize: 12, color: "#0369a1", textDecoration: "underline", wordBreak: "break-all" },
+};
+
+function BottomLineBox({ label, total, items, note }) {
+  const s = PROVIDER_DETAIL_STYLE;
+  return (
+    <div style={s.bottomLineBox}>
+      <div style={s.bottomLineLabel}>{label}</div>
+      <div style={s.bottomLineTotal}>{total}</div>
+      {items && items.map((item, i) => {
+        const isLast = i === items.length - 1;
+        return (
+          <div key={i} style={s.lineItem}>
+            <span style={s.lineItemPrefix}>{isLast ? "└──" : "├──"}</span>
+            <span><strong>{item.label}:</strong> {item.value}</span>
+          </div>
+        );
+      })}
+      {note && <div style={s.bottomLineNote}>{note}</div>}
+    </div>
+  );
+}
+
+function providerArticleSchema(title, description, route) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description: description,
+    datePublished: "2026-05-30T00:00:00-05:00",
+    dateModified: "2026-05-30T00:00:00-05:00",
+    author: { "@type": "Organization", name: "GLP-1 Cost Finder", url: "https://glp1costfinder.com" },
+    publisher: { "@type": "Organization", name: "GLP-1 Cost Finder", url: "https://glp1costfinder.com" },
+    mainEntityOfPage: { "@type": "WebPage", "@id": "https://glp1costfinder.com" + route },
+  };
+}
+
+function ProviderDetailShell({ title, route, description, lastVerified, verdict, slug, tagSlug, children }) {
+  useSeoMeta(title, description);
+  const s = legalStyles;
+  return (
+    <div style={s.wrap}>
+      <div style={s.inner}>
+        <Link to="/" style={s.backBtn}>&larr; Back to comparison tool</Link>
+        <h1 style={s.h1}>{title}</h1>
+        <p style={{fontSize:12,color:"#94a3b8",margin:"4px 0 8px"}}>Last verified: {lastVerified}</p>
+        <p style={PROVIDER_DETAIL_STYLE.verdict}>{verdict}</p>
+        <JsonLd data={providerArticleSchema(title, description, route)} />
+        {children}
+        <div style={{textAlign:"center",margin:"32px 0 16px",padding:"24px 18px",background:"#f0f9ff",border:"1px solid #bae6fd",borderRadius:14}}>
+          <div style={{fontSize:14,fontWeight:800,color:"#0c4a6e",marginBottom:4}}>Compare every GLP-1 provider in one place</div>
+          <div style={{fontSize:12,color:"#475569",marginBottom:12,lineHeight:1.55}}>Sorted by total monthly cost. Full fee breakdown. Verified status for every brand.</div>
+          <Link to="/" style={PROVIDER_DETAIL_STYLE.ctaBtn}>Compare all GLP-1 providers &rarr;</Link>
+        </div>
+        <EmailCapture
+          variant="banner"
+          headline="Get notified when prices change"
+          description="We re-verify provider pricing monthly. Drop your email and we'll alert you when this provider's pricing or programs change."
+          buttonLabel="Notify me"
+          tags={"price-alerts" + (tagSlug ? "," + tagSlug : "")}
+        />
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
+// ── Ro Weight Loss detail page ──────────────────────────────────────────
+function RoProviderDetail() {
+  const s = legalStyles;
+  const p = PROVIDER_DETAIL_STYLE;
+  return (
+    <ProviderDetailShell
+      title="Ro Weight Loss Cost 2026: What You'll Actually Pay Per Month"
+      route="/providers/ro-weight-loss-cost"
+      description={"Ro advertises GLP-1 programs \"from $39/mo\" but that's just the first month. Here's what Ro Body actually costs month after month, including the membership and medication fees they don't show upfront."}
+      lastVerified="May 30, 2026"
+      verdict="The $39/mo Ro advertises is a first-month-only promo. Real ongoing cost lands somewhere between $220 and $400 per month — membership plus a separately-billed medication price Ro doesn't publish."
+      slug="ro-weight-loss-cost"
+      tagSlug="ro"
+    >
+      <BottomLineBox
+        label="Estimated all-in cost"
+        total="$220–$400/mo"
+        items={[
+          { label: "Membership", value: "$74/mo (annual prepay) or $149/mo (monthly)" },
+          { label: "Medication", value: "Not publicly disclosed (billed separately)" },
+          { label: "Shipping", value: "Free" },
+        ]}
+        note="$39/mo is first-month-only promotional pricing. Real ongoing cost depends on your dose and whether your medication is partially covered."
+      />
+
+      <h2 style={s.h2}>How Ro's pricing actually works</h2>
+      <p style={s.p}>Ro uses a <strong>split-billing model</strong>: you pay a separate membership fee and a separate medication cost every month. The headline "$39/mo" pricing only covers the first month of membership, doesn't include any medication at all, and doesn't surface the actual ongoing rate clearly.</p>
+
+      <h3 style={s.h3}>Membership tiers</h3>
+      <ul style={s.ul}>
+        <li><strong>First month:</strong> $39 (promotional rate). Covers membership only, not medication.</li>
+        <li><strong>Annual plan:</strong> $74/mo — but you must prepay <strong>$888 upfront</strong> for the full year. Locks you in at the lower monthly rate.</li>
+        <li><strong>Monthly plan:</strong> $149/mo — no upfront commitment, cancel anytime. About 2× the per-month cost of the annual plan.</li>
+      </ul>
+
+      <h3 style={s.h3}>Medication cost (billed separately)</h3>
+      <p style={s.p}>Ro does <strong>not</strong> publicly disclose medication pricing. Their FAQ states: "Medication cost is not included in the membership cost. Medication cost will depend on your treatment and insurance coverage." Ro claims their medication prices match TrumpRx, NovoCare, and LillyDirect rates.</p>
+      <p style={s.p}>Based on user reports from <strong>r/RoBody</strong> on Reddit, members on the annual plan report paying approximately <strong>$45–$100/mo for medication</strong> (some with insurance subsidizing part of the cost). One frequently cited total: <strong>~$190/mo on the annual plan</strong> ($145 membership equivalent + ~$45 medication with Zepbound and insurance assistance). Without insurance, medication costs typically run higher.</p>
+
+      <h3 style={s.h3}>What the "$39/mo" really means</h3>
+      <p style={s.p}>The headline rate is the cheapest possible interpretation: first month only, membership only, no medication included. By month two you're paying $74 or $149 for membership AND a separate medication invoice. The $39 figure is on the marketing page; the structural reality is on the FAQ page.</p>
+
+      <h2 style={s.h2}>What's included in the Ro Body membership</h2>
+      <ul style={s.ul}>
+        <li>Clinician consultations and prescription management</li>
+        <li>Ongoing provider support and dosage adjustments</li>
+        <li>Body composition tracking tools</li>
+        <li>Free medication delivery</li>
+        <li>Access to Ro's telehealth platform</li>
+      </ul>
+
+      <h3 style={s.h3}>What's NOT included</h3>
+      <ul style={s.ul}>
+        <li>The actual medication (billed separately by the pharmacy)</li>
+        <li>Lab work, if required by your clinician</li>
+      </ul>
+
+      <h2 style={s.h2}>How Ro compares</h2>
+      <div style={p.tableWrap}>
+        <table style={p.table}>
+          <thead><tr>
+            <th style={p.th}>Provider</th>
+            <th style={p.th}>All-in monthly</th>
+            <th style={p.th}>Membership</th>
+            <th style={p.th}>Medication?</th>
+            <th style={p.th}>Commitment</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style={p.td}><strong>Ro</strong></td><td style={p.td}>Est. $220&ndash;$400/mo</td><td style={p.td}>$74&ndash;$149/mo</td><td style={p.td}>No (separate)</td><td style={p.td}>Annual or monthly</td></tr>
+            <tr><td style={p.tdHighlight}><strong>Oak</strong></td><td style={p.tdHighlight}>$133&ndash;$199/mo</td><td style={p.tdHighlight}>None</td><td style={p.tdHighlight}>Yes (included)</td><td style={p.tdHighlight}>None</td></tr>
+            <tr><td style={p.td}><strong>Hims</strong></td><td style={p.td}>$298&ndash;$448/mo</td><td style={p.td}>$149/mo</td><td style={p.td}>No (separate)</td><td style={p.td}>Monthly</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style={{fontSize:13,color:"#475569",lineHeight:1.6,margin:"0 0 14px"}}>Want to see every provider, not just three? <Link to="/" style={s.link}>Use the full comparison tool</Link> — sorted by total monthly cost with transparency badges for every brand.</p>
+
+      <h2 style={s.h2}>Pricing sources</h2>
+      <ul style={p.sourceList}>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Ro official pricing page</span><a href="https://ro.co/weight-loss/pricing/" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>ro.co/weight-loss/pricing/</a> — verified May 30, 2026</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Ro FAQ on medication costs</span><a href="https://ro.co/weight-loss/faq/" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>ro.co/weight-loss/faq/</a></li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>User-reported costs (Reddit)</span>r/RoBody community threads, 2025–2026. Median reported all-in: ~$190/mo on annual plan with partial insurance coverage on medication.</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Google AI Overview aggregate</span>Reported $250–$650+/mo total estimated range across user reports.</li>
+      </ul>
+    </ProviderDetailShell>
+  );
+}
+
+// ── Hims GLP-1 detail page ───────────────────────────────────────────────
+function HimsProviderDetail() {
+  const s = legalStyles;
+  const p = PROVIDER_DETAIL_STYLE;
+  return (
+    <ProviderDetailShell
+      title="Hims Weight Loss Cost 2026: Real Monthly Prices for GLP-1 Medications"
+      route="/providers/hims-glp1-cost"
+      description="Hims charges a $149/mo membership AND separate medication fees starting at $149/mo. Here's the complete cost breakdown for Wegovy, Zepbound, and Foundayo through Hims."
+      lastVerified="May 30, 2026"
+      verdict="Hims is $149/mo membership plus separate medication starting at $149/mo. Realistic ongoing total: $298–$448/mo depending on which brand-name GLP-1 you take."
+      slug="hims-glp1-cost"
+      tagSlug="hims"
+    >
+      <BottomLineBox
+        label="Ongoing all-in cost"
+        total="$298–$448/mo"
+        items={[
+          { label: "Membership", value: "$149/mo ($39 first month promo)" },
+          { label: "Medication", value: "$149–$299/mo (depends on which GLP-1)" },
+          { label: "Shipping", value: "Free" },
+        ]}
+        note="The $39 first-month membership is promotional. Real ongoing cost starts at $298/mo (Wegovy Pill) and tops out around $448/mo (Zepbound)."
+      />
+
+      <h2 style={s.h2}>How Hims' pricing actually works</h2>
+      <p style={s.p}>Hims uses a <strong>membership + medication</strong> model: two separate charges every month. The Hims membership page explicitly states <em>"Medication cost not included"</em>, so the bottom-line cost is whatever membership tier you're on plus whatever the GLP-1 you take is priced at.</p>
+
+      <h3 style={s.h3}>Membership fee</h3>
+      <ul style={s.ul}>
+        <li><strong>First month:</strong> $39 (promotional rate)</li>
+        <li><strong>Every month after:</strong> $149/mo</li>
+        <li>Medication cost is billed separately on top of membership.</li>
+      </ul>
+
+      <h3 style={s.h3}>Medication prices (separate from membership)</h3>
+      <ul style={s.ul}>
+        <li><strong>Wegovy Pill</strong> (oral semaglutide): from $149/mo</li>
+        <li><strong>Wegovy Pen</strong> (injectable semaglutide): from $199/mo</li>
+        <li><strong>Zepbound Vial</strong> (tirzepatide): from $299/mo</li>
+        <li><strong>Zepbound KwikPen:</strong> from $299/mo</li>
+        <li><strong>Foundayo Pill</strong> (oral tirzepatide): from $149/mo</li>
+        <li><strong>Ozempic Pill:</strong> from $149/mo</li>
+      </ul>
+
+      <h3 style={s.h3}>Real monthly cost math</h3>
+      <ul style={s.ul}>
+        <li><strong>Cheapest ongoing option:</strong> $149 membership + $149 Wegovy Pill = <strong>$298/mo</strong></li>
+        <li><strong>Most expensive:</strong> $149 membership + $299 Zepbound = <strong>$448/mo</strong></li>
+        <li><strong>First month (promotional):</strong> $39 membership + $149 medication = $188/mo — but this is the marketing-page price, not what you'll pay ongoing.</li>
+      </ul>
+
+      <h3 style={s.h3}>Important context</h3>
+      <ul style={s.ul}>
+        <li>Hims settled with Novo Nordisk in <strong>March 2026</strong> and <strong>no longer offers compounded semaglutide</strong>. All medications on the platform are now brand-name FDA-approved drugs.</li>
+        <li>Hims claims "no price markups" on medication — they pass through manufacturer pricing.</li>
+      </ul>
+
+      <h2 style={s.h2}>What's included in the $149/mo Hims membership</h2>
+      <ul style={s.ul}>
+        <li>Provider consultations and prescription management</li>
+        <li>Access to the Hims weight-loss app and tracking tools</li>
+        <li>Personalized treatment plans</li>
+        <li>Ongoing clinical support and dosage adjustments</li>
+        <li>Free medication delivery</li>
+        <li>Community support features</li>
+      </ul>
+
+      <h3 style={s.h3}>What's NOT included</h3>
+      <ul style={s.ul}>
+        <li>The medication itself (billed separately at $149–$299/mo)</li>
+        <li>Lab work, if required by your clinician</li>
+      </ul>
+
+      <h2 style={s.h2}>How Hims compares</h2>
+      <div style={p.tableWrap}>
+        <table style={p.table}>
+          <thead><tr>
+            <th style={p.th}>Provider</th>
+            <th style={p.th}>All-in monthly</th>
+            <th style={p.th}>Membership</th>
+            <th style={p.th}>Medication?</th>
+            <th style={p.th}>Drug type</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style={p.td}><strong>Hims</strong></td><td style={p.td}>$298&ndash;$448/mo</td><td style={p.td}>$149/mo</td><td style={p.td}>No (separate)</td><td style={p.td}>Brand-name only</td></tr>
+            <tr><td style={p.tdHighlight}><strong>Oak</strong></td><td style={p.tdHighlight}>$133&ndash;$199/mo</td><td style={p.tdHighlight}>None</td><td style={p.tdHighlight}>Yes (included)</td><td style={p.tdHighlight}>Compounded</td></tr>
+            <tr><td style={p.td}><strong>LifeMD</strong></td><td style={p.td}>$149&ndash;$348/mo</td><td style={p.td}>$149/mo</td><td style={p.td}>Combined pricing</td><td style={p.td}>Brand-name</td></tr>
+            <tr><td style={p.td}><strong>Ro</strong></td><td style={p.td}>Est. $220&ndash;$400/mo</td><td style={p.td}>$74&ndash;$149/mo</td><td style={p.td}>No (separate)</td><td style={p.td}>Brand-name</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style={{fontSize:13,color:"#475569",lineHeight:1.6,margin:"0 0 14px"}}>Want to see every provider, not just four? <Link to="/" style={s.link}>Use the full comparison tool</Link>.</p>
+
+      <h2 style={s.h2}>Pricing sources</h2>
+      <ul style={p.sourceList}>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Hims weight-loss treatment page</span><a href="https://www.forhims.com/weight-loss" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>hims.com/weight-loss</a> — verified May 30, 2026</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Hims membership page</span>hims.com/weight-loss/membership — verified May 30, 2026</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Membership FAQ</span>"$39 first month, then $149/mo. Medication cost not included."</li>
+      </ul>
+    </ProviderDetailShell>
+  );
+}
+
+// ── Noom Med detail page ─────────────────────────────────────────────────
+function NoomProviderDetail() {
+  const s = legalStyles;
+  const p = PROVIDER_DETAIL_STYLE;
+  return (
+    <ProviderDetailShell
+      title="Noom Med GLP-1 Cost 2026: Microdose vs Brand-Name Pricing Explained"
+      route="/providers/noom-med-cost"
+      description="Noom Med offers compounded microdose GLP-1s from $99/mo all-in, or brand-name access from $69/mo plus medication costs. Here's exactly what each path costs."
+      lastVerified="May 30, 2026"
+      verdict="Two distinct programs at very different price points. The $99/mo Microdose is the realistic self-pay option. The $69/mo brand-name program is a program fee only — medication is on top and needs insurance to make sense."
+      slug="noom-med-cost"
+      tagSlug="noom"
+    >
+      <BottomLineBox
+        label="Self-pay (no insurance)"
+        total="Microdose GLP-1: $99/mo all-in"
+        items={[
+          { label: "Program fee", value: "Included" },
+          { label: "Medication", value: "Included" },
+          { label: "Noom app", value: "Included" },
+        ]}
+        note="The microdose is the option that shows in the no-insurance flow on our comparison tool."
+      />
+
+      <BottomLineBox
+        label="With insurance"
+        total="Brand-name access: $69/mo + medication copay"
+        items={[
+          { label: "Program fee", value: "$69/mo" },
+          { label: "Medication", value: "Your insurance copay (varies)" },
+          { label: "Noom app", value: "Included" },
+        ]}
+        note="For self-pay users without insurance, this program doesn't pencil out — brand-name retail medication runs $800–$1,300/mo on top of the $69 fee."
+      />
+
+      <h2 style={s.h2}>How Noom Med's pricing actually works</h2>
+      <p style={s.p}>Noom Med is unique among the providers we track because they offer <strong>two completely different programs</strong> at different price points. The headline number you see depends entirely on which program you sign up for.</p>
+
+      <h3 style={s.h3}>Program 1 — Noom Microdose GLP-1 ($99/mo)</h3>
+      <ul style={s.ul}>
+        <li><strong>Compounded</strong>, lower-dose GLP-1 medication.</li>
+        <li><strong>$99/mo is the ALL-IN cost</strong> — program fee and medication are bundled.</li>
+        <li>No insurance required.</li>
+        <li>Includes full access to the Noom behavioral health app.</li>
+        <li>FSA/HSA eligible.</li>
+        <li>This is the option that shows in our "No Insurance" comparison flow.</li>
+      </ul>
+
+      <h3 style={s.h3}>Program 2 — Noom GLP-1 Brand-Name Access ($69/mo + medication)</h3>
+      <ul style={s.ul}>
+        <li>Provides access to brand-name <strong>Ozempic and Zepbound</strong>.</li>
+        <li><strong>$69/mo is the PROGRAM FEE only</strong> — it covers clinician access, the Noom app, and ongoing support.</li>
+        <li><strong>Medication cost is separate</strong> and depends on your insurance coverage.</li>
+        <li>If your insurance covers GLP-1s, your copay could be $0–$50/mo on top of the $69 program fee.</li>
+        <li>Without insurance, brand-name medication runs $800–$1,300/mo at retail — making this path impractical for self-pay users.</li>
+        <li>FSA/HSA eligible.</li>
+      </ul>
+
+      <h3 style={s.h3}>Program 3 — Noom GLP-1 Plus</h3>
+      <ul style={s.ul}>
+        <li>Higher-dose compounded tirzepatide (GLP-1 + GIP dual agonist).</li>
+        <li>Pricing requires completing intake — not publicly listed.</li>
+        <li>FSA/HSA eligible.</li>
+      </ul>
+
+      <h3 style={s.h3}>The "$69/mo" marketing rate</h3>
+      <p style={s.p}>The $69 headline is the brand-name <em>program fee</em> only. It doesn't include medication. For uninsured shoppers, this program isn't cheaper than self-pay alternatives like Oak ($133–$199/mo all-in) because the medication side adds $800+/mo at retail. The <strong>$99 Microdose is the realistic self-pay option</strong> from Noom Med.</p>
+
+      <h2 style={s.h2}>What's included across all Noom Med plans</h2>
+      <ul style={s.ul}>
+        <li>Full access to the Noom behavioral health app</li>
+        <li>Psychology-based lessons and habit-building curriculum</li>
+        <li>Progress-tracking tools</li>
+        <li>Supportive coaching and community</li>
+        <li>Clinician consultations and prescription management</li>
+        <li>Personalized dosing to minimize side effects</li>
+      </ul>
+
+      <h2 style={s.h2}>How Noom Med compares</h2>
+      <div style={p.tableWrap}>
+        <table style={p.table}>
+          <thead><tr>
+            <th style={p.th}>Provider</th>
+            <th style={p.th}>Self-pay monthly</th>
+            <th style={p.th}>Insurance path?</th>
+            <th style={p.th}>App/coaching included?</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style={p.tdHighlight}><strong>Noom Med Microdose</strong></td><td style={p.tdHighlight}>$99/mo all-in</td><td style={p.tdHighlight}>N/A</td><td style={p.tdHighlight}>Yes (full Noom app)</td></tr>
+            <tr><td style={p.td}><strong>Oak</strong></td><td style={p.td}>$133&ndash;$199/mo all-in</td><td style={p.td}>No</td><td style={p.td}>No</td></tr>
+            <tr><td style={p.td}><strong>Noom Med Brand-Name</strong></td><td style={p.td}>$69/mo + copay</td><td style={p.td}>Yes</td><td style={p.td}>Yes (full Noom app)</td></tr>
+            <tr><td style={p.td}><strong>Ro</strong></td><td style={p.td}>Est. $220&ndash;$400/mo</td><td style={p.td}>Partial</td><td style={p.td}>No</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style={{fontSize:13,color:"#475569",lineHeight:1.6,margin:"0 0 14px"}}>To run every provider against your own insurance + state + condition, use our <Link to="/" style={s.link}>free comparison tool</Link>.</p>
+
+      <h2 style={s.h2}>Pricing sources</h2>
+      <ul style={p.sourceList}>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Noom Med official page</span><a href="https://www.noom.com/med/" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>noom.com/med/</a> — verified May 30, 2026</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Noom Med FAQ section</span>"How much does weight-loss medication cost with Noom?"</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Product listings</span>Microdose GLP-1 from $99/mo; Brand-name from $69/mo + medication</li>
+      </ul>
+    </ProviderDetailShell>
+  );
+}
+
 // ─── ABOUT PAGE ───
 function AboutPage() {
   useSeoMeta(
@@ -1881,6 +2283,9 @@ export default function App() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/medicare-glp1-eligibility" element={<MedicareGlp1Eligibility />} />
       <Route path="/provider-check" element={<ProviderCheckPage />} />
+      <Route path="/providers/ro-weight-loss-cost" element={<RoProviderDetail />} />
+      <Route path="/providers/hims-glp1-cost" element={<HimsProviderDetail />} />
+      <Route path="/providers/noom-med-cost" element={<NoomProviderDetail />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/contact" element={<ContactPage />} />
@@ -2188,12 +2593,22 @@ function ProviderCard({ opt, selectedState, insurance, condition }) {
         </div>
       </div>
 
-      <button
-        onClick={() => setExpanded((v) => !v)}
-        style={{marginTop:10,padding:0,background:"none",border:"none",color:"#0369a1",fontSize:11,fontWeight:600,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:2}}
-      >
-        {expanded ? "Hide cost breakdown" : "See cost breakdown"}
-      </button>
+      <div style={{display:"flex",gap:14,alignItems:"center",flexWrap:"wrap",marginTop:10}}>
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          style={{padding:0,background:"none",border:"none",color:"#0369a1",fontSize:11,fontWeight:600,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:2}}
+        >
+          {expanded ? "Hide cost breakdown" : "See cost breakdown"}
+        </button>
+        {opt.detailPageSlug && (
+          <Link
+            to={"/providers/" + opt.detailPageSlug}
+            style={{padding:0,background:"none",border:"none",color:"#0369a1",fontSize:11,fontWeight:600,textDecoration:"underline",textUnderlineOffset:2}}
+          >
+            Read full pricing analysis &rarr;
+          </Link>
+        )}
+      </div>
 
       {expanded && (
         <div style={{marginTop:8,padding:"10px 12px",borderRadius:8,background:"#f8fafc",border:"1px solid #e2e8f0"}}>

@@ -15,7 +15,8 @@
     "priceVerifiedDate": "2026-05-30",
     "active": true,
     "priceTransparency": "estimated",
-    "priceTransparencyNote": "Membership ($149/mo) + medication ($149-$299/mo) billed separately."
+    "priceTransparencyNote": "Membership ($149/mo) + medication ($149-$299/mo) billed separately.",
+    "detailPageSlug": "hims-glp1-cost"
   },
   {
     "name": "Ro",
@@ -33,7 +34,8 @@
     "priceVerifiedDate": "2026-05-30",
     "active": true,
     "priceTransparency": "estimated",
-    "priceTransparencyNote": "Membership + medication billed separately. Medication cost not publicly disclosed. Estimate based on user reports."
+    "priceTransparencyNote": "Membership + medication billed separately. Medication cost not publicly disclosed. Estimate based on user reports.",
+    "detailPageSlug": "ro-weight-loss-cost"
   },
   {
     "name": "Noom Med",
@@ -50,7 +52,8 @@
     "priceVerifiedDate": "2026-05-30",
     "active": true,
     "priceTransparency": "estimated",
-    "priceTransparencyNote": "Microdose GLP-1 all-in price. Brand-name access from $69/mo + insurance copay."
+    "priceTransparencyNote": "Microdose GLP-1 all-in price. Brand-name access from $69/mo + insurance copay.",
+    "detailPageSlug": "noom-med-cost"
   },
   {
     "name": "LifeMD",

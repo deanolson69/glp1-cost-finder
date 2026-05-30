@@ -63,6 +63,33 @@ const ROUTES_META = {
     breadcrumb: [{ name: "Medicare Bridge eligibility checker", url: "/medicare-glp1-eligibility" }],
     includeWebApplication: true,
   },
+  "/providers/ro-weight-loss-cost": {
+    title: "Ro Weight Loss Cost 2026: What You'll Actually Pay Per Month",
+    description:
+      "Ro advertises GLP-1 programs \"from $39/mo\" but that's just the first month. Here's what Ro Body actually costs month after month, including the membership and medication fees they don't show upfront.",
+    breadcrumb: [
+      { name: "Providers", url: "/" },
+      { name: "Ro Weight Loss Cost", url: "/providers/ro-weight-loss-cost" },
+    ],
+  },
+  "/providers/hims-glp1-cost": {
+    title: "Hims Weight Loss Cost 2026: Real Monthly Prices for GLP-1 Medications",
+    description:
+      "Hims charges a $149/mo membership AND separate medication fees starting at $149/mo. Here's the complete cost breakdown for Wegovy, Zepbound, and Foundayo through Hims.",
+    breadcrumb: [
+      { name: "Providers", url: "/" },
+      { name: "Hims GLP-1 Cost", url: "/providers/hims-glp1-cost" },
+    ],
+  },
+  "/providers/noom-med-cost": {
+    title: "Noom Med GLP-1 Cost 2026: Microdose vs Brand-Name Pricing Explained",
+    description:
+      "Noom Med offers compounded microdose GLP-1s from $99/mo all-in, or brand-name access from $69/mo plus medication costs. Here's exactly what each path costs.",
+    breadcrumb: [
+      { name: "Providers", url: "/" },
+      { name: "Noom Med Cost", url: "/providers/noom-med-cost" },
+    ],
+  },
   "/provider-check": {
     title: "Is This GLP-1 Provider Legitimate? | Provider Safety Checker",
     description:
