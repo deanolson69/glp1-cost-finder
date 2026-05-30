@@ -1235,7 +1235,7 @@ function RoProviderDetail() {
   return (
     <ProviderDetailShell
       title="Ro Weight Loss Cost 2026: What You'll Actually Pay Per Month"
-      route="/providers/ro-weight-loss-cost"
+      route="/providers/ro-weight-loss-cost/"
       description={"Ro advertises GLP-1 programs \"from $39/mo\" but that's just the first month. Here's what Ro Body actually costs month after month, including the membership and medication fees they don't show upfront."}
       lastVerified="May 30, 2026"
       verdict="The $39/mo Ro advertises is a first-month-only promo. Real ongoing cost lands somewhere between $220 and $400 per month — membership plus a separately-billed medication price Ro doesn't publish."
@@ -1322,7 +1322,7 @@ function HimsProviderDetail() {
   return (
     <ProviderDetailShell
       title="Hims Weight Loss Cost 2026: Real Monthly Prices for GLP-1 Medications"
-      route="/providers/hims-glp1-cost"
+      route="/providers/hims-glp1-cost/"
       description="Hims charges a $149/mo membership AND separate medication fees starting at $149/mo. Here's the complete cost breakdown for Wegovy, Zepbound, and Foundayo through Hims."
       lastVerified="May 30, 2026"
       verdict="Hims is $149/mo membership plus separate medication starting at $149/mo. Realistic ongoing total: $298–$448/mo depending on which brand-name GLP-1 you take."
@@ -1426,7 +1426,7 @@ function NoomProviderDetail() {
   return (
     <ProviderDetailShell
       title="Noom Med GLP-1 Cost 2026: Microdose vs Brand-Name Pricing Explained"
-      route="/providers/noom-med-cost"
+      route="/providers/noom-med-cost/"
       description="Noom Med offers compounded microdose GLP-1s from $99/mo all-in, or brand-name access from $69/mo plus medication costs. Here's exactly what each path costs."
       lastVerified="May 30, 2026"
       verdict="Two distinct programs at very different price points. The $99/mo Microdose is the realistic self-pay option. The $69/mo brand-name program is a program fee only — medication is on top and needs insurance to make sense."
@@ -2602,7 +2602,7 @@ function ProviderCard({ opt, selectedState, insurance, condition }) {
         </button>
         {opt.detailPageSlug && (
           <Link
-            to={"/providers/" + opt.detailPageSlug}
+            to={"/providers/" + opt.detailPageSlug + "/"}
             style={{padding:0,background:"none",border:"none",color:"#0369a1",fontSize:11,fontWeight:600,textDecoration:"underline",textUnderlineOffset:2}}
           >
             Read full pricing analysis &rarr;

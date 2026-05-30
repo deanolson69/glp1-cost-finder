@@ -65,8 +65,13 @@ function distPathToUrl(filePath) {
   if (rel === "index.html") return "/";
   if (rel.endsWith("/index.html")) {
     const dir = rel.slice(0, -"/index.html".length);
-    // top-level dir matches trailing-slash list -> /<dir>/, else /<dir>
-    if (TRAILING_SLASH_DIRS.has(dir)) return "/" + dir + "/";
+    // Top-level dir matches trailing-slash list -> /<dir>/, else /<dir>.
+    // Nested dirs (multi-segment paths like providers/foo) also get the
+    // trailing slash, because Render's static-file resolver only auto-
+    // resolves bare paths to /index.html at the top level -- nested bare
+    // paths get caught by the SPA wildcard rewrite, so canonical URLs for
+    // those routes must use the trailing-slash form.
+    if (TRAILING_SLASH_DIRS.has(dir) || dir.includes("/")) return "/" + dir + "/";
     return "/" + dir;
   }
   return "/" + rel;
