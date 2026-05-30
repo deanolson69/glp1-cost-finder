@@ -2105,20 +2105,51 @@ function formatVerifiedDate(iso) {
   return months[m - 1] + " " + d + ", " + y;
 }
 function totalCostLabel(opt) {
-  if (opt.totalMonthlyMin == null && opt.totalMonthlyMax == null) {
-    return "Pricing not disclosed";
+  // "contact" transparency providers don't have public pricing at all -- skip
+  // the numeric attempt and surface the contact-for-pricing message.
+  if (
+    opt.priceTransparency === "contact" ||
+    (opt.totalMonthlyMin == null && opt.totalMonthlyMax == null)
+  ) {
+    return "Contact for pricing";
   }
+  // "estimated" providers have split-billing + medication cost we can't
+  // verify, so we prefix the number with "Est." so the user knows the
+  // ranges are a directional guess, not a hard quote.
+  const prefix = opt.priceTransparency === "estimated" ? "Est. " : "";
   if (
     opt.totalMonthlyMin != null &&
     opt.totalMonthlyMax != null &&
     opt.totalMonthlyMax > opt.totalMonthlyMin
   ) {
-    return "$" + opt.totalMonthlyMin + "–$" + opt.totalMonthlyMax + "/mo";
+    return prefix + "$" + opt.totalMonthlyMin + "–$" + opt.totalMonthlyMax + "/mo";
   }
   if (opt.totalMonthlyMin != null) {
-    return "From $" + opt.totalMonthlyMin + "/mo";
+    return prefix + "From $" + opt.totalMonthlyMin + "/mo";
   }
-  return "Pricing not disclosed";
+  return "Contact for pricing";
+}
+
+// Tiny inline badge next to the total. Three states track providers.json's
+// priceTransparency field:
+//   verified  : transparent all-in pricing on the provider's public page
+//   estimated : split-billing / medication-cost-undisclosed, ranges based on
+//               user reports + manufacturer-list comparisons
+//   contact   : pricing only revealed after intake
+function TransparencyBadge({ transparency }) {
+  if (!transparency) return null;
+  const styles = {
+    verified:  { bg: "#dcfce7", border: "#86efac", color: "#166534", label: "✓ Verified" },
+    estimated: { bg: "#fef9c3", border: "#fde047", color: "#854d0e", label: "≈ Estimated" },
+    contact:   { bg: "#f1f5f9", border: "#cbd5e1", color: "#475569", label: "Contact for pricing" },
+  };
+  const s = styles[transparency];
+  if (!s) return null;
+  return (
+    <span style={{display:"inline-block",padding:"2px 7px",borderRadius:999,fontSize:10,fontWeight:700,background:s.bg,border:"1px solid "+s.border,color:s.color,whiteSpace:"nowrap"}}>
+      {s.label}
+    </span>
+  );
 }
 
 function ProviderCard({ opt, selectedState, insurance, condition }) {
@@ -2137,6 +2168,7 @@ function ProviderCard({ opt, selectedState, insurance, condition }) {
             <span style={{fontSize:13,fontWeight:700,color:"#059669"}}>
               Total: {totalCostLabel(opt)}
             </span>
+            <TransparencyBadge transparency={opt.priceTransparency} />
           </div>
           {opt.website && (
             <div style={{fontSize:10,color:"#94a3b8",marginTop:1}}>
@@ -2144,6 +2176,11 @@ function ProviderCard({ opt, selectedState, insurance, condition }) {
             </div>
           )}
           <div style={{fontSize:12,color:"#64748b",marginTop:3,lineHeight:1.5}}>{opt.detail}</div>
+          {opt.priceTransparencyNote && (
+            <div style={{fontSize:11,color:"#94a3b8",marginTop:4,fontStyle:"italic",lineHeight:1.5}}>
+              {opt.priceTransparencyNote}
+            </div>
+          )}
         </div>
         <div style={{flexShrink:0,textAlign:"center"}}>
           <a href={opt.url} target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"8px 16px",borderRadius:8,border:"2px solid #10b981",background:"transparent",color:"#059669",fontSize:11,fontWeight:700,cursor:"pointer",textDecoration:"none"}}>Visit &rarr;</a>

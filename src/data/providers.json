@@ -3,48 +3,54 @@
     "name": "Hims",
     "website": "https://hims.com",
     "url": "https://www.forhims.com/weight-loss",
-    "detail": "Wegovy Pill from $149, Wegovy Pen from $199, Zepbound from $299, Foundayo from $149. $39 first month, $149/mo on renewal.",
+    "detail": "Wegovy Pill from $149/mo, Wegovy Pen from $199/mo, Zepbound from $299/mo, Foundayo from $149/mo. Membership $149/mo required (medication cost is separate). $39 first month promo.",
     "baseMedPrice": 149,
-    "membershipFee": 39,
-    "membershipFeeNote": "first month; renewal is $149/mo",
+    "membershipFee": 149,
+    "membershipFeeNote": "$149/mo ongoing ($39 first month promo). Medication cost is separate.",
     "consultationFee": 0,
     "shippingFee": 0,
     "cancellationPolicy": null,
-    "totalMonthlyMin": 188,
+    "totalMonthlyMin": 298,
     "totalMonthlyMax": 448,
-    "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "priceVerifiedDate": "2026-05-30",
+    "active": true,
+    "priceTransparency": "estimated",
+    "priceTransparencyNote": "Membership ($149/mo) + medication ($149-$299/mo) billed separately."
   },
   {
     "name": "Ro",
     "website": "https://ro.co",
     "url": "https://ro.co/weight-loss/",
-    "detail": "Ro Body program. Medication cost not publicly listed. $39 first month membership; as low as $74/mo prepaid quarterly.",
+    "detail": "Ro Body program. Membership $74/mo (annual prepay of $888) or $149/mo (monthly). Medication billed separately — cost not publicly disclosed. Ro claims to match TrumpRx/NovoCare rates. User-reported all-in totals: ~$190-250/mo (annual plan).",
     "baseMedPrice": null,
-    "membershipFee": 39,
-    "membershipFeeNote": "first month; as low as $74/mo prepaid quarterly",
+    "membershipFee": 74,
+    "membershipFeeNote": "$74/mo with annual prepay ($888 upfront) or $149/mo month-to-month. $39 first month promo.",
     "consultationFee": 0,
     "shippingFee": 0,
     "cancellationPolicy": null,
-    "totalMonthlyMin": 39,
-    "totalMonthlyMax": null,
-    "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "totalMonthlyMin": 220,
+    "totalMonthlyMax": 400,
+    "priceVerifiedDate": "2026-05-30",
+    "active": true,
+    "priceTransparency": "estimated",
+    "priceTransparencyNote": "Membership + medication billed separately. Medication cost not publicly disclosed. Estimate based on user reports."
   },
   {
     "name": "Noom Med",
     "website": "https://www.noom.com/med",
     "url": "https://www.noom.com/med/",
-    "detail": "Microdose GLP-1 from $99/mo. Brand-name access from $69 program fee + medication cost with insurance. Noom app included.",
+    "detail": "Microdose compounded GLP-1 from $99/mo all-in (no insurance needed). Brand-name Ozempic/Zepbound access from $69/mo program fee + medication cost with insurance. Noom app included.",
     "baseMedPrice": 99,
     "membershipFee": 0,
     "consultationFee": 0,
     "shippingFee": 0,
     "cancellationPolicy": null,
-    "totalMonthlyMin": 69,
+    "totalMonthlyMin": 99,
     "totalMonthlyMax": null,
-    "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "priceVerifiedDate": "2026-05-30",
+    "active": true,
+    "priceTransparency": "estimated",
+    "priceTransparencyNote": "Microdose GLP-1 all-in price. Brand-name access from $69/mo + insurance copay."
   },
   {
     "name": "LifeMD",
@@ -59,7 +65,8 @@
     "totalMonthlyMin": 149,
     "totalMonthlyMax": 348,
     "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "active": true,
+    "priceTransparency": "verified"
   },
   {
     "name": "LillyDirect",
@@ -74,7 +81,9 @@
     "totalMonthlyMin": null,
     "totalMonthlyMax": null,
     "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "active": true,
+    "priceTransparency": "contact",
+    "priceTransparencyNote": "Configured via Lilly's online self-pay tool — varies by device, dose, and insurance."
   },
   {
     "name": "Oak",
@@ -89,7 +98,8 @@
     "totalMonthlyMin": 133,
     "totalMonthlyMax": 199,
     "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "active": true,
+    "priceTransparency": "verified"
   },
   {
     "name": "Yucca Health",
@@ -104,7 +114,9 @@
     "totalMonthlyMin": null,
     "totalMonthlyMax": null,
     "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "active": true,
+    "priceTransparency": "contact",
+    "priceTransparencyNote": "Pricing revealed during intake."
   },
   {
     "name": "Sprout Health",
@@ -119,7 +131,9 @@
     "totalMonthlyMin": null,
     "totalMonthlyMax": null,
     "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "active": true,
+    "priceTransparency": "contact",
+    "priceTransparencyNote": "Pricing revealed during intake."
   },
   {
     "name": "SHED",
@@ -134,7 +148,9 @@
     "totalMonthlyMin": null,
     "totalMonthlyMax": null,
     "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "active": true,
+    "priceTransparency": "contact",
+    "priceTransparencyNote": "Pricing revealed during intake."
   },
   {
     "name": "Wellorithm",
@@ -149,7 +165,9 @@
     "totalMonthlyMin": null,
     "totalMonthlyMax": null,
     "priceVerifiedDate": "2026-05-28",
-    "active": true
+    "active": true,
+    "priceTransparency": "contact",
+    "priceTransparencyNote": "Pricing revealed during intake."
   },
   {
     "name": "Strut Health",
