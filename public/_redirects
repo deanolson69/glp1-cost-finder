@@ -1,0 +1,49 @@
+# Render static-site _redirects rules. Top-to-bottom, first match wins.
+# Rules only fire when no physical file matches the requested path.
+#
+# Two categories of redirects, plus the SPA fallback at the end:
+#   1. /articles/<slug>           -> /articles/<slug>.html      (301)
+#   2. /providers/<slug>          -> /providers/<slug>/         (301)
+#   3. /*                         -> /index.html                (200)
+#
+# Why these exist: Google Search Console flagged "Duplicate, Google chose
+# different canonical than user" and "Alternate page with proper canonical
+# tag" for the extensionless / trailing-slashless variants. Without
+# redirects, those bare URLs were falling through to the SPA shell and
+# serving the homepage's canonical at a non-homepage URL.
+
+# --- Article slug redirects (no .html -> .html) ---
+/articles/best-telehealth-glp1-providers                       /articles/best-telehealth-glp1-providers.html                       301
+/articles/cheapest-wegovy-without-insurance                    /articles/cheapest-wegovy-without-insurance.html                    301
+/articles/compounded-semaglutide-vs-brand-wegovy               /articles/compounded-semaglutide-vs-brand-wegovy.html               301
+/articles/foundayo-cost-savings-guide                          /articles/foundayo-cost-savings-guide.html                          301
+/articles/glp1-cost-by-state                                   /articles/glp1-cost-by-state.html                                   301
+/articles/glp1-medicaid-coverage-by-state                      /articles/glp1-medicaid-coverage-by-state.html                      301
+/articles/glp1-savings-cards-patient-assistance                /articles/glp1-savings-cards-patient-assistance.html                301
+/articles/glp1-sleep-apnea-cost                                /articles/glp1-sleep-apnea-cost.html                                301
+/articles/glp1-under-200-per-month                             /articles/glp1-under-200-per-month.html                             301
+/articles/glp1-weight-loss-after-50                            /articles/glp1-weight-loss-after-50.html                            301
+/articles/hims-vs-ro-glp1-weight-loss                          /articles/hims-vs-ro-glp1-weight-loss.html                          301
+/articles/medicare-glp1-bridge-program-2026                    /articles/medicare-glp1-bridge-program-2026.html                    301
+/articles/medicare-glp1-bridge-program                         /articles/medicare-glp1-bridge-program.html                         301
+/articles/medicare-glp1-coverage-2026                          /articles/medicare-glp1-coverage-2026.html                          301
+/articles/mounjaro-cost-every-dose                             /articles/mounjaro-cost-every-dose.html                             301
+/articles/mounjaro-vs-zepbound-cost                            /articles/mounjaro-vs-zepbound-cost.html                            301
+/articles/oral-glp1-medications-cost-comparison                /articles/oral-glp1-medications-cost-comparison.html                301
+/articles/ozempic-cost-without-insurance                       /articles/ozempic-cost-without-insurance.html                       301
+/articles/research-peptides-vs-telehealth-glp1-providers       /articles/research-peptides-vs-telehealth-glp1-providers.html       301
+/articles/switching-glp1-medications-cost                      /articles/switching-glp1-medications-cost.html                      301
+/articles/tirzepatide-vs-semaglutide-cost                      /articles/tirzepatide-vs-semaglutide-cost.html                      301
+/articles/trumprx-vs-goodrx-vs-lillydirect                     /articles/trumprx-vs-goodrx-vs-lillydirect.html                     301
+/articles/wegovy-injection-vs-pill-cost                        /articles/wegovy-injection-vs-pill-cost.html                        301
+/articles/zepbound-cost-without-insurance                      /articles/zepbound-cost-without-insurance.html                      301
+
+# --- Provider detail page redirects (no trailing slash -> trailing slash) ---
+/providers/ro-weight-loss-cost                                 /providers/ro-weight-loss-cost/                                     301
+/providers/hims-glp1-cost                                      /providers/hims-glp1-cost/                                          301
+/providers/noom-med-cost                                       /providers/noom-med-cost/                                           301
+
+# --- SPA fallback (must be last) ---
+# Catches any remaining unmatched URL and serves the SPA shell so React
+# Router can handle the route client-side on first load.
+/*                                                              /index.html                                                         200
