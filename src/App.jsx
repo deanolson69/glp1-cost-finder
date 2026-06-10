@@ -949,7 +949,8 @@ const PROVIDER_CHECK_STYLE = {
 const VERIFIED_PROVIDERS = [
   { name: "Hims", domain: "forhims.com", notes: "Publicly traded (NYSE: HIMS). Licensed telehealth platform. Prescriptions filled by licensed pharmacies." },
   { name: "Ro", domain: "ro.co", notes: "Licensed telehealth platform. Backed by major healthcare investors. Prescriptions filled by licensed pharmacies." },
-  { name: "Noom Med", domain: "noom.com/med", notes: "Established digital health company. Medical program staffed by licensed clinicians." },
+  { name: "Liv Body", domain: "livbody.com", notes: "Compounded semaglutide / tirzepatide program from LIV Body Medical. Medical operations run through OpenLoop Health (US-licensed clinician network). Business registration verified." },
+  { name: "FeelGood", domain: "feelgoodmeds.com", notes: "Compounded GLP-1 injections and tablets. USA Made, Clinician Prescribed. 4.8/5 Trustpilot. Weight-loss money-back guarantee. Business registration verified." },
   { name: "LillyDirect", domain: "lilly.com/lillydirect", notes: "Direct from Eli Lilly (NYSE: LLY), the manufacturer of Zepbound, Mounjaro, and Foundayo." },
   { name: "Oak Weight Loss", domain: "oaklovesyou.com", notes: "Telehealth platform by Oak Longevity. Business registration verified." },
   { name: "Yucca Health", domain: "tryyucca.com", notes: "Licensed telehealth provider. Business registration verified." },
@@ -961,7 +962,7 @@ const VERIFIED_PROVIDERS = [
 const PROVIDER_CHECK_FAQ = [
   { q: "How do I know if a GLP-1 provider is legitimate?", a: "Work through the six-step checklist on this page: check the FDA warning letter database, verify state pharmacy licensing via NABP, confirm a named licensed prescriber reviews your medical history, look up the business on your Secretary of State registry or BBB.org, confirm the provider requires a real prescription, and inspect any medication you receive for FDA-approved labels from the manufacturer with your name and prescriber on the pharmacy label." },
   { q: "What are the red flags for fake GLP-1 providers?", a: "Top warning signs: no medical questionnaire or prescriber consultation, prices far below market rate, no verifiable pharmacy license or prescriber credentials, no clear cancellation/refund policy, high-pressure urgency tactics, claims of \"exclusive\" formulations, plain or foreign-language packaging on received medication, no physical address or About page, payment by crypto or wire transfer only, and unsolicited social-media or email ads selling GLP-1s without a prescription." },
-  { q: "Is it safe to buy GLP-1 medications from a telehealth provider?", a: "Yes, when the provider is a licensed telehealth platform that requires a real medical questionnaire, has a named licensed prescriber sign off on your prescription, and fills through a state-licensed pharmacy. Major telehealth providers like Hims, Ro, Noom Med, and the others verified on this page meet those criteria. The risk is not telehealth itself -- it's illegitimate sellers who skip those steps." },
+  { q: "Is it safe to buy GLP-1 medications from a telehealth provider?", a: "Yes, when the provider is a licensed telehealth platform that requires a real medical questionnaire, has a named licensed prescriber sign off on your prescription, and fills through a state-licensed pharmacy. Major telehealth providers like Hims, Ro, Liv Body, FeelGood, and the others verified on this page meet those criteria. The risk is not telehealth itself -- it's illegitimate sellers who skip those steps." },
   { q: "How can I check if a pharmacy is licensed in my state?", a: "Use the National Association of Boards of Pharmacy (NABP) state-board directory at nabp.pharmacy/members/boards-of-pharmacy/ to find your state's pharmacy licensing board, then look up the pharmacy by name. NABP's safe.pharmacy site also lists VIPPS-accredited online pharmacies. Verify the license is active in YOUR state, not just the state the pharmacy is based in." },
   { q: "What should I do if I think I received counterfeit GLP-1 medication?", a: "Stop using it immediately and don't dispose of it -- you'll need it for any investigation. Report to the FDA MedWatch program (fda.gov/safety/medwatch), file an FTC complaint at reportfraud.ftc.gov, and contact your prescriber to discuss what to do next. If you paid by credit card, contact your card issuer to dispute the charge. If you have safety concerns, contact your doctor or poison control (1-800-222-1222)." },
   { q: "Are compounded GLP-1 medications safe?", a: "Compounded medications occupy a different regulatory category from FDA-approved drugs. FDA-registered 503B outsourcing facilities can legally compound certain medications during drug shortages, and 503A pharmacies can compound on a per-prescription basis. Compounded products are NOT FDA-approved, and the FDA has issued warnings about some compounded semaglutide products. Check whether your specific medication comes from a 503B facility (more oversight) vs. a 503A pharmacy. The GLP-1 shortage situation has been evolving -- check FDA.gov for the current status of any specific drug shortage before relying on compounded as a long-term option." },
@@ -1402,7 +1403,7 @@ function HimsProviderDetail() {
           <tbody>
             <tr><td style={p.td}><strong>Hims</strong></td><td style={p.td}>$298&ndash;$448/mo</td><td style={p.td}>$149/mo</td><td style={p.td}>No (separate)</td><td style={p.td}>Brand-name only</td></tr>
             <tr><td style={p.tdHighlight}><strong>Oak</strong></td><td style={p.tdHighlight}>$133&ndash;$199/mo</td><td style={p.tdHighlight}>None</td><td style={p.tdHighlight}>Yes (included)</td><td style={p.tdHighlight}>Compounded</td></tr>
-            <tr><td style={p.td}><strong>LifeMD</strong></td><td style={p.td}>$149&ndash;$348/mo</td><td style={p.td}>$149/mo</td><td style={p.td}>Combined pricing</td><td style={p.td}>Brand-name</td></tr>
+            <tr><td style={p.td}><strong>Liv Body</strong></td><td style={p.td}>$179&ndash;$279/mo</td><td style={p.td}>None</td><td style={p.td}>Included</td><td style={p.td}>Compounded</td></tr>
             <tr><td style={p.td}><strong>Ro</strong></td><td style={p.td}>Est. $220&ndash;$400/mo</td><td style={p.td}>$74&ndash;$149/mo</td><td style={p.td}>No (separate)</td><td style={p.td}>Brand-name</td></tr>
           </tbody>
         </table>
@@ -1522,6 +1523,190 @@ function NoomProviderDetail() {
         <li style={p.sourceItem}><span style={p.sourceLabel}>Noom Med official page</span><a href="https://www.noom.com/med/" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>noom.com/med/</a> — verified May 30, 2026</li>
         <li style={p.sourceItem}><span style={p.sourceLabel}>Noom Med FAQ section</span>"How much does weight-loss medication cost with Noom?"</li>
         <li style={p.sourceItem}><span style={p.sourceLabel}>Product listings</span>Microdose GLP-1 from $99/mo; Brand-name from $69/mo + medication</li>
+      </ul>
+    </ProviderDetailShell>
+  );
+}
+
+// ── Liv Body detail page ────────────────────────────────────────────────
+function LivBodyCostPage() {
+  const s = legalStyles;
+  const p = PROVIDER_DETAIL_STYLE;
+  const affiliateUrl = "https://track.revoffers.com/aff_c?offer_id=1522&aff_id=12255";
+  return (
+    <ProviderDetailShell
+      title="Liv Body GLP-1 Cost: Semaglutide & Tirzepatide Pricing 2026"
+      route="/providers/liv-body-glp1-cost/"
+      description="Liv Body GLP-1 pricing breakdown: compounded semaglutide from $179/mo, tirzepatide from $279/mo. No hidden fees — medication, clinician, Care Coach, and shipping included."
+      lastVerified="June 9, 2026"
+      verdict="Liv Body bundles medication, clinician, Care Coach, and shipping into a single flat monthly price — $179 for compounded semaglutide, $279 for compounded tirzepatide. No membership fee, no consultation charge, no surprise add-ons."
+      slug="liv-body-glp1-cost"
+      tagSlug="liv-body"
+    >
+      <BottomLineBox
+        label="All-in cost"
+        total="$179–$279/mo"
+        items={[
+          { label: "Compounded semaglutide", value: "$179/mo (Best Value)" },
+          { label: "Compounded tirzepatide", value: "$279/mo (Advanced Option)" },
+          { label: "Membership / consultation / shipping", value: "All included" },
+        ]}
+        note="One injection per week. No hidden fees — medication, clinician review, Care Coach, and free expedited shipping all included."
+      />
+
+      <h2 style={s.h2}>About Liv Body</h2>
+      <p style={s.p}>Liv Body GLP-1 is the weight-management program from <strong>LIV Body Medical</strong>, founded by fitness entrepreneur Paige Hathaway. The tagline &mdash; <em>"work with your biology, not against it"</em> &mdash; sets the tone: a structured program that pairs GLP-1 medication with health coaching and ongoing clinical support. The medical operations run through <strong>OpenLoop Health</strong>, a US-licensed clinician network that handles the prescribing side.</p>
+
+      <h2 style={s.h2}>How Liv Body's pricing actually works</h2>
+      <p style={s.p}>Liv Body uses the simplest pricing model in this market: a single flat monthly price that covers everything. No separate membership, no per-visit consultation charge, no shipping fee at the end of checkout. The number you see is the number you pay.</p>
+
+      <h3 style={s.h3}>Medications and pricing</h3>
+      <ul style={s.ul}>
+        <li><strong>Compounded semaglutide</strong> &mdash; from <strong>$179/mo</strong>, labeled "Best Value" on the Liv Body site. One injection per week.</li>
+        <li><strong>Compounded tirzepatide</strong> &mdash; from <strong>$279/mo</strong>, labeled "Advanced Option." One injection per week.</li>
+      </ul>
+
+      <h3 style={s.h3}>What's included in every plan</h3>
+      <ul style={s.ul}>
+        <li>The medication itself</li>
+        <li>Clinical review by an OpenLoop Health licensed clinician</li>
+        <li>Ongoing check-ins with a <strong>Care Coach</strong></li>
+        <li>Personalized care plan</li>
+        <li>Private patient portal</li>
+        <li>Free expedited shipping</li>
+      </ul>
+
+      <h3 style={s.h3}>Pharmacy partners</h3>
+      <p style={s.p}>Liv Body uses a network of USA-certified compounding pharmacies for fulfillment: <strong>RedRock Pharmacy</strong> (Utah), <strong>Health Warehouse</strong> (Kentucky), <strong>Precision Compounding Pharmacy</strong> (New York), and <strong>Triad Rx</strong> (Alabama). Which pharmacy ships your prescription depends on your location.</p>
+
+      <h2 style={s.h2}>How to sign up</h2>
+      <ol style={s.ul}>
+        <li>Complete a <strong>3-minute online assessment</strong> on livbody.com.</li>
+        <li>An OpenLoop Health clinician reviews your information and writes the prescription if you're a candidate.</li>
+        <li>Your medication ships fast and discreet to your address.</li>
+      </ol>
+
+      <div style={{background:"#fef3c7",border:"1px solid #fde68a",borderRadius:10,padding:"12px 16px",margin:"14px 0",fontSize:12,color:"#78350f",lineHeight:1.55}}>
+        <strong>Affiliate disclosure:</strong> The link below is an affiliate link. We earn a commission if you sign up through it, at no extra cost to you. Our comparison-tool rankings reflect total monthly cost, not commission rates.
+      </div>
+      <a href={affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" style={{display:"inline-block",padding:"12px 22px",borderRadius:8,background:"#0369a1",color:"#fff",fontSize:14,fontWeight:700,textDecoration:"none",margin:"4px 0 18px"}}>Visit Liv Body &rarr;</a>
+
+      <h2 style={s.h2}>Liv Body vs. other compounded providers</h2>
+      <div style={p.tableWrap}>
+        <table style={p.table}>
+          <thead><tr>
+            <th style={p.th}>Provider</th>
+            <th style={p.th}>All-in monthly</th>
+            <th style={p.th}>Membership</th>
+            <th style={p.th}>Includes coaching?</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style={p.tdHighlight}><strong>Liv Body</strong></td><td style={p.tdHighlight}>$179&ndash;$279/mo</td><td style={p.tdHighlight}>None</td><td style={p.tdHighlight}>Yes (Care Coach)</td></tr>
+            <tr><td style={p.td}><strong>Oak</strong></td><td style={p.td}>$133&ndash;$199/mo</td><td style={p.td}>None</td><td style={p.td}>No</td></tr>
+            <tr><td style={p.td}><strong>FeelGood</strong></td><td style={p.td}>$149&ndash;$249/mo</td><td style={p.td}>None</td><td style={p.td}>No</td></tr>
+            <tr><td style={p.td}><strong>Hims</strong></td><td style={p.td}>$298&ndash;$448/mo</td><td style={p.td}>$149/mo</td><td style={p.td}>App-based</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style={{fontSize:13,color:"#475569",lineHeight:1.6,margin:"0 0 14px"}}>Want every provider compared at once? <Link to="/" style={s.link}>Use the full comparison tool</Link>.</p>
+
+      <h2 style={s.h2}>Contact</h2>
+      <ul style={s.ul}>
+        <li>Email: <a href="mailto:help@livbody.com" style={s.link}>help@livbody.com</a></li>
+        <li>Phone: (260) 833-7235</li>
+        <li>Address: Des Moines, Iowa</li>
+      </ul>
+
+      <h2 style={s.h2}>Pricing sources</h2>
+      <ul style={p.sourceList}>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Liv Body official site</span><a href="https://livbody.com" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>livbody.com</a> &mdash; verified June 9, 2026</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Medical partner</span>OpenLoop Health (US-licensed clinician network)</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Fulfillment pharmacies</span>RedRock Pharmacy (UT), Health Warehouse (KY), Precision Compounding Pharmacy (NY), Triad Rx (AL)</li>
+      </ul>
+    </ProviderDetailShell>
+  );
+}
+
+// ── FeelGood detail page ────────────────────────────────────────────────
+function FeelGoodCostPage() {
+  const s = legalStyles;
+  const p = PROVIDER_DETAIL_STYLE;
+  const affiliateUrl = "https://track.revoffers.com/aff_c?offer_id=1604&aff_id=12255";
+  return (
+    <ProviderDetailShell
+      title="FeelGood GLP-1 Cost: Injections & Tablets Pricing 2026"
+      route="/providers/feelgood-glp1-cost/"
+      description="FeelGood Telehealth pricing: compounded GLP-1 injections from $149/mo, tablets from $249/mo. HSA/FSA approved, money back guarantee, free shipping."
+      lastVerified="June 9, 2026"
+      verdict="FeelGood is one of the cheapest legitimate compounded paths on this site — $149/mo all-in for weekly injections, $249/mo for daily tablets. No membership, no hidden fees, money-back guarantee."
+      slug="feelgood-glp1-cost"
+      tagSlug="feelgood"
+    >
+      <BottomLineBox
+        label="All-in cost"
+        total="$149–$249/mo"
+        items={[
+          { label: "Compounded injections", value: "$149/mo (weekly)" },
+          { label: "Compounded tablets", value: "$249/mo (daily)" },
+          { label: "Membership / consultation / shipping", value: "All included" },
+        ]}
+        note="HSA/FSA approved. Weight-loss money-back guarantee. Original brand-name injections also available from $1,999/mo with limited quantities."
+      />
+
+      <h2 style={s.h2}>About FeelGood</h2>
+      <p style={s.p}>FeelGood Telehealth (<strong>feelgoodmeds.com</strong>) operates in two verticals: weight loss (GLP-1) and men's health (ED treatments). The tagline &mdash; <em>"fat loss made easy with personalized GLP-1 medication"</em> &mdash; sets the pitch. The product is <strong>USA Made, Clinician Prescribed</strong>, with a <strong>4.8 / 5 Trustpilot rating</strong> at the time of our review.</p>
+
+      <h2 style={s.h2}>How FeelGood's pricing actually works</h2>
+      <p style={s.p}>FeelGood follows the "everything-in-the-price" model: no separate membership, no consultation fee, no add-on shipping cost. The number you see at checkout is the full monthly cost.</p>
+
+      <h3 style={s.h3}>Medications and pricing</h3>
+      <ul style={s.ul}>
+        <li><strong>Compounded injections</strong> &mdash; from <strong>$149/mo</strong>. One injection per week.</li>
+        <li><strong>Compounded tablets</strong> &mdash; from <strong>$249/mo</strong>. One dissolvable tablet per day. Convenient if you prefer not to inject.</li>
+        <li><strong>Original (brand-name) injections</strong> &mdash; from <strong>$1,999/mo</strong>. Brand-name supply is constrained; FeelGood notes quantities are limited.</li>
+      </ul>
+
+      <h3 style={s.h3}>What's included</h3>
+      <ul style={s.ul}>
+        <li>The medication itself</li>
+        <li>Clinician evaluation and prescription</li>
+        <li>Free shipping</li>
+        <li><strong>HSA/FSA eligible</strong> — pay with pre-tax dollars if your account is active</li>
+        <li><strong>Weight Loss Money Back Guarantee</strong> — check the FeelGood site for the current terms of the guarantee before purchase</li>
+      </ul>
+
+      <h3 style={s.h3}>Where FeelGood is available</h3>
+      <p style={s.p}>FeelGood ships compounded GLP-1 medications to most US states. <strong>Compounded medications are not available in Louisiana or North Dakota</strong>; brand-name original injections may still be accessible from those states &mdash; verify on the FeelGood site before completing intake.</p>
+
+      <div style={{background:"#fef3c7",border:"1px solid #fde68a",borderRadius:10,padding:"12px 16px",margin:"14px 0",fontSize:12,color:"#78350f",lineHeight:1.55}}>
+        <strong>Affiliate disclosure:</strong> The link below is an affiliate link. We earn a commission if you sign up through it, at no extra cost to you. Our comparison-tool rankings reflect total monthly cost, not commission rates.
+      </div>
+      <a href={affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" style={{display:"inline-block",padding:"12px 22px",borderRadius:8,background:"#0369a1",color:"#fff",fontSize:14,fontWeight:700,textDecoration:"none",margin:"4px 0 18px"}}>Visit FeelGood &rarr;</a>
+
+      <h2 style={s.h2}>FeelGood vs. other compounded providers</h2>
+      <div style={p.tableWrap}>
+        <table style={p.table}>
+          <thead><tr>
+            <th style={p.th}>Provider</th>
+            <th style={p.th}>All-in monthly</th>
+            <th style={p.th}>Membership</th>
+            <th style={p.th}>Tablets option?</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style={p.tdHighlight}><strong>FeelGood</strong></td><td style={p.tdHighlight}>$149&ndash;$249/mo</td><td style={p.tdHighlight}>None</td><td style={p.tdHighlight}>Yes</td></tr>
+            <tr><td style={p.td}><strong>Oak</strong></td><td style={p.td}>$133&ndash;$199/mo</td><td style={p.td}>None</td><td style={p.td}>No (injection only)</td></tr>
+            <tr><td style={p.td}><strong>Liv Body</strong></td><td style={p.td}>$179&ndash;$279/mo</td><td style={p.td}>None</td><td style={p.td}>No (injection only)</td></tr>
+            <tr><td style={p.td}><strong>Hims</strong></td><td style={p.td}>$298&ndash;$448/mo</td><td style={p.td}>$149/mo</td><td style={p.td}>Yes (Wegovy Pill brand)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style={{fontSize:13,color:"#475569",lineHeight:1.6,margin:"0 0 14px"}}>To run every provider against your insurance + state + condition, use our <Link to="/" style={s.link}>free comparison tool</Link>.</p>
+
+      <h2 style={s.h2}>Pricing sources</h2>
+      <ul style={p.sourceList}>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>FeelGood official site</span><a href="https://feelgoodmeds.com" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>feelgoodmeds.com</a> &mdash; verified June 9, 2026</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Trustpilot</span>4.8 / 5 average customer rating at review time</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>State availability</span>Compounded medications unavailable in Louisiana and North Dakota</li>
       </ul>
     </ProviderDetailShell>
   );
@@ -2286,6 +2471,8 @@ export default function App() {
       <Route path="/providers/ro-weight-loss-cost" element={<RoProviderDetail />} />
       <Route path="/providers/hims-glp1-cost" element={<HimsProviderDetail />} />
       <Route path="/providers/noom-med-cost" element={<NoomProviderDetail />} />
+      <Route path="/providers/liv-body-glp1-cost" element={<LivBodyCostPage />} />
+      <Route path="/providers/feelgood-glp1-cost" element={<FeelGoodCostPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/contact" element={<ContactPage />} />

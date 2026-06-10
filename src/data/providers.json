@@ -1,5 +1,41 @@
 [
   {
+    "name": "Liv Body",
+    "website": "https://livbody.com",
+    "url": "https://track.revoffers.com/aff_c?offer_id=1522&aff_id=12255",
+    "detail": "Compounded semaglutide from $179/mo and tirzepatide from $279/mo by LIV Body Medical. No hidden fees — medication, clinician consultations, Care Coach, and free expedited shipping included.",
+    "baseMedPrice": 179,
+    "membershipFee": 0,
+    "membershipFeeNote": "No membership fee — everything included in medication price",
+    "consultationFee": 0,
+    "shippingFee": 0,
+    "cancellationPolicy": null,
+    "totalMonthlyMin": 179,
+    "totalMonthlyMax": 279,
+    "priceVerifiedDate": "2026-06-09",
+    "active": true,
+    "priceTransparency": "verified",
+    "detailPageSlug": "liv-body-glp1-cost"
+  },
+  {
+    "name": "FeelGood",
+    "website": "https://feelgoodmeds.com",
+    "url": "https://track.revoffers.com/aff_c?offer_id=1604&aff_id=12255",
+    "detail": "Compounded injections from $149/mo and compounded tablets from $249/mo. No membership or hidden fees — everything included. HSA/FSA approved. Weight loss money back guarantee. Free shipping.",
+    "baseMedPrice": 149,
+    "membershipFee": 0,
+    "membershipFeeNote": "No membership fee — everything included in medication price",
+    "consultationFee": 0,
+    "shippingFee": 0,
+    "cancellationPolicy": null,
+    "totalMonthlyMin": 149,
+    "totalMonthlyMax": 249,
+    "priceVerifiedDate": "2026-06-09",
+    "active": true,
+    "priceTransparency": "verified",
+    "detailPageSlug": "feelgood-glp1-cost"
+  },
+  {
     "name": "Hims",
     "website": "https://hims.com",
     "url": "https://www.forhims.com/weight-loss",
@@ -50,7 +86,8 @@
     "totalMonthlyMin": 99,
     "totalMonthlyMax": null,
     "priceVerifiedDate": "2026-05-30",
-    "active": true,
+    "active": false,
+    "inactiveReason": "No affiliate partnership — removed from public listing 2026-06-09.",
     "priceTransparency": "estimated",
     "priceTransparencyNote": "Microdose GLP-1 all-in price. Brand-name access from $69/mo + insurance copay.",
     "detailPageSlug": "noom-med-cost"
@@ -68,7 +105,8 @@
     "totalMonthlyMin": 149,
     "totalMonthlyMax": 348,
     "priceVerifiedDate": "2026-05-28",
-    "active": true,
+    "active": false,
+    "inactiveReason": "No affiliate partnership — removed from public listing 2026-06-09.",
     "priceTransparency": "verified"
   },
   {

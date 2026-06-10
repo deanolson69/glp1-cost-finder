@@ -97,6 +97,24 @@ const ROUTES_META = {
       { name: "Noom Med Cost", url: "/providers/noom-med-cost/" },
     ],
   },
+  "/providers/liv-body-glp1-cost/": {
+    title: "Liv Body GLP-1 Cost: Semaglutide & Tirzepatide Pricing 2026 | GLP-1 Cost Finder",
+    description:
+      "Liv Body GLP-1 pricing breakdown: compounded semaglutide from $179/mo, tirzepatide from $279/mo. No hidden fees — medication, clinician, Care Coach, and shipping included.",
+    breadcrumb: [
+      { name: "Providers", url: "/" },
+      { name: "Liv Body GLP-1 Cost", url: "/providers/liv-body-glp1-cost/" },
+    ],
+  },
+  "/providers/feelgood-glp1-cost/": {
+    title: "FeelGood GLP-1 Cost: Injections & Tablets Pricing 2026 | GLP-1 Cost Finder",
+    description:
+      "FeelGood Telehealth pricing: compounded GLP-1 injections from $149/mo, tablets from $249/mo. HSA/FSA approved, money back guarantee, free shipping.",
+    breadcrumb: [
+      { name: "Providers", url: "/" },
+      { name: "FeelGood GLP-1 Cost", url: "/providers/feelgood-glp1-cost/" },
+    ],
+  },
   "/provider-check": {
     title: "Is This GLP-1 Provider Legitimate? | Provider Safety Checker",
     description:
@@ -105,7 +123,7 @@ const ROUTES_META = {
     faq: [
       { q: "How do I know if a GLP-1 provider is legitimate?", a: "Work through the six-step checklist on this page: check the FDA warning letter database, verify state pharmacy licensing via NABP, confirm a named licensed prescriber reviews your medical history, look up the business on your Secretary of State registry or BBB.org, confirm the provider requires a real prescription, and inspect any medication you receive for FDA-approved labels from the manufacturer with your name and prescriber on the pharmacy label." },
       { q: "What are the red flags for fake GLP-1 providers?", a: "Top warning signs: no medical questionnaire or prescriber consultation, prices far below market rate, no verifiable pharmacy license or prescriber credentials, no clear cancellation/refund policy, high-pressure urgency tactics, claims of \"exclusive\" formulations, plain or foreign-language packaging on received medication, no physical address or About page, payment by crypto or wire transfer only, and unsolicited social-media or email ads selling GLP-1s without a prescription." },
-      { q: "Is it safe to buy GLP-1 medications from a telehealth provider?", a: "Yes, when the provider is a licensed telehealth platform that requires a real medical questionnaire, has a named licensed prescriber sign off on your prescription, and fills through a state-licensed pharmacy. Major telehealth providers like Hims, Ro, Noom Med, and the others verified on this page meet those criteria. The risk is not telehealth itself -- it's illegitimate sellers who skip those steps." },
+      { q: "Is it safe to buy GLP-1 medications from a telehealth provider?", a: "Yes, when the provider is a licensed telehealth platform that requires a real medical questionnaire, has a named licensed prescriber sign off on your prescription, and fills through a state-licensed pharmacy. Major telehealth providers like Hims, Ro, Liv Body, FeelGood, and the others verified on this page meet those criteria. The risk is not telehealth itself -- it's illegitimate sellers who skip those steps." },
       { q: "How can I check if a pharmacy is licensed in my state?", a: "Use the National Association of Boards of Pharmacy (NABP) state-board directory at nabp.pharmacy/members/boards-of-pharmacy/ to find your state's pharmacy licensing board, then look up the pharmacy by name. NABP's safe.pharmacy site also lists VIPPS-accredited online pharmacies. Verify the license is active in YOUR state, not just the state the pharmacy is based in." },
       { q: "What should I do if I think I received counterfeit GLP-1 medication?", a: "Stop using it immediately and don't dispose of it -- you'll need it for any investigation. Report to the FDA MedWatch program (fda.gov/safety/medwatch), file an FTC complaint at reportfraud.ftc.gov, and contact your prescriber to discuss what to do next. If you paid by credit card, contact your card issuer to dispute the charge. If you have safety concerns, contact your doctor or poison control (1-800-222-1222)." },
       { q: "Are compounded GLP-1 medications safe?", a: "Compounded medications occupy a different regulatory category from FDA-approved drugs. FDA-registered 503B outsourcing facilities can legally compound certain medications during drug shortages, and 503A pharmacies can compound on a per-prescription basis. Compounded products are NOT FDA-approved, and the FDA has issued warnings about some compounded semaglutide products. Check whether your specific medication comes from a 503B facility (more oversight) vs. a 503A pharmacy. The GLP-1 shortage situation has been evolving -- check FDA.gov for the current status of any specific drug shortage before relying on compounded as a long-term option." },
