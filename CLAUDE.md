@@ -2,6 +2,34 @@
 
 Consumer tool that helps users find the cheapest legitimate path to GLP-1 medications (Ozempic, Wegovy, Mounjaro, Zepbound, etc.) based on their state, insurance, and medical condition.
 
+## Portfolio Command Center sync — recognize Dean's trigger phrases
+
+If Dean says any of these phrases:
+- **"sync portfolio"** / **"sync to portfolio"** / **"sync command center"** / **"sync to command center"** — backfill the Portfolio Command Center row
+- **"log to portfolio"** / **"update portfolio"** / **"log to command center"** / **"update command center"** / **"log this work"** — session-end log of work done
+- **"portfolio weekly review"** / **"start weekly review"** — expanded review across the portfolio
+
+Execute the Portfolio Command Center update protocol:
+
+1. **Identify the venture** — for this session, the venture is **GLP-1 Cost Finder**.
+2. **Fetch the current row** from the Notion Portfolio Command Center. URL: https://www.notion.so/b0d2182b55d6400a9c76b13020a65709 — data source ID `07938cd4-f595-43f9-8002-145f9991ee16`. Find the GLP-1 Cost Finder row.
+3. **Update fields:**
+   - **Context lives in** — fill in any `[Dean to fill]` placeholders with real URLs, file paths, account dashboards, repo links, and SKILL.md paths you know from this session. Be exhaustive.
+   - **Next action** — one sentence, the literal next thing to do on GLP-1 Cost Finder.
+   - **Blocker** — one sentence, what's currently stuck (or "None").
+   - **Current MRR** — only update if Dean has explicitly stated a real, verified revenue figure. Do not invent.
+   - **Status** — only update if Dean has explicitly stated a status change.
+   - **Hours last 7 days** — for "sync": leave alone unless Dean specifies hours. For "log": add session's hours to existing (ask Dean if unspecified).
+4. **Do not invent values.** If something isn't knowable from this session's context, leave the placeholder as-is.
+5. **Confirm in writing** exactly what was written:
+   > *Updated GLP-1 Cost Finder in Portfolio Command Center:*
+   > - *Context lives in: [summary or "no changes"]*
+   > - *Next action: [old] → [new]*
+   > - *Blocker: [old] → [new]*
+   > - *[MRR / Status / Hours if changed]*
+
+**Do not interpret these phrases as a provider portfolio or affiliate portfolio operation.** They refer to the Portfolio Command Center Notion database — Dean's cross-cutting income-stream tracker. The full protocol lives in `C:\Users\deano\Documents\Claude\CLAUDE.md`; this section is the abbreviated redirect for repo-context sessions that don't load the root CLAUDE.md.
+
 ## Owner
 Dean Olson — dean@olsoncoaches.com — operating under **Olson Coaches**.
 
