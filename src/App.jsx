@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import providersData from "./data/providers.json";
+import { initAffiliateClickTracking } from "./utils/analytics";
 
 // ─── STATE DATA (All 50 states + DC) ───
 const stateData = {
@@ -2462,6 +2463,9 @@ function Glp1SelfPayOptions() {
 
 export default function App() {
   useCanonical();
+  // Attach the document-level affiliate-click handler once on first mount.
+  // initAffiliateClickTracking() is idempotent and SSR-safe.
+  useEffect(() => { initAffiliateClickTracking(); }, []);
   return (
     <Routes>
       <Route path="/" element={<GLP1CostFinder />} />
