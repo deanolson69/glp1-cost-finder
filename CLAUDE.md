@@ -19,14 +19,13 @@ Execute the Portfolio Command Center update protocol:
    - **Blocker** — one sentence, what's currently stuck (or "None").
    - **Current MRR** — only update if Dean has explicitly stated a real, verified revenue figure. Do not invent.
    - **Status** — only update if Dean has explicitly stated a status change.
-   - **Hours last 7 days** — for "sync": leave alone unless Dean specifies hours. For "log": add session's hours to existing (ask Dean if unspecified).
 4. **Do not invent values.** If something isn't knowable from this session's context, leave the placeholder as-is.
 5. **Confirm in writing** exactly what was written:
    > *Updated GLP-1 Cost Finder in Portfolio Command Center:*
    > - *Context lives in: [summary or "no changes"]*
    > - *Next action: [old] → [new]*
    > - *Blocker: [old] → [new]*
-   > - *[MRR / Status / Hours if changed]*
+   > - *[MRR / Status if changed]*
 
 **Do not interpret these phrases as a provider portfolio or affiliate portfolio operation.** They refer to the Portfolio Command Center Notion database — Dean's cross-cutting income-stream tracker. The full protocol lives in `C:\Users\deano\Documents\Claude\CLAUDE.md`; this section is the abbreviated redirect for repo-context sessions that don't load the root CLAUDE.md.
 
