@@ -47,6 +47,61 @@
           "name": "GLP-1 Cost Finder",
           "url": "https://glp1costfinder.com",
           "publisher": { "@id": "https://glp1costfinder.com/#organization" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://glp1costfinder.com/about#dean-olson",
+          "name": "Dean Olson",
+          "jobTitle": "Founder and Lead Researcher",
+          "url": "https://glp1costfinder.com/about",
+          "description": "Independent consumer researcher tracking GLP-1 medication pricing. Verifies every listed price against the provider's own published pages on a monthly cadence. Financial coach by training, not a clinician — this site covers cost and coverage, not medical advice.",
+          "knowsAbout": [
+            "GLP-1 medication pricing",
+            "Telehealth provider cost comparison",
+            "Medicare Part D prescription drug coverage",
+            "Manufacturer savings cards and patient assistance programs",
+            "Compounded medication regulation"
+          ],
+          "hasCredential": {
+            "@type": "EducationalOccupationalCredential",
+            "credentialCategory": "certification",
+            "name": "Ramsey Solutions Master Financial Coach"
+          },
+          "worksFor": { "@id": "https://glp1costfinder.com/#organization" }
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://glp1costfinder.com/#pricing-dataset",
+          "name": "GLP-1 Medication Self-Pay Price Dataset",
+          "description": "Monthly self-pay pricing for GLP-1 weight-loss and diabetes medications across US telehealth providers and manufacturer direct-to-consumer programs. Each record carries the provider name, total monthly cost range, a pricing-confidence label (verified means confirmed on the provider's own public pages; estimated means sourced from review sites or press releases and not confirmed through intake), and an individual verification date. Headline figures are ongoing monthly rates, not promotional first-month pricing.",
+          "url": "https://glp1costfinder.com/",
+          "keywords": [
+            "GLP-1",
+            "semaglutide",
+            "tirzepatide",
+            "compounded semaglutide",
+            "Wegovy",
+            "Zepbound",
+            "Ozempic",
+            "Mounjaro",
+            "medication pricing",
+            "telehealth",
+            "self-pay",
+            "drug costs"
+          ],
+          "creator": { "@id": "https://glp1costfinder.com/about#dean-olson" },
+          "publisher": { "@id": "https://glp1costfinder.com/#organization" },
+          "isAccessibleForFree": true,
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "spatialCoverage": "United States",
+          "measurementTechnique": "Direct verification against each provider's own published pricing pages, on a monthly cadence",
+          "creativeWorkStatus": "Published",
+          "dateModified": "2026-08-03",
+          "distribution": {
+            "@type": "DataDownload",
+            "encodingFormat": "text/markdown",
+            "contentUrl": "https://glp1costfinder.com/llms.txt"
+          }
         }
       ]
     }

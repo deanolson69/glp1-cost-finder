@@ -1756,8 +1756,44 @@ function AboutPage() {
         <h2 style={s.h2}>Who We Are</h2>
         <p style={s.p}>This site is built and maintained by <strong>Dean Olson</strong>, an independent researcher and consumer advocate. GLP-1 Cost Finder is not affiliated with any pharmaceutical company, telehealth provider, or insurance company.</p>
 
-        <h2 style={s.h2}>Our Methodology</h2>
+        <h2 style={s.h2} id="methodology">Our Methodology</h2>
         <p style={s.p}>Pricing data is collected directly from provider websites and verified monthly. We include the <strong>full cost</strong> &mdash; not just the medication price, but membership fees, consultation charges, shipping, and dose escalation costs where applicable. When we can't verify a price directly, we say so.</p>
+        <p style={s.p}>Because this site makes cost claims that people use to make health decisions, the full process is written out below rather than summarized. If you're a journalist, researcher, or advocacy organization evaluating whether to cite this data, this section is what you're looking for.</p>
+
+        <h3 style={s.h3}>Where the numbers come from</h3>
+        <p style={s.p}>Every price originates from <strong>the provider's own published pages</strong> &mdash; not from aggregators, affiliate networks, press coverage, or other comparison sites. When a provider publishes a price, we record it along with the date we saw it. When a provider gates pricing behind an intake form, we say that instead of guessing.</p>
+        <p style={s.p}>Manufacturer pricing (NovoCare, LillyDirect) comes from the manufacturer's own consumer-facing program pages. Retail reference prices are the manufacturer list price (WAC), which is why they appear as ranges rather than exact figures &mdash; actual pharmacy cash prices vary by location and pharmacy contract.</p>
+
+        <h3 style={s.h3}>What "verified" and "estimated" mean</h3>
+        <p style={s.p}>Every provider in the comparison tool carries one of two confidence labels, and they mean specific things:</p>
+        <ul style={s.ul}>
+          <li><strong>Verified</strong> &mdash; the price was confirmed on the provider's own public pages. We saw the number on their site.</li>
+          <li><strong>Estimated</strong> &mdash; the price came from review sites, press releases, or user reports, and has <em>not</em> been confirmed through the provider's own published pricing. Providers that require completing an intake form before showing a price generally carry this label. An estimated price is our best available read, not a quote.</li>
+        </ul>
+        <p style={s.p}>We would rather label something estimated than present an unverified number as fact. If a provider starts publishing its pricing, the label changes.</p>
+
+        <h3 style={s.h3}>Verification cadence</h3>
+        <p style={s.p}>Prices are re-checked on a <strong>monthly cadence</strong>. Each provider carries its own individual verification date, shown on its card in the comparison tool and in the monthly price index. Those dates are real &mdash; we do not bump a date without actually re-checking the price, and we do not round them to make the data look fresher than it is.</p>
+        <p style={s.p}>This means you will sometimes see a provider whose verification date is older than a month. That is deliberate. It means that provider was not independently re-verified in the most recent pass, and the honest thing is to show you when the number was last confirmed rather than to imply currency we haven't earned. Providers that gate pricing behind intake are the most common case.</p>
+
+        <h3 style={s.h3}>Ongoing prices, not promotional ones</h3>
+        <p style={s.p}>Where a provider advertises a discounted first month, <strong>the headline number in our comparison is the ongoing rate</strong>, not the promo. A "$39 first month" offer that renews at $149/month is listed at the price you will actually be paying in month two and beyond, with the promo noted separately.</p>
+        <p style={s.p}>This is a deliberate editorial choice and it makes some providers look more expensive than their own marketing does. We think that's correct: almost nobody takes a GLP-1 for one month, so first-month pricing is not the number that matters.</p>
+
+        <h3 style={s.h3}>Split billing is surfaced, not hidden</h3>
+        <p style={s.p}>Several providers bill the membership separately from the medication. Their advertised price is the membership alone, which understates what you'll pay. Where that's the case we show both components and the combined total, because the combined total is the real cost.</p>
+
+        <h3 style={s.h3}>What we don't do</h3>
+        <ul style={s.ul}>
+          <li>We do not accept payment for placement or ranking. Rankings are sorted by total monthly cost, full stop.</li>
+          <li>We do not adjust rankings based on affiliate commission rates. Some providers we rank near the top pay us nothing.</li>
+          <li>We do not invent, interpolate, or estimate a price to fill a gap. A missing price is shown as missing.</li>
+          <li>We do not give medical advice. This site is about cost and coverage. Whether a GLP-1 is appropriate for you is a question for a licensed clinician.</li>
+        </ul>
+
+        <h3 style={s.h3}>Corrections</h3>
+        <p style={s.p}>If you find a price on this site that doesn't match what a provider currently charges, email <a href="mailto:dean@olsoncoaches.com" style={s.link}>dean@olsoncoaches.com</a> with the provider name and a link or screenshot. Pricing corrections are the single most useful thing anyone can send us, and they get fixed quickly.</p>
+        <p style={s.p}>A machine-readable summary of the current dataset, including every provider's price range and verification date, is published at <a href="/llms.txt" style={s.link}>/llms.txt</a>.</p>
 
         <h2 style={s.h2}>How We Make Money</h2>
         <p style={s.p}>Some links on this site are affiliate links. If you click through and make a purchase, we may earn a commission at no additional cost to you. <strong>This never affects our rankings or recommendations.</strong> Providers cannot pay for higher placement. Our full affiliate disclosure is available on every page with affiliate links.</p>

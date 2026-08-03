@@ -12,6 +12,7 @@
     "og:image": "node scripts/generate-og-image.mjs",
     "seo:audit": "node scripts/seo-audit.mjs",
     "price:check": "node scripts/price-check.mjs",
+    "llms:txt": "node scripts/generate-llms-txt.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
