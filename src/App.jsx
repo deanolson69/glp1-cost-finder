@@ -2488,7 +2488,19 @@ export default function App() {
       <Route path="/provider-check" element={<ProviderCheckPage />} />
       <Route path="/providers/ro-weight-loss-cost" element={<RoProviderDetail />} />
       <Route path="/providers/hims-glp1-cost" element={<HimsProviderDetail />} />
-      <Route path="/providers/noom-med-cost" element={<NoomProviderDetail />} />
+      {/* Noom Med was removed from the public comparison 2026-06-09 (no
+          affiliate partnership). The detail page was kept live for a
+          transition period so Google wouldn't hit a 404; as of 2026-08-03
+          it redirects to the homepage instead. Both URL forms are matched
+          because the indexed/canonical form was the trailing-slash one.
+          The NoomProviderDetail component is intentionally left in place
+          (unreferenced) so the page can be restored if a partnership
+          lands — same "preserve for re-enable" pattern as the
+          active:false entries in providers.json. Server-side 301s are
+          configured in the Render dashboard; this client-side redirect
+          is the fallback for anyone already inside the SPA. */}
+      <Route path="/providers/noom-med-cost" element={<Navigate to="/" replace />} />
+      <Route path="/providers/noom-med-cost/" element={<Navigate to="/" replace />} />
       <Route path="/providers/liv-body-glp1-cost" element={<LivBodyCostPage />} />
       <Route path="/providers/feelgood-glp1-cost" element={<FeelGoodCostPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />

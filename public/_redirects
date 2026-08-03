@@ -38,10 +38,23 @@
 /articles/wegovy-injection-vs-pill-cost                        /articles/wegovy-injection-vs-pill-cost.html                        301
 /articles/zepbound-cost-without-insurance                      /articles/zepbound-cost-without-insurance.html                      301
 
+# --- Retired provider pages (301 to homepage) ---
+# Noom Med was pulled from the public comparison 2026-06-09 (no affiliate
+# partnership). The detail page stayed live through a transition window so
+# Google wouldn't hit a 404. As of 2026-08-03 it retires to the homepage.
+# BOTH URL forms are listed: the trailing-slash form is what the sitemap
+# and canonical advertised, so it's the one Google actually indexed. The
+# bare form previously 301'd to the trailing-slash form -- that rule is
+# retargeted here rather than left in place, because chaining
+# bare -> trailing-slash -> homepage dilutes the signal for no benefit.
+/providers/noom-med-cost                                       /                                                                   301
+/providers/noom-med-cost/                                      /                                                                   301
+
 # --- Provider detail page redirects (no trailing slash -> trailing slash) ---
 /providers/ro-weight-loss-cost                                 /providers/ro-weight-loss-cost/                                     301
 /providers/hims-glp1-cost                                      /providers/hims-glp1-cost/                                          301
-/providers/noom-med-cost                                       /providers/noom-med-cost/                                           301
+/providers/liv-body-glp1-cost                                  /providers/liv-body-glp1-cost/                                      301
+/providers/feelgood-glp1-cost                                  /providers/feelgood-glp1-cost/                                      301
 
 # --- SPA fallback (must be last) ---
 # Catches any remaining unmatched URL and serves the SPA shell so React

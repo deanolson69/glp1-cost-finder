@@ -88,15 +88,13 @@ const ROUTES_META = {
       { name: "Hims GLP-1 Cost", url: "/providers/hims-glp1-cost/" },
     ],
   },
-  "/providers/noom-med-cost/": {
-    title: "Noom Med GLP-1 Cost 2026: All Five Programs and What They Cost",
-    description:
-      "Noom Med runs five GLP-1 programs in 2026, from $99/mo branded telehealth to $299/mo all-inclusive tirzepatide. Start prices are introductory — here's what each program actually costs ongoing.",
-    breadcrumb: [
-      { name: "Providers", url: "/" },
-      { name: "Noom Med Cost", url: "/providers/noom-med-cost/" },
-    ],
-  },
+  // REMOVED 2026-08-03 -- /providers/noom-med-cost/ now 301s to the
+  // homepage (Noom Med was pulled from the public comparison 2026-06-09;
+  // the page was kept live through a transition window so Google wouldn't
+  // hit a 404). Prerendering it would emit an empty shell still carrying
+  // Noom Med's title, description, and self-canonical, which contradicts
+  // the redirect. The route now renders <Navigate to="/" replace /> in
+  // App.jsx, and the server-side 301s live in the Render dashboard.
   "/providers/liv-body-glp1-cost/": {
     title: "Liv Body GLP-1 Cost: Semaglutide & Tirzepatide Pricing 2026 | GLP-1 Cost Finder",
     description:
