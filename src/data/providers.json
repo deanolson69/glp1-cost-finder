@@ -1,5 +1,22 @@
 [
   {
+    "name": "telos rx",
+    "website": "https://telosrx.com",
+    "url": "https://track.revoffers.com/aff_c?offer_id=1612&aff_id=12255",
+    "detail": "Compounded semaglutide from $99/mo and tirzepatide from $139/mo. Oral tirzepatide $129/mo, microdosed tirzepatide $116/mo. Flat pricing covers the medication, free 2-day shipping included. Cancel anytime — one click in the portal, no retention call. Listed rates are starting prices; higher doses may cost more.",
+    "baseMedPrice": 99,
+    "membershipFee": 0,
+    "consultationFee": 0,
+    "shippingFee": 0,
+    "cancellationPolicy": "Cancel anytime — one click in your portal, no retention call",
+    "totalMonthlyMin": 99,
+    "totalMonthlyMax": 139,
+    "priceVerifiedDate": "2026-08-03",
+    "active": true,
+    "priceTransparency": "verified",
+    "priceTransparencyNote": "Prices published on telosrx.com and advertised as flat pricing covering the medication. The site does not itemize a separate membership or consultation fee, and lists rates as \"as low as\" — confirm your dose's price at intake."
+  },
+  {
     "name": "Liv Body",
     "website": "https://livbody.com",
     "url": "https://track.revoffers.com/aff_c?offer_id=1522&aff_id=12255",
@@ -31,7 +48,8 @@
     "totalMonthlyMin": 149,
     "totalMonthlyMax": 249,
     "priceVerifiedDate": "2026-06-09",
-    "active": true,
+    "active": false,
+    "inactiveReason": "Katalys paused the FeelGood Telehealth Program 2026-06-30 — clicks are unpaid. Data preserved; flip active back to true when Katalys un-pauses (offer_id 1604 is still valid).",
     "priceTransparency": "verified",
     "detailPageSlug": "feelgood-glp1-cost"
   },

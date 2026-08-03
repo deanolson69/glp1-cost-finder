@@ -1646,7 +1646,15 @@ function LivBodyCostPage() {
 function FeelGoodCostPage() {
   const s = legalStyles;
   const p = PROVIDER_DETAIL_STYLE;
-  const affiliateUrl = "https://track.revoffers.com/aff_c?offer_id=1604&aff_id=12255";
+  // Katalys paused the FeelGood Telehealth Program 2026-06-30, so clicks
+  // through the tracking link earn nothing. Pointing the CTA at the direct
+  // site instead: the payout is $0 either way, but this keeps us out of a
+  // paused program's click stats and keeps the page useful to readers.
+  // TO RE-ENABLE when Katalys un-pauses: restore the tracking URL below and
+  // flip FeelGood's "active" back to true in src/data/providers.json.
+  //   const affiliateUrl = "https://track.revoffers.com/aff_c?offer_id=1604&aff_id=12255";
+  const affiliateUrl = "https://feelgoodmeds.com";
+  const affiliateActive = false;
   return (
     <ProviderDetailShell
       title="FeelGood GLP-1 Cost: Injections & Tablets Pricing 2026"
@@ -1694,9 +1702,13 @@ function FeelGoodCostPage() {
       <p style={s.p}>FeelGood ships compounded GLP-1 medications to most US states. <strong>Compounded medications are not available in Louisiana or North Dakota</strong>; brand-name original injections may still be accessible from those states &mdash; verify on the FeelGood site before completing intake.</p>
 
       <div style={{background:"#fef3c7",border:"1px solid #fde68a",borderRadius:10,padding:"12px 16px",margin:"14px 0",fontSize:12,color:"#78350f",lineHeight:1.55}}>
-        <strong>Affiliate disclosure:</strong> The link below is an affiliate link. We earn a commission if you sign up through it, at no extra cost to you. Our comparison-tool rankings reflect total monthly cost, not commission rates.
+        {affiliateActive ? (
+          <><strong>Affiliate disclosure:</strong> The link below is an affiliate link. We earn a commission if you sign up through it, at no extra cost to you. Our comparison-tool rankings reflect total monthly cost, not commission rates.</>
+        ) : (
+          <><strong>Note:</strong> We are not currently in an affiliate relationship with FeelGood, so we earn nothing if you sign up. The link below goes directly to their site. We've kept this page up because the pricing information is still useful.</>
+        )}
       </div>
-      <a href={affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" style={{display:"inline-block",padding:"12px 22px",borderRadius:8,background:"#0369a1",color:"#fff",fontSize:14,fontWeight:700,textDecoration:"none",margin:"4px 0 18px"}}>Visit FeelGood &rarr;</a>
+      <a href={affiliateUrl} target="_blank" rel={affiliateActive ? "noopener noreferrer sponsored" : "noopener noreferrer"} style={{display:"inline-block",padding:"12px 22px",borderRadius:8,background:"#0369a1",color:"#fff",fontSize:14,fontWeight:700,textDecoration:"none",margin:"4px 0 18px"}}>Visit FeelGood &rarr;</a>
 
       <h2 style={s.h2}>FeelGood vs. other compounded providers</h2>
       <div style={p.tableWrap}>
