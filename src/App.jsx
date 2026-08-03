@@ -3002,7 +3002,7 @@ function GLP1CostFinder() {
       {/* TRUST BAR */}
       <div style={{background:"#fff",borderBottom:"1px solid #e2e8f0",padding:"8px 24px"}}>
         <div style={{maxWidth:720,margin:"0 auto",display:"flex",justifyContent:"center",alignItems:"center",gap:16,flexWrap:"wrap"}}>
-          <span style={{fontSize:11,fontWeight:600,color:"#10b981",display:"flex",alignItems:"center",gap:4}}>&#9679; Prices verified May 2026</span>
+          <span style={{fontSize:11,fontWeight:600,color:"#10b981",display:"flex",alignItems:"center",gap:4}}>&#9679; Prices verified August 2026</span>
           <span style={{fontSize:11,color:"#cbd5e1"}}>|</span>
           <span style={{fontSize:11,color:"#64748b"}}>Sources: FDA, CMS, GoodRx, LillyDirect, NovoCare, TrumpRx.gov</span>
         </div>
@@ -3518,7 +3518,7 @@ function GLP1CostFinder() {
                 {/* DISCLAIMER */}
                 <div style={{background:"#f8fafc",borderRadius:10,padding:16,marginBottom:16}}>
                   <p style={{fontSize:11,color:"#94a3b8",lineHeight:1.7,margin:0}}>
-                    <strong style={{color:"#64748b"}}>Medical disclaimer:</strong> This site provides cost comparison information only and is not medical advice. The condition you selected is used only to show relevant pricing and coverage information. Consult your healthcare provider before starting or changing medication. Prices are estimates and may vary. Data last verified May 2026. Some links are affiliate links.
+                    <strong style={{color:"#64748b"}}>Medical disclaimer:</strong> This site provides cost comparison information only and is not medical advice. The condition you selected is used only to show relevant pricing and coverage information. Consult your healthcare provider before starting or changing medication. Prices are estimates and may vary. Data last verified August 2026. Some links are affiliate links.
                   </p>
                 </div>
 
