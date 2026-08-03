@@ -1239,7 +1239,7 @@ function RoProviderDetail() {
       title="Ro Weight Loss Cost 2026: What You'll Actually Pay Per Month"
       route="/providers/ro-weight-loss-cost/"
       description={"Ro advertises GLP-1 programs \"from $39/mo\" but that's just the first month. Here's what Ro Body actually costs month after month, including the membership and medication fees they don't show upfront."}
-      lastVerified="May 30, 2026"
+      lastVerified="August 2, 2026"
       verdict="The $39/mo Ro advertises is a first-month-only promo. Real ongoing cost lands somewhere between $220 and $400 per month — membership plus a separately-billed medication price Ro doesn't publish."
       slug="ro-weight-loss-cost"
       tagSlug="ro"
@@ -1326,7 +1326,7 @@ function HimsProviderDetail() {
       title="Hims Weight Loss Cost 2026: Real Monthly Prices for GLP-1 Medications"
       route="/providers/hims-glp1-cost/"
       description="Hims charges a $149/mo membership AND separate medication fees starting at $149/mo. Here's the complete cost breakdown for Wegovy, Zepbound, and Foundayo through Hims."
-      lastVerified="May 30, 2026"
+      lastVerified="August 2, 2026"
       verdict="Hims is $149/mo membership plus separate medication starting at $149/mo. Realistic ongoing total: $298–$448/mo depending on which brand-name GLP-1 you take."
       slug="hims-glp1-cost"
       tagSlug="hims"
@@ -1427,68 +1427,80 @@ function NoomProviderDetail() {
   const p = PROVIDER_DETAIL_STYLE;
   return (
     <ProviderDetailShell
-      title="Noom Med GLP-1 Cost 2026: Microdose vs Brand-Name Pricing Explained"
+      title="Noom Med GLP-1 Cost 2026: All Five Programs and What They Cost"
       route="/providers/noom-med-cost/"
-      description="Noom Med offers compounded microdose GLP-1s from $99/mo all-in, or brand-name access from $69/mo plus medication costs. Here's exactly what each path costs."
-      lastVerified="May 30, 2026"
-      verdict="Two distinct programs at very different price points. The $99/mo Microdose is the realistic self-pay option. The $69/mo brand-name program is a program fee only — medication is on top and needs insurance to make sense."
+      description="Noom Med runs five GLP-1 programs in 2026, from $99/mo branded telehealth to $299/mo all-inclusive tirzepatide. Start prices are introductory — here's what each program actually costs ongoing."
+      lastVerified="August 2, 2026"
+      verdict="Five programs at very different price points. The all-inclusive GLP-1Rx tiers ($199–$299/mo, medication included, billed quarterly) are the realistic self-pay options. The $39 and $99 branded-telehealth rates are program fees only — medication is billed separately on top."
       slug="noom-med-cost"
       tagSlug="noom"
     >
       <BottomLineBox
-        label="Self-pay (no insurance)"
-        total="Microdose GLP-1: $99/mo all-in"
+        label="All-inclusive self-pay (medication included)"
+        total="$199–$299/mo"
         items={[
-          { label: "Program fee", value: "Included" },
-          { label: "Medication", value: "Included" },
-          { label: "Noom app", value: "Included" },
+          { label: "Microdose GLP-1Rx", value: "$79 to start, then $199/mo" },
+          { label: "GLP-1Rx", value: "$129 to start, then $249/mo" },
+          { label: "GLP-1Rx Plus (tirzepatide)", value: "$149 to start, then $299/mo" },
         ]}
-        note="The microdose is the option that shows in the no-insurance flow on our comparison tool."
+        note="Billed quarterly. Medication, clinical care, and the Noom app are all included in the monthly price. Start prices are introductory first-supply rates, not ongoing."
       />
 
       <BottomLineBox
-        label="With insurance"
-        total="Brand-name access: $69/mo + medication copay"
+        label="Branded-medication telehealth (medication separate)"
+        total="$99/mo + medication cost"
         items={[
-          { label: "Program fee", value: "$69/mo" },
-          { label: "Medication", value: "Your insurance copay (varies)" },
+          { label: "Program fee", value: "$39 to start, then $99/mo" },
+          { label: "Medication", value: "Billed separately (insurance copay or retail)" },
           { label: "Noom app", value: "Included" },
         ]}
-        note="For self-pay users without insurance, this program doesn't pencil out — brand-name retail medication runs $800–$1,300/mo on top of the $69 fee."
+        note="This tier only makes financial sense if your insurance covers the brand-name medication. Without coverage, retail brand-name GLP-1s run $900–$1,400/mo on top of the $99 program fee."
       />
 
       <h2 style={s.h2}>How Noom Med's pricing actually works</h2>
-      <p style={s.p}>Noom Med is unique among the providers we track because they offer <strong>two completely different programs</strong> at different price points. The headline number you see depends entirely on which program you sign up for.</p>
+      <p style={s.p}>Noom Med runs <strong>five distinct programs</strong> as of August 2026, and the headline number you see depends entirely on which one you sign up for. The critical distinction: the <strong>GLP-1Rx tiers bundle the medication into the monthly price</strong>, while the <strong>branded-medication telehealth tier bills medication separately</strong>. Comparing a bundled price against an unbundled program fee is the most common way people misjudge Noom's cost.</p>
+      <p style={s.p}>A second thing to know: the all-inclusive programs <strong>bill quarterly</strong>, not monthly. The "$199/mo" figure is the monthly equivalent of a quarterly charge, so budget for the full quarter up front.</p>
 
-      <h3 style={s.h3}>Program 1 — Noom Microdose GLP-1 ($99/mo)</h3>
+      <h3 style={s.h3}>Program 1 — Microdose GLP-1Rx ($79 start, then $199/mo)</h3>
       <ul style={s.ul}>
-        <li><strong>Compounded</strong>, lower-dose GLP-1 medication.</li>
-        <li><strong>$99/mo is the ALL-IN cost</strong> — program fee and medication are bundled.</li>
-        <li>No insurance required.</li>
-        <li>Includes full access to the Noom behavioral health app.</li>
-        <li>FSA/HSA eligible.</li>
-        <li>This is the option that shows in our "No Insurance" comparison flow.</li>
+        <li>Compounded, lower-dose GLP-1 medication.</li>
+        <li><strong>$199/mo is the ongoing all-in cost</strong> — medication, clinical care, and the Noom app are bundled.</li>
+        <li>$79 is the introductory first-supply price, not the ongoing rate.</li>
+        <li>Billed quarterly. No insurance required.</li>
+        <li>Cheapest of the all-inclusive tiers, and the one our comparison tool represents for Noom.</li>
       </ul>
 
-      <h3 style={s.h3}>Program 2 — Noom GLP-1 Brand-Name Access ($69/mo + medication)</h3>
+      <h3 style={s.h3}>Program 2 — GLP-1Rx ($129 start, then $249/mo)</h3>
       <ul style={s.ul}>
-        <li>Provides access to brand-name <strong>Ozempic and Zepbound</strong>.</li>
-        <li><strong>$69/mo is the PROGRAM FEE only</strong> — it covers clinician access, the Noom app, and ongoing support.</li>
-        <li><strong>Medication cost is separate</strong> and depends on your insurance coverage.</li>
-        <li>If your insurance covers GLP-1s, your copay could be $0–$50/mo on top of the $69 program fee.</li>
-        <li>Without insurance, brand-name medication runs $800–$1,300/mo at retail — making this path impractical for self-pay users.</li>
-        <li>FSA/HSA eligible.</li>
+        <li>Standard-dose compounded GLP-1 (semaglutide-class).</li>
+        <li>$249/mo ongoing, all-inclusive, billed quarterly.</li>
+        <li>Step up from Microdose for patients who need standard dosing.</li>
       </ul>
 
-      <h3 style={s.h3}>Program 3 — Noom GLP-1 Plus</h3>
+      <h3 style={s.h3}>Program 3 — GLP-1Rx Plus / tirzepatide ($149 start, then $299/mo)</h3>
       <ul style={s.ul}>
-        <li>Higher-dose compounded tirzepatide (GLP-1 + GIP dual agonist).</li>
-        <li>Pricing requires completing intake — not publicly listed.</li>
-        <li>FSA/HSA eligible.</li>
+        <li>Compounded <strong>tirzepatide</strong> (GLP-1 + GIP dual agonist) &mdash; the more potent molecule class.</li>
+        <li>$299/mo ongoing, all-inclusive, billed quarterly.</li>
+        <li>Most expensive Noom tier, and the top of the all-inclusive range.</li>
       </ul>
 
-      <h3 style={s.h3}>The "$69/mo" marketing rate</h3>
-      <p style={s.p}>The $69 headline is the brand-name <em>program fee</em> only. It doesn't include medication. For uninsured shoppers, this program isn't cheaper than self-pay alternatives like Oak ($133–$199/mo all-in) because the medication side adds $800+/mo at retail. The <strong>$99 Microdose is the realistic self-pay option</strong> from Noom Med.</p>
+      <h3 style={s.h3}>Program 4 — Branded-medication telehealth ($39 start, then $99/mo + medication)</h3>
+      <ul style={s.ul}>
+        <li>Provides access to brand-name medications (Ozempic, Zepbound, Wegovy).</li>
+        <li><strong>$99/mo is the PROGRAM FEE only</strong> &mdash; clinician access, the Noom app, ongoing support.</li>
+        <li><strong>Medication is billed separately</strong> and depends on your insurance coverage.</li>
+        <li>With insurance covering the drug, your copay could be $25&ndash;$50/mo on top of the $99 fee.</li>
+        <li>Without insurance, retail brand-name medication runs $900&ndash;$1,400/mo &mdash; this tier is impractical for self-pay.</li>
+      </ul>
+
+      <h3 style={s.h3}>Program 5 — Metformin ($69 start, then $99/mo)</h3>
+      <ul style={s.ul}>
+        <li>Oral metformin, not a GLP-1. A separate metabolic-health pathway at a lower price point.</li>
+        <li>$99/mo ongoing. Worth knowing about but not comparable to the GLP-1 programs clinically.</li>
+      </ul>
+
+      <h3 style={s.h3}>Reading the "start" prices honestly</h3>
+      <p style={s.p}>Every Noom tier advertises a low "to start" figure &mdash; $39, $69, $79, $129, $149. Those are <strong>introductory first-supply rates</strong>, not what you pay ongoing. The gap is substantial: the Microdose tier goes from $79 to start to $199/mo ongoing, a 2.5&times; step-up. When comparing Noom against flat-rate providers like Oak ($133/mo semaglutide, same price every month), use the ongoing number, not the start price.</p>
 
       <h2 style={s.h2}>What's included across all Noom Med plans</h2>
       <ul style={s.ul}>
@@ -1510,20 +1522,22 @@ function NoomProviderDetail() {
             <th style={p.th}>App/coaching included?</th>
           </tr></thead>
           <tbody>
-            <tr><td style={p.tdHighlight}><strong>Noom Med Microdose</strong></td><td style={p.tdHighlight}>$99/mo all-in</td><td style={p.tdHighlight}>N/A</td><td style={p.tdHighlight}>Yes (full Noom app)</td></tr>
             <tr><td style={p.td}><strong>Oak</strong></td><td style={p.td}>$133&ndash;$199/mo all-in</td><td style={p.td}>No</td><td style={p.td}>No</td></tr>
-            <tr><td style={p.td}><strong>Noom Med Brand-Name</strong></td><td style={p.td}>$69/mo + copay</td><td style={p.td}>Yes</td><td style={p.td}>Yes (full Noom app)</td></tr>
+            <tr><td style={p.td}><strong>FeelGood</strong></td><td style={p.td}>$149&ndash;$249/mo all-in</td><td style={p.td}>No</td><td style={p.td}>No</td></tr>
+            <tr><td style={p.tdHighlight}><strong>Noom Med Microdose GLP-1Rx</strong></td><td style={p.tdHighlight}>$199/mo all-in</td><td style={p.tdHighlight}>N/A</td><td style={p.tdHighlight}>Yes (full Noom app)</td></tr>
+            <tr><td style={p.td}><strong>Noom Med GLP-1Rx Plus</strong></td><td style={p.td}>$299/mo all-in</td><td style={p.td}>N/A</td><td style={p.td}>Yes (full Noom app)</td></tr>
+            <tr><td style={p.td}><strong>Noom Med branded telehealth</strong></td><td style={p.td}>$99/mo + medication</td><td style={p.td}>Yes</td><td style={p.td}>Yes (full Noom app)</td></tr>
             <tr><td style={p.td}><strong>Ro</strong></td><td style={p.td}>Est. $220&ndash;$400/mo</td><td style={p.td}>Partial</td><td style={p.td}>No</td></tr>
           </tbody>
         </table>
       </div>
-      <p style={{fontSize:13,color:"#475569",lineHeight:1.6,margin:"0 0 14px"}}>To run every provider against your own insurance + state + condition, use our <Link to="/" style={s.link}>free comparison tool</Link>.</p>
+      <p style={{fontSize:13,color:"#475569",lineHeight:1.6,margin:"0 0 14px"}}>Noom's all-inclusive tiers bundle behavioral coaching that the cheaper compounded providers don't offer &mdash; whether that's worth the $66&ndash;$100/mo premium over Oak is a personal call. To run every provider against your own insurance + state + condition, use our <Link to="/" style={s.link}>free comparison tool</Link>.</p>
 
       <h2 style={s.h2}>Pricing sources</h2>
       <ul style={p.sourceList}>
-        <li style={p.sourceItem}><span style={p.sourceLabel}>Noom Med official page</span><a href="https://www.noom.com/med/" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>noom.com/med/</a> — verified May 30, 2026</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Noom Med official page</span><a href="https://www.noom.com/med/" target="_blank" rel="noopener noreferrer" style={p.sourceLink}>noom.com/med/</a> — verified August 2, 2026</li>
         <li style={p.sourceItem}><span style={p.sourceLabel}>Noom Med FAQ section</span>"How much does weight-loss medication cost with Noom?"</li>
-        <li style={p.sourceItem}><span style={p.sourceLabel}>Product listings</span>Microdose GLP-1 from $99/mo; Brand-name from $69/mo + medication</li>
+        <li style={p.sourceItem}><span style={p.sourceLabel}>Product listings</span>Microdose GLP-1Rx $79 start / $199 ongoing; GLP-1Rx $129 / $249; GLP-1Rx Plus $149 / $299; branded telehealth $39 / $99 + medication; metformin $69 / $99</li>
       </ul>
     </ProviderDetailShell>
   );

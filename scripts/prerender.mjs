@@ -89,9 +89,9 @@ const ROUTES_META = {
     ],
   },
   "/providers/noom-med-cost/": {
-    title: "Noom Med GLP-1 Cost 2026: Microdose vs Brand-Name Pricing Explained",
+    title: "Noom Med GLP-1 Cost 2026: All Five Programs and What They Cost",
     description:
-      "Noom Med offers compounded microdose GLP-1s from $99/mo all-in, or brand-name access from $69/mo plus medication costs. Here's exactly what each path costs.",
+      "Noom Med runs five GLP-1 programs in 2026, from $99/mo branded telehealth to $299/mo all-inclusive tirzepatide. Start prices are introductory — here's what each program actually costs ongoing.",
     breadcrumb: [
       { name: "Providers", url: "/" },
       { name: "Noom Med Cost", url: "/providers/noom-med-cost/" },
